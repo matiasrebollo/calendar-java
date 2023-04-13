@@ -7,12 +7,11 @@ public class Tarea {
     private String descripcion;
     private boolean todoElDia;
     private Date fecha;
-    //LocalTime hora;
     private int[] horario = new int[2];// [0] = hs,    [1] = min
 
     private boolean completada;
 
-    public Tarea(String titulo, String descripcion,Date fecha, boolean todoElDia) {
+    public Tarea(String titulo, String descripcion, Date fecha, boolean todoElDia) {
         this.completada = false;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -22,7 +21,7 @@ public class Tarea {
         }
         else {
             this.todoElDia = false;
-            //this.horario = horario;
+            //falta poner el horario
          }
     }
 
@@ -64,7 +63,6 @@ public class Tarea {
             this.completada = false;
         }
         return this.completada;
-
     }
 }
 
