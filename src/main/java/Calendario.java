@@ -16,8 +16,8 @@ public class Calendario {
     public void eliminarEvento(Evento evento) {
         eventos.remove(evento);
     }
-    public void crearTarea() {
-        var tarea = new Tarea();
+    public void crearTarea(String titulo, String descripcion, boolean todoElDia) {
+        var tarea = new Tarea(titulo, descripcion,todoElDia);
         tareas.add(tarea);
     }
     public void modificarTarea() {

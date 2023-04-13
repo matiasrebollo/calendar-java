@@ -4,20 +4,20 @@ import java.util.Date;
 public class Tarea {
     private String titulo;
     private String descripcion;
-    private boolean deDiaCompleto;
+    private boolean todoElDia;
     private LocalDate vencimiento;
     private boolean completada;
 
-    public Tarea(String titulo, String descripcion, boolean deDiaCompleto, LocalDate vencimiento) {
+    public Tarea(String titulo, String descripcion, boolean todoElDia) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.completada = false;
-        if (deDiaCompleto) {
-            this.deDiaCompleto = true;
+        if (todoElDia) {
+            this.todoElDia = true;
         }
         else {
-            this.deDiaCompleto = false;
-            this.vencimiento = vencimiento;
+            this.todoElDia = false;
+            //this.vencimiento = vencimiento;
         }
     }
 
