@@ -9,8 +9,8 @@ public class Calendario {
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
     }
-    public void crearEvento() {
-        var evento = new Evento();
+    public void crearEvento(String titulo, String descripcion, Date fechaInicio, Date fechaFin, int[] horarioInicio, int[] horarioFin, boolean todoElDia) {
+        var evento = new Evento(titulo, descripcion, fechaInicio, fechaFin, horarioInicio, horarioFin, todoElDia);
         eventos.add(evento);
     }
     public void modificarEvento(Evento evento) {
