@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Tarea {
@@ -6,14 +7,14 @@ public class Tarea {
     private String titulo;
     private String descripcion;
     private boolean todoElDia;
-    private Date fecha;
+    private LocalDate fecha;
     private int[] horario = new int[2];// [0] = hs,    [1] = min
 
     private boolean completada;
 
     //si recibe true, no deberia pedirle el horario
     //si recibe false, si deberia pedirle el horario
-    public Tarea(String titulo, String descripcion, Date fecha, boolean todoElDia) {
+    public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia) {
         this.completada = false;
         this.titulo = titulo;
         this.descripcion = descripcion;
@@ -43,7 +44,7 @@ public class Tarea {
         this.horario[1] = nuevoHorario[1];
         return OK;
     }
-    public void modificarFecha(Date fechaNueva) {
+    public void modificarFecha(LocalDate fechaNueva) {
         this.fecha = fechaNueva;
     }
     public void modificarTitulo(String tituloNuevo) {

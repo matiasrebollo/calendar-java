@@ -1,8 +1,10 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Calendario {
+    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO};
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
 
@@ -21,13 +23,38 @@ public class Calendario {
         eventos.remove(evento);
     }
 
+
+
     //TAREA
-    public void crearTarea(String titulo, String descripcion, Date fecha, boolean todoElDia) {
+    public void crearTarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia) {
         var tarea = new Tarea(titulo, descripcion, fecha, todoElDia);
         tareas.add(tarea);
     }
-    public void modificarTarea(String titulo) {
+    /**
+     * Recibe el titulo de la Tarea a modificar, el elemento que desea modificar
+     * y el nuevo valor de ese elemento
+     * En el caso de la fecha el formato debe ser "dd/MM/yyyy"
+     * */
+    public void modificarTarea(String titulo, Elementos e, String nuevoValor) {
         Tarea tarea = buscarTareaPorTitulo(titulo);
+        switch (e) {
+            case TITULO -> {
+                tarea.modificarTitulo(nuevoValor);
+            }
+            case DESCRIPCION -> {
+                tarea.modificarDescripcion(nuevoValor);
+            }
+            case FECHA -> {
+                //chequear que el formato sea correcto
+                LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                tarea.modificarFecha(nuevaFecha);
+            }
+            case HORARIO -> {
+                //chequear que el formato sea correcto
+                //pasar horario a Time o DateTime
+                //tarea.modificarHorario(nuevoValor);
+            }
+        }
     }
     /**
      * Recorre las tareas y devuelve la Tarea que tenga el titulo recibido,
@@ -41,7 +68,18 @@ public class Calendario {
         }
         return null;
     }
-    public void eliminarTarea() {
+    public boolean existeTarea(String titulo) {
+        var tarea = buscarTareaPorTitulo(titulo);
+        return (tarea != null);
+    }
+    public void eliminarTarea(String titulo) {
+        var tarea = buscarTareaPorTitulo(titulo);
+        if (tarea != null) {
+            this.tareas.remove(tarea);
+        }
+        else {
+            //la tarea no existe
+        }
 
     }
 
