@@ -1,31 +1,29 @@
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 public class Evento {
     private String titulo;
     private String descripcion;
-    private Date fechaInicio;
-    private Date fechaFin;
-    private int[] horarioInicio = new int[2];
-    private int[] horarioFin = new int[2];
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
+    private LocalTime horarioInicio;
+    private LocalTime horarioFin;
     private boolean todoElDia;
 
 //falta ver como hacer que si le fecha de fin es anterior a la fecha de inicio que no se cree el evento
-    public Evento(String titulo, String descripcion, Date fechaInicio, Date fechaFin, int[] horarioInicio, int[] horarioFin, boolean todoElDia){
+    public Evento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia){
         this.titulo = titulo;
         this.descripcion= descripcion;
         this.fechaInicio = fechaInicio;
-        this.fechaFin= fechaFin;
+        this.fechaFin = fechaFin;
         if (todoElDia){
-            this.todoElDia = true;
-            this.horarioInicio[0] = 0;
-            this.horarioInicio[1] = 0;
-            this.horarioFin[0] = 0;
-            this.horarioFin[1] = 0;
+            this.horarioInicio = LocalTime.parse("00:00");
+            this.horarioFin = LocalTime.parse("00:00");
         } else {
-            this.todoElDia = false; // no se si hace falta que todoeldia sea un atributo
-            this.horarioInicio[0] = horarioInicio[0];
-            this.horarioInicio[1] = horarioInicio[1];
-            this.horarioFin[0] = horarioFin[0];
-            this.horarioFin[1] = horarioFin[1];
+            this.horarioInicio = horarioInicio;
+            this.horarioFin = horarioFin;
         }
     }
     //en las funciones de modificar falta que haya algun retorno para poder hacer las pruebas
@@ -41,18 +39,29 @@ public class Evento {
     public void modificarFecha(Date nuevaFechaInicio, Date nuevaFechaFin){
 
     }
-    public int modificarHorario(int[] nuevoHorarioInicio, int[] nuevoHorarioFin){
-        if (nuevoHorarioInicio[0] >= 24 || nuevoHorarioInicio[0] < 0 || nuevoHorarioFin[0] >= 24 || nuevoHorarioFin[0] < 0){
+    public int modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
+        if (!validarHorario(nuevoHorarioInicio, nuevoHorarioFin)){
             return -1;
+        } else {
+            this.horarioInicio = nuevoHorarioInicio;
+            this.horarioFin= nuevoHorarioFin;
         }
-        else if (nuevoHorarioInicio[1] >= 60 || nuevoHorarioInicio[1] < 0 || nuevoHorarioFin[1] >= 60 || nuevoHorarioFin[1] < 0){
-            return -1;
-        }
-        this.horarioInicio[0] = nuevoHorarioInicio[0];
-        this.horarioInicio[1] = nuevoHorarioInicio[1];
-        this.horarioFin[0] = nuevoHorarioFin[0];
-        this.horarioFin[1] = nuevoHorarioFin[1];
         return 0;
+    }
+
+    private boolean validarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
+        int horaInicio = nuevoHorarioInicio.getHour();
+        int horaFin = nuevoHorarioFin.getHour();
+        int minutoInicio = nuevoHorarioInicio.getMinute();
+        int minutoFin = nuevoHorarioFin.getMinute();
+        //ver porque la condicion tira ese warning
+        if (horaInicio < 0 || horaFin < 0 || horaInicio > 23 || horaFin > 23){
+            return false;
+        }
+        if (minutoInicio < 0 || minutoFin < 0 || minutoInicio > 59 || minutoFin < 0){
+            return false;
+        }
+        return true;
     }
 
     /*public String getTitulo() {

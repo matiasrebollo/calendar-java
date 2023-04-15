@@ -13,7 +13,7 @@ public class Calendario {
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
     }
-    public void crearEvento(String titulo, String descripcion, Date fechaInicio, Date fechaFin, int[] horarioInicio, int[] horarioFin, boolean todoElDia) {
+    public void crearEvento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia) {
         var evento = new Evento(titulo, descripcion, fechaInicio, fechaFin, horarioInicio, horarioFin, todoElDia);
         eventos.add(evento);
     }
