@@ -11,6 +11,8 @@ public class Tarea {
 
     private boolean completada;
 
+    //si recibe true, no deberia pedirle el horario
+    //si recibe false, si deberia pedirle el horario
     public Tarea(String titulo, String descripcion, Date fecha, boolean todoElDia) {
         this.completada = false;
         this.titulo = titulo;
@@ -63,6 +65,11 @@ public class Tarea {
             this.completada = false;
         }
         return this.completada;
+    }
+
+
+    public String getTitulo() {
+        return titulo;
     }
 }
 
