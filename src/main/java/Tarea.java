@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 public class Tarea {
@@ -8,12 +9,11 @@ public class Tarea {
     private String descripcion;
     private boolean todoElDia;
     private LocalDate fecha;
-    private int[] horario = new int[2];// [0] = hs,    [1] = min
+    private LocalTime horario;
 
     private boolean completada;
 
-    //si recibe true, no deberia pedirle el horario
-    //si recibe false, si deberia pedirle el horario
+
     public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia) {
         this.completada = false;
         this.titulo = titulo;
@@ -24,25 +24,26 @@ public class Tarea {
         }
         else {
             this.todoElDia = false;
-            //falta poner el horario
+            horario = LocalTime.now(); //hora actual (valor por defecto)
          }
     }
+    public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario) {
+        this.completada = false;
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.fecha = fecha;
+        if (todoElDia) {
+            this.todoElDia = true;
+        }
+        else {
+            this.todoElDia = false;
+            horario = horario;
+        }
+    }
 
-    /**
-     * Recibe un horario nuevo y modifica el actual
-     * si pudo modificarlo devuele 0
-     * si hubo un error devuelve -1
-     */
-    public int modificarHorario(int[] nuevoHorario) {
-        if (nuevoHorario[0] >= 24 || nuevoHorario[1] >= 60) {
-            return ERROR;
-        }
-        else if (nuevoHorario[0] < 0 || nuevoHorario[1] < 0) {
-            return ERROR;
-        }
-        this.horario[0] = nuevoHorario[0];
-        this.horario[1] = nuevoHorario[1];
-        return OK;
+
+    public void modificarHorario(LocalTime nuevoHorario) {
+        this.horario = nuevoHorario;
     }
     public void modificarFecha(LocalDate fechaNueva) {
         this.fecha = fechaNueva;
