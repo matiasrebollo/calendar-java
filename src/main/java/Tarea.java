@@ -1,6 +1,5 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 public class Tarea {
     private static final int ERROR = -1;
@@ -41,9 +40,9 @@ public class Tarea {
         }
     }
 
-
     public void modificarHorario(LocalTime nuevoHorario) {
         this.horario = nuevoHorario;
+        this.todoElDia = false;
     }
     public void modificarFecha(LocalDate fechaNueva) {
         this.fecha = fechaNueva;

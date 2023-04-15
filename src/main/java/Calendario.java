@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,9 @@ public class Calendario {
      * */
     public void modificarTarea(String titulo, Elementos e, String nuevoValor) {
         Tarea tarea = buscarTareaPorTitulo(titulo);
+        if (tarea == null) {
+            return;//La tarea no existe
+        }
         switch (e) {
             case TITULO -> {
                 tarea.modificarTitulo(nuevoValor);
@@ -51,8 +55,8 @@ public class Calendario {
             }
             case HORARIO -> {
                 //chequear que el formato sea correcto
-                //pasar horario a Time o DateTime
-                //tarea.modificarHorario(nuevoValor);
+                LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("hh:mm"));
+                tarea.modificarHorario(nuevoHorario);
             }
         }
     }
