@@ -27,18 +27,36 @@ public class Calendario {
 
 
     //TAREA
-    public void crearTarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia) {
-        var tarea = new Tarea(titulo, descripcion, fecha, todoElDia);
-        tareas.add(tarea);
-    }
     /**
-     * Recibe el titulo de la Tarea a modificar, el elemento que desea modificar
-     * y el nuevo valor de ese elemento
-     * En el caso de la fecha el formato debe ser "dd/MM/yyyy"
+     * Devuelve la tarea creada o null en caso de que no se cree
+     * el formato de fecha debe ser "d/M/yyyy", por ej. "2/10/2022"
+     * el formato de la hora debe ser "kk:mm", por ej. "20:05"
      * */
-    public void modificarTarea(String titulo, Elementos e, String nuevoValor) {
-        Tarea tarea = buscarTareaPorTitulo(titulo);
-        if (tarea == null) {
+    public Tarea crearTarea(String titulo, String descripcion, String fecha, boolean todoElDia, String hora) {
+        //falta chequear que el formato de la fecha sea correcto (etapa 2)
+        LocalDate fechaDate = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
+
+        Tarea tarea;
+        if (todoElDia) {
+            tarea = new Tarea(titulo, descripcion, fechaDate, todoElDia);
+        }
+        else {
+            //falta chequear que el formato de la hora sea correcto (etapa 2)
+            LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
+            tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, horaTime);
+        }
+        this.tareas.add(tarea);
+        return tarea;
+    }
+
+    /**
+     * Recibe la tarea a modificar, el elemento que desea modificar
+     * y el nuevo valor de ese elemento
+     * En el caso de la fecha el formato debe ser "d/M/yyyy"
+     * En el caso de la hora el formato debe ser "kk:mm"
+     * */
+    public void modificarTarea(Tarea tarea, Elementos e, String nuevoValor) {
+        if (!existeTarea(tarea)) {
             return;//La tarea no existe
         }
         switch (e) {
@@ -49,42 +67,25 @@ public class Calendario {
                 tarea.modificarDescripcion(nuevoValor);
             }
             case FECHA -> {
-                //chequear que el formato sea correcto
-                LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                //falta chequear que el formato sea correcto
+                LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("d/M/yyyy"));
                 tarea.modificarFecha(nuevaFecha);
             }
             case HORARIO -> {
-                //chequear que el formato sea correcto
-                LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("hh:mm"));
+                //falta chequear que el formato sea correcto
+                LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
                 tarea.modificarHorario(nuevoHorario);
             }
         }
     }
-    /**
-     * Recorre las tareas y devuelve la Tarea que tenga el titulo recibido,
-     * o null en caso de que no exista
-     * */
-    private Tarea buscarTareaPorTitulo(String titulo) {
-        for (int i = 0; i < tareas.size(); i++) {
-            if (this.tareas.get(i).getTitulo().equals(titulo)) {
-                return this.tareas.get(i);
-            }
-        }
-        return null;
+
+    public boolean existeTarea(Tarea tarea) {
+        return this.tareas.contains(tarea);
     }
-    public boolean existeTarea(String titulo) {
-        var tarea = buscarTareaPorTitulo(titulo);
-        return (tarea != null);
-    }
-    public void eliminarTarea(String titulo) {
-        var tarea = buscarTareaPorTitulo(titulo);
-        if (tarea != null) {
+    public void eliminarTarea(Tarea tarea) {
+        if (existeTarea(tarea)) {
             this.tareas.remove(tarea);
         }
-        else {
-            //la tarea no existe
-        }
-
     }
 
     public int cantidadEventos() {

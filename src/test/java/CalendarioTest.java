@@ -1,13 +1,8 @@
-import org.junit.Assert;
 import org.junit.Test;
-
-import javax.xml.crypto.Data;
-import java.sql.Date;
-import java.time.LocalDate;
-
 import static org.junit.Assert.assertEquals;
 
 public class CalendarioTest {
+
     @Test
     public void elCalendarioRecienCreadoNoTieneEventosNiTareas(){
         var calendario = new Calendario();
@@ -16,12 +11,38 @@ public class CalendarioTest {
     }
     @Test
     public void seCreaUnaTareaCorrectamente() {
-        var calendario = new Calendario();
-        LocalDate fecha = LocalDate.of(2023,5,20);
+        var c = new Calendario();
 
-        calendario.crearTarea("tarea1", "", fecha,true);
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true, "");
 
-        assertEquals(1,calendario.cantidadTareas());
+        assertEquals(1, c.cantidadTareas());
+        assertEquals(true, c.existeTarea(tarea));
+        assertEquals("tarea1", tarea.getTitulo());
+        assertEquals("", tarea.getDescripcion());
+        assertEquals("2023-05-02",tarea.getFecha().toString());
     }
+    @Test
+    public void seEliminaUnaTareaCorretamente(){
+        var c = new Calendario();
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true, "");
+
+        c.eliminarTarea(tarea);
+        assertEquals(0, c.cantidadTareas());
+        assertEquals(false, c.existeTarea(tarea));
+
+        //assertEquals(null, tarea);
+    }
+    @Test
+    public void modificoElTituloDeUnaTareaCorrectamente() {
+        var c = new Calendario();
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"");
+
+        c.modificarTarea(tarea, Calendario.Elementos.TITULO,"Hacer compras");
+
+        assertEquals("Hacer compras",tarea.getTitulo());
+        assertEquals(1, c.cantidadTareas());
+        assertEquals(true, c.existeTarea(tarea));
+    }
+
 
 }

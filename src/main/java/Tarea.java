@@ -2,8 +2,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Tarea {
-    private static final int ERROR = -1;
-    private static final int OK = 0;
     private String titulo;
     private String descripcion;
     private boolean todoElDia;
@@ -11,6 +9,7 @@ public class Tarea {
     private LocalTime horario;
 
     private boolean completada;
+    //FALTA EL TEMA DE LA FRECUENCIA y LAS ALARMAS
 
 
     public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia) {
@@ -36,7 +35,7 @@ public class Tarea {
         }
         else {
             this.todoElDia = false;
-            horario = horario;
+            this.horario = horario;
         }
     }
 
@@ -71,6 +70,12 @@ public class Tarea {
 
     public String getTitulo() {
         return titulo;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public LocalDate getFecha() {
+        return fecha;
     }
 }
 
