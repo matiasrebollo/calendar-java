@@ -1,42 +1,36 @@
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Month;
 
-public class Tarea {
+import static java.time.temporal.ChronoUnit.*;
+
+public class Tarea implements Frecuencia{
     private String titulo;
     private String descripcion;
     private boolean todoElDia;
     private LocalDate fecha;
     private LocalTime horario;
-
     private boolean completada;
-    //FALTA EL TEMA DE LA FRECUENCIA y LAS ALARMAS
+    //FALTA EL TEMA DE LAS ALARMAS
+    private FrecuenciaC frecuencia;
 
 
-    public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia) {
+    public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario, FrecuenciaC frecuencia) {
         this.completada = false;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fecha = fecha;
+        this.frecuencia = frecuencia;
+        if (frecuencia == null) {
+            this.frecuencia = new FrecuenciaC(TipoFrecuencia.CERO);
+        }
+        this.horario = horario;
+        this.todoElDia = todoElDia;
         if (todoElDia) {
-            this.todoElDia = true;
+            this.horario = LocalTime.MIDNIGHT;
         }
-        else {
-            this.todoElDia = false;
-            horario = LocalTime.now(); //hora actual (valor por defecto)
-         }
-    }
-    public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario) {
-        this.completada = false;
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.fecha = fecha;
-        if (todoElDia) {
-            this.todoElDia = true;
-        }
-        else {
-            this.todoElDia = false;
-            this.horario = horario;
-        }
+
     }
 
     public void modificarHorario(LocalTime nuevoHorario) {
@@ -52,6 +46,7 @@ public class Tarea {
     public void modificarDescripcion(String descripcionNueva) {
         this.descripcion = descripcionNueva;
     }
+
     /**
      * Si la tarea está completada, la marca como no completada
      * si la tarea no está completada, la marca como completada
@@ -76,6 +71,14 @@ public class Tarea {
     }
     public LocalDate getFecha() {
         return fecha;
+    }
+
+    /**
+     * Devuelve true si la tarea ocurrirá en la fecha recibida
+     * */
+
+    public boolean ocurreEnFecha(LocalDate fechaCualqueira){
+        return frecuencia.coincidenFechas(this.fecha, fechaCualqueira);
     }
 }
 

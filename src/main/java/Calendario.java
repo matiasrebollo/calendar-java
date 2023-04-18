@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -6,12 +7,16 @@ import java.util.Date;
 
 public class Calendario {
     enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO};
+    enum Semana {LUNES, MARTES, MIERCOLES, JUEVES, VIERNES};
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
+    private LocalDate fechaActual;
+    private LocalTime horaActual;
 
     public Calendario(){
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
+        this.fechaActual = LocalDate.now();
     }
     public void crearEvento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia) {
         var evento = new Evento(titulo, descripcion, fechaInicio, fechaFin, horarioInicio, horarioFin, todoElDia);
@@ -32,19 +37,15 @@ public class Calendario {
      * el formato de fecha debe ser "d/M/yyyy", por ej. "2/10/2022"
      * el formato de la hora debe ser "kk:mm", por ej. "20:05"
      * */
-    public Tarea crearTarea(String titulo, String descripcion, String fecha, boolean todoElDia, String hora) {
-        //falta chequear que el formato de la fecha sea correcto (etapa 2)
+    public Tarea crearTarea(String titulo, String descripcion, String fecha, boolean todoElDia, String hora, FrecuenciaC frecuencia) {
+        //chequear que el formato de la fecha sea correcto (etapa 2)
         LocalDate fechaDate = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
 
         Tarea tarea;
-        if (todoElDia) {
-            tarea = new Tarea(titulo, descripcion, fechaDate, todoElDia);
-        }
-        else {
-            //falta chequear que el formato de la hora sea correcto (etapa 2)
-            LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
-            tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, horaTime);
-        }
+        //chequear que el formato de la hora sea correcto (etapa 2)
+        LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
+        tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, horaTime,frecuencia);
+
         this.tareas.add(tarea);
         return tarea;
     }
@@ -93,5 +94,12 @@ public class Calendario {
     }
     public int cantidadTareas() {
         return tareas.size();
+    }
+
+    /**
+     * muestra las tareas que hay en una fecha cualquiera
+     * */
+    public void mostrarTareasDelDia(LocalDate fecha) {
+
     }
 }

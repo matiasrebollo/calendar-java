@@ -13,7 +13,7 @@ public class CalendarioTest {
     public void seCreaUnaTareaCorrectamente() {
         var c = new Calendario();
 
-        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true, "");
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true, "", null);
 
         assertEquals(1, c.cantidadTareas());
         assertEquals(true, c.existeTarea(tarea));
@@ -24,7 +24,7 @@ public class CalendarioTest {
     @Test
     public void seEliminaUnaTareaCorretamente(){
         var c = new Calendario();
-        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true, "");
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true, "", null);
 
         c.eliminarTarea(tarea);
         assertEquals(0, c.cantidadTareas());
@@ -35,7 +35,7 @@ public class CalendarioTest {
     @Test
     public void modificoElTituloDeUnaTareaCorrectamente() {
         var c = new Calendario();
-        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"");
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"", null);
 
         c.modificarTarea(tarea, Calendario.Elementos.TITULO,"Hacer compras");
 
