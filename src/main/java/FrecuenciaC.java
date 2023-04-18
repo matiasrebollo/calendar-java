@@ -1,6 +1,7 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -8,18 +9,30 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
 
 public class FrecuenciaC implements Frecuencia{
+    private LocalDate fechaInicio;
     public TipoFrecuencia tipo;
     public FrecuenciaMensual frecuenciaMensual;
     private int intervalo;
-    private ArrayList<DayOfWeek> diasDeLaSemana;
+    private ArrayList<DayOfWeek> diasDeLaSemana = new ArrayList<>();
     private LocalDate fechaFin;
+    private int cantRepeticiones;
 
-    public FrecuenciaC(TipoFrecuencia tipo) {
+    public FrecuenciaC(TipoFrecuencia tipo, LocalDate fechaInicio) {
         this.tipo = tipo;
         this.intervalo = 1; //por defecto
         frecuenciaMensual = FrecuenciaMensual.MISMODIA;//por defecto
         this.fechaFin = LocalDate.MAX; //por defecto
+        this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());//por defecto
+        this.fechaInicio = fechaInicio;
+    }
+    public FrecuenciaC(TipoFrecuencia tipo,LocalDate fechaInicio, int intervalo, int cantRepeticiones) {
+        this.tipo = tipo;
+        this.intervalo = intervalo;
+        frecuenciaMensual = FrecuenciaMensual.MISMODIA;//por defecto
+        this.fechaFin = LocalDate.MAX; //por defecto
         this.diasDeLaSemana = new ArrayList<>();
+        this.fechaInicio = fechaInicio;
+        this.cantRepeticiones = cantRepeticiones;
     }
 
     public int getIntervalo() {
@@ -65,6 +78,74 @@ public class FrecuenciaC implements Frecuencia{
         this.fechaFin = fechaFin;
     }
 
+    LocalDate calcularFechaFin(){
+        LocalDate fechaAux = fechaInicio;
+        switch (this.tipo) {
+            case CERO -> {
+                return fechaFin;
+            }
+            case DIARIA -> {
+                for (int i = 0; i < cantRepeticiones; i++) {
+                    fechaAux = fechaAux.plusDays(intervalo);
+                }
+                break;
+            }
+            case SEMANAL -> {
+                int contador = 0;
+                while (contador < cantRepeticiones) {//se puede hacer mejor
+                    var diaActual = fechaAux.getDayOfWeek();
+                    if (diasDeLaSemana.contains(diaActual)) {//ERROR ciclo infinito
+                        contador++;
+                    }
+                    fechaAux = fechaAux.plusDays(1);
+                    if (fechaAux.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {//si termina la semana
+                        fechaAux = fechaAux.plusWeeks(intervalo);
+                    }
+                }
+                break;
+            }
+            case MENSUAL -> {
+                switch (frecuenciaMensual) {
+                    case MISMONUMERO -> {
+                        for (int i = 0; i < cantRepeticiones; i++) {
+                            fechaAux = fechaAux.plus(intervalo, ChronoUnit.MONTHS);//sumo 1 mes
+                        }
+                    }
+                    case MISMODIA -> {
+                        int diaDelMes = fechaAux.getDayOfMonth();
+                        var diaInicial = fechaAux.getDayOfWeek();
+                        int mesActual = fechaAux.getMonthValue();
+                        int anioActual = fechaAux.getYear();
+                        int nroSemana = (diaDelMes - 1) / 7 + 1;// 7: cant de dias de una semana
+
+                        for (int i = 0; i < cantRepeticiones; i++) {
+                            mesActual++;
+                            if (mesActual > 12) {
+                                mesActual = 1;
+                                anioActual++;
+                            }
+                            i++;
+                        }
+                        fechaAux = LocalDate.of(anioActual,mesActual, 1);
+                        fechaAux = fechaAux.plusWeeks(nroSemana-1);
+
+
+                        while (!fechaAux.getDayOfWeek().equals(diaInicial)){
+                            fechaAux = fechaAux.plusDays(1);
+                        }
+                    }
+                }
+                break;
+            }
+            case ANUAL -> {
+                for (int i = 0; i < cantRepeticiones; i++) {
+                    fechaAux = fechaAux.plusYears(intervalo);
+                }
+                break;
+            }
+        }
+        return fechaAux;
+    }
 
     /**
      * Recibe una fecha inicial (del evento o tarea) y una fecha cualquiera.
@@ -91,8 +172,8 @@ public class FrecuenciaC implements Frecuencia{
                     return false;
                 }
                 case DIARIA -> {
-                    int cadaCuantosDias = this.getIntervalo();
-                    return (diferenciaDeDias % cadaCuantosDias == 0);
+                    int intervalo = this.getIntervalo();
+                    return (diferenciaDeDias % intervalo == 0);
                 }
                 case SEMANAL -> {
                     int intervalo = this.getIntervalo();

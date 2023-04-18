@@ -23,7 +23,7 @@ public class Tarea implements Frecuencia{
         this.fecha = fecha;
         this.frecuencia = frecuencia;
         if (frecuencia == null) {
-            this.frecuencia = new FrecuenciaC(TipoFrecuencia.CERO);
+            this.frecuencia = new FrecuenciaC(TipoFrecuencia.CERO, fecha);
         }
         this.horario = horario;
         this.todoElDia = todoElDia;
@@ -71,6 +71,10 @@ public class Tarea implements Frecuencia{
     }
     public LocalDate getFecha() {
         return fecha;
+    }
+
+    public LocalTime getHorario() {
+        return horario;
     }
 
     /**

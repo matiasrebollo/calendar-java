@@ -43,8 +43,13 @@ public class Calendario {
 
         Tarea tarea;
         //chequear que el formato de la hora sea correcto (etapa 2)
-        LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
-        tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, horaTime,frecuencia);
+        if (hora.equals("")) {
+            tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, null,frecuencia);
+        }
+        else {
+            LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
+            tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, horaTime,frecuencia);
+        }
 
         this.tareas.add(tarea);
         return tarea;
@@ -99,7 +104,14 @@ public class Calendario {
     /**
      * muestra las tareas que hay en una fecha cualquiera
      * */
-    public void mostrarTareasDelDia(LocalDate fecha) {
-
+    public ArrayList<Tarea> mostrarTareasDelDia(LocalDate fecha) {
+        ArrayList<Tarea> tareasDeLaFecha = new ArrayList<>();
+        for (int i = 0; i < tareas.size(); i++) {
+            var tarea = tareas.get(i);
+            if (tarea.ocurreEnFecha(fecha)) {
+                tareasDeLaFecha.add(tarea);
+            }
+        }
+        return tareasDeLaFecha;
     }
 }

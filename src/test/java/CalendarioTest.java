@@ -1,4 +1,7 @@
 import org.junit.Test;
+
+import java.time.LocalDate;
+
 import static org.junit.Assert.assertEquals;
 
 public class CalendarioTest {
@@ -40,6 +43,29 @@ public class CalendarioTest {
         c.modificarTarea(tarea, Calendario.Elementos.TITULO,"Hacer compras");
 
         assertEquals("Hacer compras",tarea.getTitulo());
+        assertEquals(1, c.cantidadTareas());
+        assertEquals(true, c.existeTarea(tarea));
+    }
+    @Test
+    public void seModificaLaFechaDeUnaTareaCorrectamente(){
+        var c = new Calendario();
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"", null);
+        LocalDate fechaNueva = LocalDate.of(2023, 10, 5);
+
+        c.modificarTarea(tarea, Calendario.Elementos.FECHA, "5/10/2023");
+
+        assertEquals(fechaNueva, tarea.getFecha());
+        assertEquals(1, c.cantidadTareas());
+        assertEquals(true, c.existeTarea(tarea));
+    }
+    @Test
+    public void seModificaLaHoraDeUnaTareaCorrectamente(){
+        var c = new Calendario();
+        var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"20:30", null);
+
+        c.modificarTarea(tarea, Calendario.Elementos.HORARIO, "15:30");
+
+        assertEquals("15:30", tarea.getHorario().toString());
         assertEquals(1, c.cantidadTareas());
         assertEquals(true, c.existeTarea(tarea));
     }
