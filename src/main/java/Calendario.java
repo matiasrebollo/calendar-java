@@ -40,15 +40,32 @@ public class Calendario {
             case DESCRIPCION -> {
                 evento.modificarDescripcion(nuevoValor1);
             }
+            //ver si se puede enprolijar un poco fecha y horario
             case FECHA -> {
-                LocalDate nuevaFechaInicio = LocalDate.parse(nuevoValor1, DateTimeFormatter.ofPattern("d/M/yyyy"));
-                LocalDate nuevaFechaFin = LocalDate.parse(nuevoValor2, DateTimeFormatter.ofPattern("d/M/yyyy"));
-                evento.modificarFecha(nuevaFechaInicio, nuevaFechaFin);
+                if (nuevoValor1.equals("")){
+                    LocalDate nuevaFechaFin = LocalDate.parse(nuevoValor2, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                    evento.modificarFecha(null, nuevaFechaFin);
+                } else if (nuevoValor2.equals("")){
+                    LocalDate nuevaFechaInicio = LocalDate.parse(nuevoValor1, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                    evento.modificarFecha(nuevaFechaInicio, null);
+                } else {
+                    LocalDate nuevaFechaInicio = LocalDate.parse(nuevoValor1, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                    LocalDate nuevaFechaFin = LocalDate.parse(nuevoValor2, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                    evento.modificarFecha(nuevaFechaInicio, nuevaFechaFin);
+                }
             }
             case HORARIO -> {
-                LocalTime nuevoHorarioInicio = LocalTime.parse(nuevoValor1, DateTimeFormatter.ofPattern("kk:mm"));
-                LocalTime nuevoHorarioFin = LocalTime.parse(nuevoValor2, DateTimeFormatter.ofPattern("kk:mm"));
-                evento.modificarHorario(nuevoHorarioInicio, nuevoHorarioFin);
+                if (nuevoValor1.equals("")){
+                    LocalTime nuevoHorarioFin = LocalTime.parse(nuevoValor2, DateTimeFormatter.ofPattern("kk:mm"));
+                    evento.modificarHorario(null, nuevoHorarioFin);
+                } else if (nuevoValor2.equals("")){
+                    LocalTime nuevoHorarioInicio = LocalTime.parse(nuevoValor1, DateTimeFormatter.ofPattern("kk:mm"));
+                    evento.modificarHorario(nuevoHorarioInicio, null);
+                } else {
+                    LocalTime nuevoHorarioInicio = LocalTime.parse(nuevoValor1, DateTimeFormatter.ofPattern("kk:mm"));
+                    LocalTime nuevoHorarioFin = LocalTime.parse(nuevoValor2, DateTimeFormatter.ofPattern("kk:mm"));
+                    evento.modificarHorario(nuevoHorarioInicio, nuevoHorarioFin);
+                }
             }
             /* no se como hacer el formato
             case FRECUENCIA -> {

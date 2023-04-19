@@ -13,7 +13,7 @@ public class Evento {
     private boolean todoElDia;
     private FrecuenciaC frecuencia;
 
-//falta ver como hacer que si le fecha de fin es anterior a la fecha de inicio que no se cree el evento
+
     public Evento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia, FrecuenciaC frecuencia){
         this.titulo = titulo;
         this.descripcion= descripcion;
@@ -43,13 +43,25 @@ public class Evento {
     }
 
     public void modificarFecha(LocalDate nuevaFechaInicio, LocalDate nuevaFechaFin){
-        this.fechaInicio = nuevaFechaInicio;
-        this.fechaFin = nuevaFechaFin;
+        if (nuevaFechaInicio == null){
+            this.fechaFin = nuevaFechaFin;
+        } else if (nuevaFechaFin == null){
+            this.fechaInicio = nuevaFechaInicio;
+        } else {
+            this.fechaInicio = nuevaFechaInicio;
+            this.fechaFin = nuevaFechaFin;
+        }
     }
     public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
-        this.horarioInicio = nuevoHorarioInicio;
-        this.horarioFin= nuevoHorarioFin;
-        this.todoElDia = false;
+        if (nuevoHorarioInicio == null){
+            this.horarioFin = nuevoHorarioFin;
+        } else if (nuevoHorarioFin == null){
+            this.horarioInicio = nuevoHorarioInicio;
+        } else {
+            this.horarioInicio = nuevoHorarioInicio;
+            this.horarioFin= nuevoHorarioFin;
+        }
+        this.todoElDia = nuevoHorarioInicio == LocalTime.MIDNIGHT && nuevoHorarioFin == LocalTime.MIDNIGHT;
 
     }
 
@@ -77,6 +89,18 @@ public class Evento {
     }
     public String getDescripcion() {
         return descripcion;
+    }
+    public LocalDate getFechaInicio(){
+        return fechaInicio;
+    }
+    public LocalDate getFechaFin(){
+        return fechaFin;
+    }
+    public LocalTime getHorarioInicio(){
+        return horarioInicio;
+    }
+    public LocalTime getHorarioFin(){
+        return horarioFin;
     }
 
 }
