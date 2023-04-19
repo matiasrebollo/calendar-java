@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Calendario {
-    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO};
+    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA};
     enum Semana {LUNES, MARTES, MIERCOLES, JUEVES, VIERNES};
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
@@ -18,18 +18,53 @@ public class Calendario {
         this.tareas = new ArrayList<>();
         this.fechaActual = LocalDate.now();
     }
-    public void crearEvento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia) {
-        var evento = new Evento(titulo, descripcion, fechaInicio, fechaFin, horarioInicio, horarioFin, todoElDia);
-        eventos.add(evento);
-    }
-    public void modificarEvento(Evento evento) {
+    public Evento crearEvento(String titulo, String descripcion, String fechaIni, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, FrecuenciaC frecuencia) {
+        LocalDate fechaInicio = LocalDate.parse(fechaIni, DateTimeFormatter.ofPattern("d/M/yyyy"));
+        LocalDate fechaFinal = LocalDate.parse(fechaFin, DateTimeFormatter.ofPattern("d/M/yyyy"));
+        LocalTime horarioInicio = LocalTime.parse(horarioIni, DateTimeFormatter.ofPattern("kk:mm"));
+        LocalTime horarioFinal = LocalTime.parse(horarioFin, DateTimeFormatter.ofPattern("kk:mm"));
 
+        var evento = new Evento(titulo, descripcion, fechaInicio, fechaFinal, horarioInicio, horarioFinal, todoElDia, frecuencia);
+        this.eventos.add(evento);
+
+        return evento;
+    }
+    public void modificarEvento(Evento evento, Elementos e, String nuevoValor1, String nuevoValor2) {
+        if(!existeEvento(evento)){
+            return;
+        }
+        switch (e) {
+            case TITULO -> {
+                evento.modificarTitulo(nuevoValor1);
+            }
+            case DESCRIPCION -> {
+                evento.modificarDescripcion(nuevoValor1);
+            }
+            case FECHA -> {
+                LocalDate nuevaFechaInicio = LocalDate.parse(nuevoValor1, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                LocalDate nuevaFechaFin = LocalDate.parse(nuevoValor2, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                evento.modificarFecha(nuevaFechaInicio, nuevaFechaFin);
+            }
+            case HORARIO -> {
+                LocalTime nuevoHorarioInicio = LocalTime.parse(nuevoValor1, DateTimeFormatter.ofPattern("kk:mm"));
+                LocalTime nuevoHorarioFin = LocalTime.parse(nuevoValor2, DateTimeFormatter.ofPattern("kk:mm"));
+                evento.modificarHorario(nuevoHorarioInicio, nuevoHorarioFin);
+            }
+            /* no se como hacer el formato
+            case FRECUENCIA -> {
+                evento.modificarFrecuencia(nuevoValor1);
+            }*/
+        }
     }
     public void eliminarEvento(Evento evento) {
-        eventos.remove(evento);
+        if (existeEvento(evento)){
+            this.eventos.remove(evento);
+        }
     }
 
-
+    public boolean existeEvento(Evento evento){
+        return this.eventos.contains(evento);
+    }
 
     //TAREA
     /**

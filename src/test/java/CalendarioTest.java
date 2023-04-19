@@ -12,6 +12,16 @@ public class CalendarioTest {
         assertEquals(0, calendario.cantidadEventos());
         assertEquals(0, calendario.cantidadTareas());
     }
+
+    @Test
+    public void seCreaUnEventoCorrectamente() {
+        var c = new Calendario();
+        var evento = c.crearEvento("evento1", "", "1/1/2023", "1/1/2023", "00:00", "00:30" , false, null);
+
+        assertEquals(1, c.cantidadEventos());
+        assertEquals(true, c.existeEvento(evento));
+    }
+
     @Test
     public void seCreaUnaTareaCorrectamente() {
         var c = new Calendario();
@@ -24,6 +34,17 @@ public class CalendarioTest {
         assertEquals("", tarea.getDescripcion());
         assertEquals("2023-05-02",tarea.getFecha().toString());
     }
+
+    @Test
+    public void seEliminaUnEventoCorrectamente() {
+        var c = new Calendario();
+        var evento = c.crearEvento("evento1", "", "1/1/2023", "1/1/2023", "00:00", "00:30" , false, null);
+        c.eliminarEvento(evento);
+
+        assertEquals(0, c.cantidadEventos());
+        assertEquals(false, c.existeEvento(evento));
+    }
+
     @Test
     public void seEliminaUnaTareaCorretamente(){
         var c = new Calendario();

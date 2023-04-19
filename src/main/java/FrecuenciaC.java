@@ -10,8 +10,8 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 
 public class FrecuenciaC implements Frecuencia{
     private LocalDate fechaInicio;
-    public TipoFrecuencia tipo;
-    public FrecuenciaMensual frecuenciaMensual;
+    private TipoFrecuencia tipo;
+    private FrecuenciaMensual frecuenciaMensual;
     private int intervalo;
     private ArrayList<DayOfWeek> diasDeLaSemana = new ArrayList<>();
     private LocalDate fechaFin;

@@ -11,9 +11,10 @@ public class Evento {
     private LocalTime horarioInicio;
     private LocalTime horarioFin;
     private boolean todoElDia;
+    private FrecuenciaC frecuencia;
 
 //falta ver como hacer que si le fecha de fin es anterior a la fecha de inicio que no se cree el evento
-    public Evento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia){
+    public Evento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia, FrecuenciaC frecuencia){
         this.titulo = titulo;
         this.descripcion= descripcion;
         this.fechaInicio = fechaInicio;
@@ -21,10 +22,17 @@ public class Evento {
         if (todoElDia){
             this.horarioInicio = LocalTime.parse("00:00");
             this.horarioFin = LocalTime.parse("00:00");
+            this.todoElDia = true;
         } else {
             this.horarioInicio = horarioInicio;
             this.horarioFin = horarioFin;
+            this.todoElDia = false;
         }
+        this.frecuencia = frecuencia;
+        if (frecuencia == null){
+            this.frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.CERO, fechaInicio);
+        }
+
     }
     //en las funciones de modificar falta que haya algun retorno para poder hacer las pruebas
     public void modificarTitulo(String nuevoTitulo){
@@ -33,23 +41,23 @@ public class Evento {
     public void modificarDescripcion(String nuevaDescripcion){
         this.descripcion = nuevaDescripcion;
     }
-//para mi los modificar fecha y horario tendrian que ir juntos, falta verificar que el horario de fin no sea menor al horario
-//de inicio, si es que estan en el mismo dia, por eso digo que deben ir juntos, para que un evento no arranque en el presente
-//y finalice en el pasado.
-    public void modificarFecha(Date nuevaFechaInicio, Date nuevaFechaFin){
+
+    public void modificarFecha(LocalDate nuevaFechaInicio, LocalDate nuevaFechaFin){
+        this.fechaInicio = nuevaFechaInicio;
+        this.fechaFin = nuevaFechaFin;
+    }
+    public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
+        this.horarioInicio = nuevoHorarioInicio;
+        this.horarioFin= nuevoHorarioFin;
+        this.todoElDia = false;
 
     }
-    public int modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
-        if (!validarHorario(nuevoHorarioInicio, nuevoHorarioFin)){
-            return -1;
-        } else {
-            this.horarioInicio = nuevoHorarioInicio;
-            this.horarioFin= nuevoHorarioFin;
-        }
-        return 0;
+
+    public void modificarFrecuencia(FrecuenciaC frecuencia){
+        this.frecuencia = frecuencia;
     }
 
-    private boolean validarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
+    /*private boolean validarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
         int horaInicio = nuevoHorarioInicio.getHour();
         int horaFin = nuevoHorarioFin.getHour();
         int minutoInicio = nuevoHorarioInicio.getMinute();
@@ -62,13 +70,13 @@ public class Evento {
             return false;
         }
         return true;
-    }
+    }*/
 
-    /*public String getTitulo() {
+    public String getTitulo() {
         return titulo;
     }
     public String getDescripcion() {
         return descripcion;
-    }*/
+    }
 
 }
