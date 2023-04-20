@@ -46,6 +46,9 @@ public class Tarea implements Frecuencia{
     public void modificarDescripcion(String descripcionNueva) {
         this.descripcion = descripcionNueva;
     }
+    public void modificarFrecuencia(FrecuenciaC frecuencia){
+        this.frecuencia = frecuencia;
+    }
 
     /**
      * Si la tarea está completada, la marca como no completada
@@ -72,7 +75,9 @@ public class Tarea implements Frecuencia{
     public LocalDate getFecha() {
         return fecha;
     }
-
+    public FrecuenciaC getFrecuencia(){
+        return frecuencia;
+}
     public LocalTime getHorario() {
         return horario;
     }
@@ -80,9 +85,9 @@ public class Tarea implements Frecuencia{
     /**
      * Devuelve true si la tarea ocurrirá en la fecha recibida
      * */
-
+//soy mati, cambie el coinciden fechas por el fecha esta incluida porque tiraba error
     public boolean ocurreEnFecha(LocalDate fechaCualqueira){
-        return frecuencia.coincidenFechas(fechaCualqueira);
+        return frecuencia.fechaEstaIncluida(fechaCualqueira);
     }
 }
 

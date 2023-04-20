@@ -29,7 +29,7 @@ public class Calendario {
 
         return evento;
     }
-    public void modificarEvento(Evento evento, Elementos e, String nuevoValor1, String nuevoValor2) {
+    public void modificarEvento(Evento evento, Elementos e, String nuevoValor1, String nuevoValor2, FrecuenciaC frecuencia) {
         if(!existeEvento(evento)){
             return;
         }
@@ -40,7 +40,6 @@ public class Calendario {
             case DESCRIPCION -> {
                 evento.modificarDescripcion(nuevoValor1);
             }
-            //ver si se puede enprolijar un poco fecha y horario
             case FECHA -> {
                 if (nuevoValor1.equals("")){
                     LocalDate nuevaFechaFin = LocalDate.parse(nuevoValor2, DateTimeFormatter.ofPattern("d/M/yyyy"));
@@ -67,10 +66,11 @@ public class Calendario {
                     evento.modificarHorario(nuevoHorarioInicio, nuevoHorarioFin);
                 }
             }
-            /* no se como hacer el formato
             case FRECUENCIA -> {
-                evento.modificarFrecuencia(nuevoValor1);
-            }*/
+                if (frecuencia != null){
+                    evento.modificarFrecuencia(frecuencia);
+                }
+            }
         }
     }
     public void eliminarEvento(Evento evento) {
@@ -113,7 +113,7 @@ public class Calendario {
      * En el caso de la fecha el formato debe ser "d/M/yyyy"
      * En el caso de la hora el formato debe ser "kk:mm"
      * */
-    public void modificarTarea(Tarea tarea, Elementos e, String nuevoValor) {
+    public void modificarTarea(Tarea tarea, Elementos e, String nuevoValor, FrecuenciaC frecuencia) {
         if (!existeTarea(tarea)) {
             return;//La tarea no existe
         }
@@ -133,6 +133,11 @@ public class Calendario {
                 //falta chequear que el formato sea correcto
                 LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
                 tarea.modificarHorario(nuevoHorario);
+            }
+            case FRECUENCIA -> {
+                if (frecuencia != null){
+                    tarea.modificarFrecuencia(frecuencia);
+                }
             }
         }
     }

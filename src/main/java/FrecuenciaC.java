@@ -79,7 +79,12 @@ public class FrecuenciaC implements Frecuencia{
     public void setFrecuenciaMensual(FrecuenciaMensual frecuenciaMensual) {
         this.frecuenciaMensual = frecuenciaMensual;
     }
-
+    public void setFechaInicio(LocalDate fechaInicio){
+        this.fechaInicio = fechaInicio;
+        if (this.cantRepeticiones > 0){
+            this.fechaFin = calcularFechaFin();
+        }
+    }
     public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
     }

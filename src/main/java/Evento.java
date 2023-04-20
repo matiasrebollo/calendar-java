@@ -102,5 +102,8 @@ public class Evento {
     public LocalTime getHorarioFin(){
         return horarioFin;
     }
+    public FrecuenciaC getFrecuencia(){
+        return frecuencia;
+    }
 
 }
