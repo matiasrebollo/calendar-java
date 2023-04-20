@@ -23,7 +23,7 @@ public class Tarea implements Frecuencia{
         this.fecha = fecha;
         this.frecuencia = frecuencia;
         if (frecuencia == null) {
-            this.frecuencia = new FrecuenciaC(TipoFrecuencia.CERO, fecha);
+            this.frecuencia = new FrecuenciaC(TipoFrecuencia.CERO, fecha,1, null);
         }
         this.horario = horario;
         this.todoElDia = todoElDia;
@@ -82,7 +82,7 @@ public class Tarea implements Frecuencia{
      * */
 
     public boolean ocurreEnFecha(LocalDate fechaCualqueira){
-        return frecuencia.coincidenFechas(this.fecha, fechaCualqueira);
+        return frecuencia.coincidenFechas(fechaCualqueira);
     }
 }
 

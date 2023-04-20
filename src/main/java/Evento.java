@@ -30,7 +30,7 @@ public class Evento {
         }
         this.frecuencia = frecuencia;
         if (frecuencia == null){
-            this.frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.CERO, fechaInicio);
+            this.frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.CERO, fechaInicio,1, null);
         }
 
     }
