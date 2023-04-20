@@ -163,8 +163,7 @@ public class Calendario {
      * */
     public ArrayList<Tarea> mostrarTareasDelDia(LocalDate fecha) {
         ArrayList<Tarea> tareasDeLaFecha = new ArrayList<>();
-        for (int i = 0; i < tareas.size(); i++) {
-            var tarea = tareas.get(i);
+        for (Tarea tarea : tareas) {
             if (tarea.ocurreEnFecha(fecha)) {
                 tareasDeLaFecha.add(tarea);
             }
