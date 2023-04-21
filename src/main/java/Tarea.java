@@ -1,11 +1,6 @@
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Month;
-
-import static java.time.temporal.ChronoUnit.*;
-
-public class Tarea implements Frecuencia{
+public class Tarea{
     private String titulo;
     private String descripcion;
     private boolean todoElDia;
@@ -23,7 +18,7 @@ public class Tarea implements Frecuencia{
         this.fecha = fecha;
         this.frecuencia = frecuencia;
         if (frecuencia == null) {
-            this.frecuencia = new FrecuenciaC(TipoFrecuencia.CERO, fecha,1, null);
+            this.frecuencia = new FrecuenciaC(FrecuenciaC.TipoFrecuencia.CERO, fecha,1, null);
         }
         this.horario = horario;
         this.todoElDia = todoElDia;
@@ -85,9 +80,8 @@ public class Tarea implements Frecuencia{
     /**
      * Devuelve true si la tarea ocurrirá en la fecha recibida
      * */
-//soy mati, cambie el coinciden fechas por el fecha esta incluida porque tiraba error
-    public boolean ocurreEnFecha(LocalDate fechaCualqueira){
-        return frecuencia.fechaEstaIncluida(fechaCualqueira);
+    public boolean ocurreEnFecha(LocalDate fechaCualquiera){
+        return frecuencia.fechaEstaIncluida(fechaCualquiera);
     }
 }
 

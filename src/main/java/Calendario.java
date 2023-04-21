@@ -7,7 +7,6 @@ import java.util.Date;
 
 public class Calendario {
     enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA};
-    enum Semana {LUNES, MARTES, MIERCOLES, JUEVES, VIERNES};
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
     private LocalDate fechaActual;
@@ -17,6 +16,7 @@ public class Calendario {
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
         this.fechaActual = LocalDate.now();
+        this.horaActual = LocalTime.now();
     }
     public Evento crearEvento(String titulo, String descripcion, String fechaIni, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, FrecuenciaC frecuencia) {
         LocalDate fechaInicio = LocalDate.parse(fechaIni, DateTimeFormatter.ofPattern("d/M/yyyy"));
@@ -165,6 +165,7 @@ public class Calendario {
         ArrayList<Tarea> tareasDeLaFecha = new ArrayList<>();
         for (Tarea tarea : tareas) {
             if (tarea.ocurreEnFecha(fecha)) {
+                System.out.println(tarea.getTitulo());
                 tareasDeLaFecha.add(tarea);
             }
         }

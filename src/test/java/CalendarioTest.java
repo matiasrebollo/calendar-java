@@ -190,6 +190,7 @@ public class CalendarioTest {
         var c = new Calendario();
         var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"20:30", null);
         LocalDate fecha = LocalDate.of(2023,5,2);
+
         FrecuenciaC frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.DIARIA, fecha, 3, 3);
         c.modificarTarea(tarea, Calendario.Elementos.FRECUENCIA, "", frecuencia);
 
