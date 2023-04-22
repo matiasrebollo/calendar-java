@@ -1,5 +1,8 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+
 public class Tarea{
     private String titulo;
     private String descripcion;
@@ -7,8 +10,8 @@ public class Tarea{
     private LocalDate fecha;
     private LocalTime horario;
     private boolean completada;
-    //FALTA EL TEMA DE LAS ALARMAS
     private FrecuenciaC frecuencia;
+    private ArrayList<Alarma> alarmas;
 
 
     public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario, FrecuenciaC frecuencia) {
@@ -34,6 +37,7 @@ public class Tarea{
     }
     public void modificarFecha(LocalDate fechaNueva) {
         this.fecha = fechaNueva;
+        this.frecuencia.setFechaInicio(fechaNueva);
     }
     public void modificarTitulo(String tituloNuevo) {
         this.titulo = tituloNuevo;
@@ -43,6 +47,18 @@ public class Tarea{
     }
     public void modificarFrecuencia(FrecuenciaC frecuencia){
         this.frecuencia = frecuencia;
+    }
+
+    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad){
+        LocalDateTime fechaHora = this.fecha.atTime(horario);
+        Alarma alarma;
+        if (fechaHoraAlarma == null){
+            alarma = new Alarma(fechaHora, intervalo, unidad);
+        } else {
+            alarma = new Alarma(fechaHora, fechaHoraAlarma);
+        }
+        this.alarmas.add(alarma);
+        return alarma;
     }
 
     /**

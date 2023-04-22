@@ -1,5 +1,8 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+
 public class Evento {
     private String titulo;
     private String descripcion;
@@ -9,6 +12,7 @@ public class Evento {
     private LocalTime horarioFin;
     private boolean todoElDia;
     private FrecuenciaC frecuencia;
+    private ArrayList<Alarma> alarmas;
 
 
     public Evento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia, FrecuenciaC frecuencia){
@@ -48,6 +52,7 @@ public class Evento {
             this.fechaInicio = nuevaFechaInicio;
             this.fechaFin = nuevaFechaFin;
         }
+        this.frecuencia.setFechaInicio(nuevaFechaInicio);
     }
     public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
         if (nuevoHorarioInicio == null){
@@ -64,6 +69,18 @@ public class Evento {
 
     public void modificarFrecuencia(FrecuenciaC frecuencia){
         this.frecuencia = frecuencia;
+    }
+
+    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad){
+        LocalDateTime fechaHora = this.fechaInicio.atTime(horarioInicio);
+        Alarma alarma;
+        if (fechaHoraAlarma == null){
+            alarma = new Alarma(fechaHora, intervalo, unidad);
+        } else {
+            alarma = new Alarma(fechaHora, fechaHoraAlarma);
+        }
+        this.alarmas.add(alarma);
+        return alarma;
     }
 
     /*private boolean validarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
