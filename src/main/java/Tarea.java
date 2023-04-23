@@ -30,6 +30,7 @@ public class Tarea{
         }
     }
 
+
     public void modificarHorario(LocalTime nuevoHorario) {
         this.horario = nuevoHorario;
         this.todoElDia = false;

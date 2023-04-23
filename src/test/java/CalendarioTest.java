@@ -1,6 +1,7 @@
 import org.junit.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static org.junit.Assert.assertEquals;
@@ -125,14 +126,15 @@ public class CalendarioTest {
         assertEquals(fechaFin1, evento1.getFechaHoraFin().toLocalDate());
 
         var evento2 = c.crearEvento("evento2", "", "5/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
-        c.modificarEvento(evento2, Calendario.Elementos.FECHA, "10/10/2023", "", null);
-        LocalDate fechaInicio2 = LocalDate.of(2023, 10, 10);
+        c.agregarAlarmaEvento(evento2, "", "", 2, Alarma.UnidadesDeTiempo.DIAS, Alarma.EfectosAlarma.NOTIFICACION);
+        c.modificarEvento(evento2, Calendario.Elementos.FECHA, "3/1/2023", "", null);
+        LocalDate fechaInicio2 = LocalDate.of(2023, 1, 3);
         LocalDate fechaFin2 = LocalDate.of(2023, 1, 30);
         assertEquals(fechaInicio2, evento2.getFechaHoraInicio().toLocalDate());
         assertEquals(fechaFin2, evento2.getFechaHoraFin().toLocalDate());
 
         var evento3 = c.crearEvento("evento3", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
-        c.modificarEvento(evento3, Calendario.Elementos.FECHA, "10/10/2023", "2/6/2023", null);
+        c.modificarEvento(evento3, Calendario.Elementos.FECHA, "3/1/2023", "2/6/2023", null);
         assertEquals(fechaInicio2, evento3.getFechaHoraInicio().toLocalDate());
         assertEquals(fechaFin1, evento3.getFechaHoraFin().toLocalDate());
     }
@@ -174,6 +176,17 @@ public class CalendarioTest {
     }
 
     @Test
+    public void seMarcaUnEventoTodoElDiaCorrectamente() {
+        var c = new Calendario();
+        var evento = c.crearEvento("evento", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
+        c.modificarEvento(evento, Calendario.Elementos.DIACOMPLETO, "", "", null);
+        LocalDate fechaInicio = LocalDate.of(2023,1,1);
+        LocalDate fechaFin = LocalDate.of(2023,1,30);
+        assertEquals(LocalDateTime.of(fechaInicio, LocalTime.MIN), evento.getFechaHoraInicio());
+        assertEquals(LocalDateTime.of(fechaFin, LocalTime.MAX), evento.getFechaHoraFin());
+    }
+
+    @Test
     public void seModificaLaFrecuenciaDeUnEventoCorrectamente() {
         var c = new Calendario();
         var evento = c.crearEvento("evento", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
@@ -196,5 +209,26 @@ public class CalendarioTest {
         c.modificarTarea(tarea, Calendario.Elementos.FRECUENCIA, "", frecuencia);
 
         assertEquals(frecuencia, tarea.getFrecuencia());
+    }
+
+    @Test
+    public void seAgregaUnaAlarmaAUnEventoCorrectamente() {
+        var c = new Calendario();
+        var evento = c.crearEvento("evento", "", "2/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
+        c.agregarAlarmaEvento(evento, "", "", 2, Alarma.UnidadesDeTiempo.HORAS, Alarma.EfectosAlarma.NOTIFICACION);
+        assertEquals(1, evento.cantidadAlarmas());
+
+        c.agregarAlarmaEvento(evento, "1/1/2023", "23:30", 0, null, Alarma.EfectosAlarma.NOTIFICACION);
+        assertEquals(2, evento.cantidadAlarmas());
+    }
+
+    @Test
+    public void seDestruyeUnaAlarmaDeUnEventoCorrectamente() {
+        var c = new Calendario();
+        var evento = c.crearEvento("evento", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
+        var alarma = c.agregarAlarmaEvento(evento, "", "", 2, Alarma.UnidadesDeTiempo.HORAS, Alarma.EfectosAlarma.NOTIFICACION);
+        assertEquals(1, evento.cantidadAlarmas());
+        c.destruirAlarmaEvento(evento, alarma);
+        assertEquals(0, evento.cantidadAlarmas());
     }
 }

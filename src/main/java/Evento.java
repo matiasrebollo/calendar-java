@@ -70,6 +70,7 @@ public class Evento {
             fechaHoraInicio = LocalDateTime.of(nuevaFechaInicio, fechaHoraInicio.toLocalTime());
             fechaHoraFin = LocalDateTime.of(nuevaFechaFin, fechaHoraFin.toLocalTime());
         }
+        modificarTodasLasAlarmas();
         this.frecuencia.setFechaInicio(nuevaFechaInicio);
     }
     public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
@@ -88,7 +89,6 @@ public class Evento {
             fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), nuevoHorarioFin);
         }
         modificarTodasLasAlarmas();
-
         this.todoElDia = (nuevoHorarioInicio == LocalTime.MIN && nuevoHorarioFin == LocalTime.MAX);
 
     }
@@ -112,10 +112,14 @@ public class Evento {
         if (fechaHoraAlarma == null){
             alarma = new Alarma(fechaHoraInicio, intervalo, unidad, efecto);
         } else {
-            alarma = new Alarma(fechaHoraAlarma, fechaHoraAlarma, efecto);
+            alarma = new Alarma(fechaHoraInicio, fechaHoraAlarma, efecto);
         }
         this.alarmas.add(alarma);
         return alarma;
+    }
+
+    public int cantidadAlarmas(){
+        return alarmas.size();
     }
 
     public void destruirAlarma(Alarma alarma){
@@ -167,4 +171,5 @@ public class Evento {
     public FrecuenciaC getFrecuencia(){
         return frecuencia;
     }
+
 }
