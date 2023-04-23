@@ -54,8 +54,6 @@ public class CalendarioTest {
         c.eliminarTarea(tarea);
         assertEquals(0, c.cantidadTareas());
         assertEquals(false, c.existeTarea(tarea));
-
-        //assertEquals(null, tarea);
     }
 
     @Test
@@ -123,20 +121,20 @@ public class CalendarioTest {
 
         LocalDate fechaInicio1 = LocalDate.of(2023, 1, 1);
         LocalDate fechaFin1 = LocalDate.of(2023, 6, 2);
-        assertEquals(fechaInicio1, evento1.getFechaInicio());
-        assertEquals(fechaFin1, evento1.getFechaFin());
+        assertEquals(fechaInicio1, evento1.getFechaHoraInicio().toLocalDate());
+        assertEquals(fechaFin1, evento1.getFechaHoraFin().toLocalDate());
 
         var evento2 = c.crearEvento("evento2", "", "5/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
         c.modificarEvento(evento2, Calendario.Elementos.FECHA, "10/10/2023", "", null);
         LocalDate fechaInicio2 = LocalDate.of(2023, 10, 10);
         LocalDate fechaFin2 = LocalDate.of(2023, 1, 30);
-        assertEquals(fechaInicio2, evento2.getFechaInicio());
-        assertEquals(fechaFin2, evento2.getFechaFin());
+        assertEquals(fechaInicio2, evento2.getFechaHoraInicio().toLocalDate());
+        assertEquals(fechaFin2, evento2.getFechaHoraFin().toLocalDate());
 
         var evento3 = c.crearEvento("evento3", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
         c.modificarEvento(evento3, Calendario.Elementos.FECHA, "10/10/2023", "2/6/2023", null);
-        assertEquals(fechaInicio2, evento3.getFechaInicio());
-        assertEquals(fechaFin1, evento3.getFechaFin());
+        assertEquals(fechaInicio2, evento3.getFechaHoraInicio().toLocalDate());
+        assertEquals(fechaFin1, evento3.getFechaHoraFin().toLocalDate());
     }
 
     @Test
@@ -159,20 +157,20 @@ public class CalendarioTest {
         c.modificarEvento(evento1, Calendario.Elementos.HORARIO, "", "01:00", null);
         LocalTime horaInicio1 = LocalTime.MIDNIGHT;
         LocalTime horaFin1 = LocalTime.of(1,0);
-        assertEquals(horaInicio1, evento1.getHorarioInicio());
-        assertEquals(horaFin1, evento1.getHorarioFin());
+        assertEquals(horaInicio1, evento1.getFechaHoraInicio().toLocalTime());
+        assertEquals(horaFin1, evento1.getFechaHoraFin().toLocalTime());
 
         var evento2 = c.crearEvento("evento2", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
         c.modificarEvento(evento2, Calendario.Elementos.HORARIO, "00:15", "", null);
         LocalTime horaInicio2 = LocalTime.of(0,15);
         LocalTime horaFin2 = LocalTime.of(0,30);
-        assertEquals(horaInicio2, evento2.getHorarioInicio());
-        assertEquals(horaFin2, evento2.getHorarioFin());
+        assertEquals(horaInicio2, evento2.getFechaHoraInicio().toLocalTime());
+        assertEquals(horaFin2, evento2.getFechaHoraFin().toLocalTime());
 
         var evento3 = c.crearEvento("evento3", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
         c.modificarEvento(evento3, Calendario.Elementos.HORARIO, "00:15", "01:00", null);
-        assertEquals(horaInicio2, evento3.getHorarioInicio());
-        assertEquals(horaFin1, evento3.getHorarioFin());
+        assertEquals(horaInicio2, evento3.getFechaHoraInicio().toLocalTime());
+        assertEquals(horaFin1, evento3.getFechaHoraFin().toLocalTime());
     }
 
     @Test
@@ -194,7 +192,7 @@ public class CalendarioTest {
         var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"20:30", null);
         LocalDate fecha = LocalDate.of(2023,5,2);
 
-        FrecuenciaC frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.DIARIA, fecha, 3, 3);
+        FrecuenciaC frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.DIARIA, fecha, 3, null);
         c.modificarTarea(tarea, Calendario.Elementos.FRECUENCIA, "", frecuencia);
 
         assertEquals(frecuencia, tarea.getFrecuencia());

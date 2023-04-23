@@ -3,7 +3,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Calendario {
     enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA};
@@ -24,7 +23,9 @@ public class Calendario {
         LocalTime horarioInicio = LocalTime.parse(horarioIni, DateTimeFormatter.ofPattern("kk:mm"));
         LocalTime horarioFinal = LocalTime.parse(horarioFin, DateTimeFormatter.ofPattern("kk:mm"));
 
-        var evento = new Evento(titulo, descripcion, fechaInicio, fechaFinal, horarioInicio, horarioFinal, todoElDia, frecuencia);
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(fechaInicio, horarioInicio);
+        LocalDateTime fechaHoraFin = LocalDateTime.of(fechaFinal, horarioFinal);
+        var evento = new Evento(titulo, descripcion, fechaHoraInicio, fechaHoraFin, todoElDia, frecuencia);
         this.eventos.add(evento);
 
         return evento;
@@ -125,12 +126,12 @@ public class Calendario {
                 tarea.modificarDescripcion(nuevoValor);
             }
             case FECHA -> {
-                //falta chequear que el formato sea correcto
+                //falta chequear que el formato sea correcto (etapa 2)
                 LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("d/M/yyyy"));
                 tarea.modificarFecha(nuevaFecha);
             }
             case HORARIO -> {
-                //falta chequear que el formato sea correcto
+                //falta chequear que el formato sea correcto (etapa 2)
                 LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
                 tarea.modificarHorario(nuevoHorario);
             }
@@ -145,6 +146,7 @@ public class Calendario {
     public boolean existeTarea(Tarea tarea) {
         return this.tareas.contains(tarea);
     }
+
     public void eliminarTarea(Tarea tarea) {
         if (existeTarea(tarea)) {
             this.tareas.remove(tarea);
@@ -165,7 +167,7 @@ public class Calendario {
         ArrayList<Tarea> tareasDeLaFecha = new ArrayList<>();
         for (Tarea tarea : tareas) {
             if (tarea.ocurreEnFecha(fecha)) {
-                System.out.println(tarea.getTitulo());
+                System.out.println("  -" + tarea.getTitulo());
                 tareasDeLaFecha.add(tarea);
             }
         }

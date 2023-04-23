@@ -316,6 +316,55 @@ public class FrecuenciaTest{
         assertEquals(true, f.fechaEstaIncluida(fechaIncluida2));
         assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida));
         assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida2));
+    }
 
+    //Pruebas de obtenerProximaFecha
+    @Test
+    public void obtenerProximaFecha1() {
+        var fecha = LocalDate.of(2023, 1, 1);
+        int intervalo = 2;
+        var fechaEsperada = LocalDate.of(2023, 1, 15);
+
+        var f = new FrecuenciaC(Frecuencia.TipoFrecuencia.SEMANAL, fecha, intervalo, null);
+
+        var fechaDevuelta = f.obtenerProximaFecha();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
+    }
+    @Test
+    public void obtenerProximaFecha2() {
+        var fecha = LocalDate.of(2023, 1, 1);
+        int intervalo = 2;
+        var fechaEsperada = LocalDate.of(2023, 1, 4);//miercoles
+
+        var f = new FrecuenciaC(Frecuencia.TipoFrecuencia.SEMANAL, fecha, intervalo, null);
+        f.agregarOQuitarDiaDeLaSemana(DayOfWeek.WEDNESDAY);
+        var fechaDevuelta = f.obtenerProximaFecha();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
+    }
+    @Test
+    public void obtenerProximaFecha3() {
+        var fecha = LocalDate.of(2023, 1, 1);
+        int intervalo = 2;
+        var fechaEsperada = LocalDate.of(2023, 3, 1);
+
+        var f = new FrecuenciaC(Frecuencia.TipoFrecuencia.MENSUAL, fecha, intervalo, null);
+        f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMONUMERO);
+        var fechaDevuelta = f.obtenerProximaFecha();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
+    }
+    @Test
+    public void obtenerProximaFecha4() {
+        var fecha = LocalDate.of(2023, 1, 1);//1er domingo
+        int intervalo = 4;
+        var fechaEsperada = LocalDate.of(2023, 5, 7);
+
+        var f = new FrecuenciaC(Frecuencia.TipoFrecuencia.MENSUAL, fecha, intervalo, null);
+        f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
+        var fechaDevuelta = f.obtenerProximaFecha();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
     }
 }

@@ -11,7 +11,7 @@ public class Tarea{
     private LocalTime horario;
     private boolean completada;
     private FrecuenciaC frecuencia;
-    private ArrayList<Alarma> alarmas;
+    private ArrayList<Alarma> alarmas = new ArrayList<>();
 
 
     public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario, FrecuenciaC frecuencia) {
@@ -26,9 +26,8 @@ public class Tarea{
         this.horario = horario;
         this.todoElDia = todoElDia;
         if (todoElDia) {
-            this.horario = LocalTime.MIDNIGHT;
+            this.horario = LocalTime.MAX;
         }
-
     }
 
     public void modificarHorario(LocalTime nuevoHorario) {
@@ -49,16 +48,24 @@ public class Tarea{
         this.frecuencia = frecuencia;
     }
 
-    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad){
-        LocalDateTime fechaHora = this.fecha.atTime(horario);
+    public void marcarTodoElDia() {
+        this.todoElDia = true;
+        this.horario = LocalTime.MAX;
+    }
+
+    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+        LocalDateTime fechaHora = LocalDateTime.of(fecha, horario);
         Alarma alarma;
         if (fechaHoraAlarma == null){
-            alarma = new Alarma(fechaHora, intervalo, unidad);
+            alarma = new Alarma(fechaHora, intervalo, unidad, efecto);
         } else {
-            alarma = new Alarma(fechaHora, fechaHoraAlarma);
+            alarma = new Alarma(fechaHora, fechaHoraAlarma, efecto);
         }
         this.alarmas.add(alarma);
         return alarma;
+    }
+    public void destruirAlarma(Alarma alarma){
+        this.alarmas.remove(alarma);
     }
 
     /**

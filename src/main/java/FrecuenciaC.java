@@ -15,6 +15,8 @@ public class FrecuenciaC implements Frecuencia{
     private LocalDate fechaFin;
     private int ocurrencias;
 
+    private LocalDate fechaProxima;
+
     public FrecuenciaC(TipoFrecuencia tipo, LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
         this.tipo = tipo;
         this.intervalo = intervalo;
@@ -27,6 +29,7 @@ public class FrecuenciaC implements Frecuencia{
         }
         this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
         this.fechaInicio = fechaInicio;
+        this.fechaProxima = fechaInicio;
     }
     public FrecuenciaC(TipoFrecuencia tipo,LocalDate fechaInicio, int intervalo, int ocurrencias) {
         this.tipo = tipo;
@@ -36,7 +39,7 @@ public class FrecuenciaC implements Frecuencia{
         this.frecuenciaMensual = FrecuenciaMensual.MISMONUMERO;//por defecto
         this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
         this.fechaFin = calcularFechaFin();
-
+        this.fechaProxima = fechaInicio;
     }
 
     public int getIntervalo() {
@@ -63,10 +66,6 @@ public class FrecuenciaC implements Frecuencia{
             diasDeLaSemana.add(dia);
         }
     }
-    private boolean incluyeElDia(DayOfWeek dia) {
-        return diasDeLaSemana.contains(dia);
-    }
-
     public void setTipo(TipoFrecuencia tipo) {
         this.tipo = tipo;
     }
@@ -120,7 +119,7 @@ public class FrecuenciaC implements Frecuencia{
                 fechaAux = LocalDate.of(fechaAux.getYear(), fechaAux.getMonthValue(), 1);
 
                 for (int i = 0; i < ocurrencias-1; i++) {
-                  fechaAux = fechaAux.plusMonths(1);
+                  fechaAux = fechaAux.plusMonths(intervalo);
                 }
 
                 int nroSemanaAux = calcularNroSemana(fechaAux);
@@ -162,6 +161,59 @@ public class FrecuenciaC implements Frecuencia{
         return fechaAux;
     }
 
+
+    public LocalDate obtenerProximaFecha() {
+        switch (tipo) {
+            case CERO -> {
+                return null;
+            }
+            case DIARIA -> {
+                fechaProxima = fechaProxima.plusDays(intervalo);
+            }
+            case SEMANAL -> {
+                fechaProxima = fechaProxima.plusDays(1);
+                var diaSemana = fechaProxima.getDayOfWeek();
+                while (!diasDeLaSemana.contains(diaSemana)) {
+                    fechaProxima = fechaProxima.plusDays(1);
+                    if (fechaProxima.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+                        fechaProxima = fechaProxima.plusWeeks(intervalo - 1);
+                    }
+                    diaSemana = fechaProxima.getDayOfWeek();
+                }
+            }
+            case MENSUAL -> {
+                switch (frecuenciaMensual) {
+                    case MISMONUMERO -> {
+                        fechaProxima = fechaProxima.plusMonths(intervalo);
+                    }
+                    case MISMODIA -> {
+                        var diaInicial = fechaProxima.getDayOfWeek();
+                        int nroSemana = calcularNroSemana(fechaProxima);
+                        fechaProxima = LocalDate.of(fechaProxima.getYear(), fechaProxima.getMonthValue(), 1);
+
+                        fechaProxima = fechaProxima.plusMonths(intervalo);
+
+                        int nroSemanaAux = calcularNroSemana(fechaProxima);
+
+                        while (!fechaProxima.getDayOfWeek().equals(diaInicial)) {//busco el mismo dia
+                            fechaProxima = fechaProxima.plusDays(1);
+                        }
+                        while (nroSemanaAux < nroSemana) { //busco la "misma semana"
+                            fechaProxima = fechaProxima.plusWeeks(1);
+                            nroSemanaAux++;
+                        }
+                    }
+                }
+            }
+            case ANUAL -> {
+                fechaProxima = fechaProxima.plusYears(intervalo);
+            }
+        }
+        if (fechaProxima.isAfter(fechaFin)){
+            return null;
+        }
+        return fechaProxima;
+    }
     /**
      * Devuelve true si la fecha recibida está incluida en la frecuencia,
      * es decir si es parte del ciclo de dis establecidos.

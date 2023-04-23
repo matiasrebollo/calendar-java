@@ -6,36 +6,44 @@ import java.util.ArrayList;
 public class Evento {
     private String titulo;
     private String descripcion;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-    private LocalTime horarioInicio;
-    private LocalTime horarioFin;
+
+    private LocalDateTime fechaHoraInicio;
+    private LocalDateTime fechaHoraFin;
+
+    //private LocalDate fechaInicio;
+    //private LocalDate fechaFin;
+    //private LocalTime horarioInicio;
+    //private LocalTime horarioFin;
     private boolean todoElDia;
     private FrecuenciaC frecuencia;
-    private ArrayList<Alarma> alarmas;
+    private ArrayList<Alarma> alarmas = new ArrayList<>();
 
 
-    public Evento(String titulo, String descripcion, LocalDate fechaInicio, LocalDate fechaFin, LocalTime horarioInicio, LocalTime horarioFin, boolean todoElDia, FrecuenciaC frecuencia){
+    public Evento(String titulo, String descripcion, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, boolean todoElDia, FrecuenciaC frecuencia){
         this.titulo = titulo;
         this.descripcion= descripcion;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
+        //this.fechaInicio = fechaInicio;
+        //this.fechaFin = fechaFin;
+        this.fechaHoraInicio = fechaHoraInicio;
+        this.fechaHoraFin = fechaHoraFin;
         if (todoElDia){
-            this.horarioInicio = LocalTime.parse("00:00");
-            this.horarioFin = LocalTime.parse("00:00");
+            this.fechaHoraInicio = LocalDateTime.of(fechaHoraInicio.toLocalDate(), LocalTime.MIN);
+            this.fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), LocalTime.MAX);
+            //this.horarioInicio = LocalTime.MIN;
+            //this.horarioFin = LocalTime.MAX;
             this.todoElDia = true;
         } else {
-            this.horarioInicio = horarioInicio;
-            this.horarioFin = horarioFin;
+            //this.horarioInicio = horarioInicio;
+            //this.horarioFin = horarioFin;
             this.todoElDia = false;
         }
         this.frecuencia = frecuencia;
         if (frecuencia == null){
-            this.frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.CERO, fechaInicio,1, null);
+            this.frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.CERO, fechaHoraInicio.toLocalDate(),1, null);
         }
 
     }
-    //en las funciones de modificar falta que haya algun retorno para poder hacer las pruebas
+
     public void modificarTitulo(String nuevoTitulo){
         this.titulo = nuevoTitulo;
     }
@@ -43,27 +51,45 @@ public class Evento {
         this.descripcion = nuevaDescripcion;
     }
 
+
+    private void modificarTodasLasAlarmas() {
+        for (Alarma alarma : alarmas) {
+            alarma.actualizarFechaHoraAlarma(fechaHoraInicio);
+        }
+    }
     public void modificarFecha(LocalDate nuevaFechaInicio, LocalDate nuevaFechaFin){
         if (nuevaFechaInicio == null){
-            this.fechaFin = nuevaFechaFin;
+            fechaHoraFin = LocalDateTime.of(nuevaFechaFin, fechaHoraFin.toLocalTime());
+            //this.fechaFin = nuevaFechaFin;
         } else if (nuevaFechaFin == null){
-            this.fechaInicio = nuevaFechaInicio;
+            fechaHoraInicio = LocalDateTime.of(nuevaFechaInicio, fechaHoraInicio.toLocalTime());
+            //this.fechaInicio = nuevaFechaInicio;
         } else {
-            this.fechaInicio = nuevaFechaInicio;
-            this.fechaFin = nuevaFechaFin;
+            //this.fechaInicio = nuevaFechaInicio;
+            //this.fechaFin = nuevaFechaFin;
+            fechaHoraInicio = LocalDateTime.of(nuevaFechaInicio, fechaHoraInicio.toLocalTime());
+            fechaHoraFin = LocalDateTime.of(nuevaFechaFin, fechaHoraFin.toLocalTime());
         }
         this.frecuencia.setFechaInicio(nuevaFechaInicio);
     }
     public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
         if (nuevoHorarioInicio == null){
-            this.horarioFin = nuevoHorarioFin;
+            //this.horarioFin = nuevoHorarioFin;
+            fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), nuevoHorarioFin);
+
         } else if (nuevoHorarioFin == null){
-            this.horarioInicio = nuevoHorarioInicio;
+            //this.horarioInicio = nuevoHorarioInicio;
+            fechaHoraInicio = LocalDateTime.of(fechaHoraInicio.toLocalDate(), nuevoHorarioInicio);
+
         } else {
-            this.horarioInicio = nuevoHorarioInicio;
-            this.horarioFin= nuevoHorarioFin;
+            //this.horarioInicio = nuevoHorarioInicio;
+            //this.horarioFin= nuevoHorarioFin;
+            fechaHoraInicio = LocalDateTime.of(fechaHoraInicio.toLocalDate(), nuevoHorarioInicio);
+            fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), nuevoHorarioFin);
         }
-        this.todoElDia = nuevoHorarioInicio == LocalTime.MIDNIGHT && nuevoHorarioFin == LocalTime.MIDNIGHT;
+        modificarTodasLasAlarmas();
+
+        this.todoElDia = (nuevoHorarioInicio == LocalTime.MIN && nuevoHorarioFin == LocalTime.MAX);
 
     }
 
@@ -71,16 +97,29 @@ public class Evento {
         this.frecuencia = frecuencia;
     }
 
-    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad){
-        LocalDateTime fechaHora = this.fechaInicio.atTime(horarioInicio);
+    public void marcarTodoElDia() {
+        this.todoElDia = true;
+        fechaHoraInicio = LocalDateTime.of(fechaHoraInicio.toLocalDate(), LocalTime.MIN);
+        fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), LocalTime.MAX);
+
+        //this.horarioInicio = LocalTime.MIN;
+        //this.horarioFin = LocalTime.MAX;
+    }
+
+    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+        //LocalDateTime fechaHora = LocalDateTime.of(fechaFin, horarioFin);
         Alarma alarma;
         if (fechaHoraAlarma == null){
-            alarma = new Alarma(fechaHora, intervalo, unidad);
+            alarma = new Alarma(fechaHoraInicio, intervalo, unidad, efecto);
         } else {
-            alarma = new Alarma(fechaHora, fechaHoraAlarma);
+            alarma = new Alarma(fechaHoraAlarma, fechaHoraAlarma, efecto);
         }
         this.alarmas.add(alarma);
         return alarma;
+    }
+
+    public void destruirAlarma(Alarma alarma){
+        this.alarmas.remove(alarma);
     }
 
     /*private boolean validarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
@@ -104,7 +143,15 @@ public class Evento {
     public String getDescripcion() {
         return descripcion;
     }
-    public LocalDate getFechaInicio(){
+
+    public LocalDateTime getFechaHoraInicio() {
+        return fechaHoraInicio;
+    }
+    public LocalDateTime getFechaHoraFin() {
+        return fechaHoraFin;
+    }
+
+/*    public LocalDate getFechaInicio(){
         return fechaInicio;
     }
     public LocalDate getFechaFin(){
@@ -116,6 +163,7 @@ public class Evento {
     public LocalTime getHorarioFin(){
         return horarioFin;
     }
+    */
     public FrecuenciaC getFrecuencia(){
         return frecuencia;
     }
