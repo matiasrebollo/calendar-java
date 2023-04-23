@@ -3,7 +3,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.MONTHS;
 
@@ -34,7 +33,7 @@ public class FrecuenciaC implements Frecuencia{
         this.intervalo = intervalo;
         this.fechaInicio = fechaInicio;
         this.ocurrencias = ocurrencias;
-        this.frecuenciaMensual = FrecuenciaMensual.MISMODIA;//por defecto
+        this.frecuenciaMensual = FrecuenciaMensual.MISMONUMERO;//por defecto
         this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
         this.fechaFin = calcularFechaFin();
 
@@ -64,7 +63,7 @@ public class FrecuenciaC implements Frecuencia{
             diasDeLaSemana.add(dia);
         }
     }
-    public boolean incluyeElDia(DayOfWeek dia) {
+    private boolean incluyeElDia(DayOfWeek dia) {
         return diasDeLaSemana.contains(dia);
     }
 
@@ -87,10 +86,6 @@ public class FrecuenciaC implements Frecuencia{
     public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
     }
-
-    private LocalDate fechaFinDiaria(){
-        return fechaFin;
-    }
     private LocalDate fechaFinSemanal(LocalDate fechaAux) {
         int contador = 0;
         while (contador < ocurrencias) {
@@ -107,6 +102,11 @@ public class FrecuenciaC implements Frecuencia{
         }
         return fechaAux;
     }
+
+    private int calcularNroSemana(LocalDate fecha) {
+        int diaDelMes = fecha.getDayOfMonth();
+        return (diaDelMes - 1) / 7 + 1; // 7: cant de dias de una semana
+    }
     private LocalDate fechaFinMensual(LocalDate fechaAux){
         switch (frecuenciaMensual) {
             case MISMONUMERO -> {
@@ -115,25 +115,22 @@ public class FrecuenciaC implements Frecuencia{
                 }
             }
             case MISMODIA -> {
-                int diaDelMes = fechaAux.getDayOfMonth();
                 var diaInicial = fechaAux.getDayOfWeek();
-                int mesActual = fechaAux.getMonthValue();
-                int anioActual = fechaAux.getYear();
-                int nroSemana = (diaDelMes - 1) / 7 + 1;// 7: cant de dias de una semana
+                int nroSemana = calcularNroSemana(fechaAux);
+                fechaAux = LocalDate.of(fechaAux.getYear(), fechaAux.getMonthValue(), 1);
 
-                for (int i = 0; i < ocurrencias; i++) {
-                    mesActual++;
-                    if (mesActual > 12) {
-                        mesActual = 1;
-                        anioActual++;
-                    }
-                    i++;
+                for (int i = 0; i < ocurrencias-1; i++) {
+                  fechaAux = fechaAux.plusMonths(1);
                 }
-                fechaAux = LocalDate.of(anioActual,mesActual, 1);
-                fechaAux = fechaAux.plusWeeks(nroSemana-1);
 
-                while (!fechaAux.getDayOfWeek().equals(diaInicial)){
+                int nroSemanaAux = calcularNroSemana(fechaAux);
+
+                while (!fechaAux.getDayOfWeek().equals(diaInicial)) {//busco el mismo dia
                     fechaAux = fechaAux.plusDays(1);
+                }
+                while (nroSemanaAux < nroSemana) { //busco la "misma semana"
+                    fechaAux = fechaAux.plusWeeks(1);
+                    nroSemanaAux++;
                 }
             }
         }
@@ -194,7 +191,7 @@ public class FrecuenciaC implements Frecuencia{
 
                 }
                 case MENSUAL -> {
-                    if (diferenciaDeMeses % intervalo != 0) {
+                    if ((diferenciaDeMeses % intervalo) != 0) {
                         return false;
                     }
                     switch (frecuenciaMensual) {
@@ -202,8 +199,8 @@ public class FrecuenciaC implements Frecuencia{
                             return (diaDelMes == diaDelMesCualquiera);
                         }
                         case MISMODIA -> {
-                            int nroSemana = (diaDelMes + 6) / 7;// 7: cant de dias de una semana
-                            int nroSemanaCualquiera = (diaDelMesCualquiera + 6) / 7;
+                            int nroSemana = calcularNroSemana(fechaInicio);
+                            int nroSemanaCualquiera = calcularNroSemana(fechaCualqueira);
                             DayOfWeek dia = fechaInicio.getDayOfWeek();
                             DayOfWeek diaCualquiera = fechaCualqueira.getDayOfWeek();
 
@@ -212,10 +209,12 @@ public class FrecuenciaC implements Frecuencia{
                     }
                 }
                 case ANUAL -> {
+                    if ((diferenciaDeMeses/12) % intervalo != 0) {
+                        return false;
+                    }
                     Month mes = fechaInicio.getMonth();
                     Month mesCualquiera = fechaCualqueira.getMonth();
-                    return (diaDelMes == diaDelMesCualquiera && mes.equals(mesCualquiera) &&
-                            diferenciaDeMeses / intervalo*12 == 0);
+                    return (diaDelMes == diaDelMesCualquiera && mes.equals(mesCualquiera));
                 }
             }
         }

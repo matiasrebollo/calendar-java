@@ -38,6 +38,8 @@ public class FrecuenciaTest{
 
         assertEquals(fechaEsperada, fechaDevuelta);
     }
+
+    //SEMANAL
     @Test
     public void frecuenciaSemanalCadaUnaSemana() {
         var fecha = LocalDate.of(2023, 1, 1);
@@ -108,7 +110,7 @@ public class FrecuenciaTest{
 
     //MENSUAL
     @Test
-    public void frecuenciaCadaUnMes() {
+    public void frecuenciaMensualCadaUnMes() {
         var fecha = LocalDate.of(2023, 1, 1);
         int intervalo = 1;
         int ocurrencias = 3;
@@ -121,7 +123,46 @@ public class FrecuenciaTest{
         assertEquals(fechaEsperada, fechaDevuelta);
     }
     @Test
-    public void frecuenciaCadaDosMeses() {
+    public void frecuenciaMensual1erLunes() {
+        var fecha = LocalDate.of(2023, 1, 2);
+        int intervalo = 1;
+        int ocurrencias = 4;
+        var f  = new FrecuenciaC(Frecuencia.TipoFrecuencia.MENSUAL, fecha, intervalo, ocurrencias);
+        f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
+        var fechaEsperada = LocalDate.of(2023,4, 3);
+
+        var fechaDevuelta = f.calcularFechaFin();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
+    }
+    @Test
+    public void frecuenciaMensual2doMartes() {
+        var fecha = LocalDate.of(2023, 2, 14);
+        int intervalo = 1;
+        int ocurrencias = 4;
+        var f  = new FrecuenciaC(Frecuencia.TipoFrecuencia.MENSUAL, fecha, intervalo, ocurrencias);
+        f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
+        var fechaEsperada = LocalDate.of(2023,5, 9);
+
+        var fechaDevuelta = f.calcularFechaFin();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
+    }
+    @Test
+    public void frecuaneciaMensual4toLunes() {
+        var fecha = LocalDate.of(2023, 1, 23);
+        int intervalo = 1;
+        int ocurrencias = 4;
+        var f  = new FrecuenciaC(Frecuencia.TipoFrecuencia.MENSUAL, fecha, intervalo, ocurrencias);
+        f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
+        var fechaEsperada = LocalDate.of(2023,4, 24);
+
+        var fechaDevuelta = f.calcularFechaFin();
+
+        assertEquals(fechaEsperada, fechaDevuelta);
+    }
+    @Test
+    public void frecuenciaMensualCadaDosMeses() {
         var fecha = LocalDate.of(2023, 1, 1);
         int intervalo = 2;
         int ocurrencias = 5;
@@ -147,6 +188,7 @@ public class FrecuenciaTest{
         assertEquals(fechaEsperada, fechaDevuelta);
     }
 
+    //Anual
     @Test
     public void frecuenciaCadaUnAnio() {
         var fecha = LocalDate.of(2023, 1, 1);
@@ -188,7 +230,7 @@ public class FrecuenciaTest{
     }
 
 
-
+    //Pruebas de método fechaEstaIncluida()
     @Test
     public void fechaEstaIncluidaDiaria() {
         var fecha = LocalDate.of(2023, 1, 1);
@@ -238,5 +280,42 @@ public class FrecuenciaTest{
 
         assertEquals(true, f.fechaEstaIncluida(fechaIncluida));
         assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida));
+    }
+    @Test
+    public void fechaEstaIncluidaCada2MesesMismoDia() {
+        var fecha = LocalDate.of(2023, 1, 1);//primer domingo
+        var fechaIncluida = LocalDate.of(2023, 3, 5);
+        var fechaIncluida2 = LocalDate.of(2023, 5, 7);
+        var fechaNoIncluida = LocalDate.of(2023, 3, 1);
+        var fechaNoIncluida2 = LocalDate.of(2023, 2, 5);
+
+        int intervalo = 2;
+
+        var f = new FrecuenciaC(Frecuencia.TipoFrecuencia.MENSUAL, fecha, intervalo, null);
+        f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
+
+        assertEquals(true, f.fechaEstaIncluida(fechaIncluida));
+        assertEquals(true, f.fechaEstaIncluida(fechaIncluida2));
+        assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida));
+        assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida2));
+
+    }
+    @Test
+    public void fechaEstaIncluidaCada2Anios() {
+        var fecha = LocalDate.of(2023, 1, 1);
+        var fechaIncluida = LocalDate.of(2025, 1, 1);
+        var fechaIncluida2 = LocalDate.of(2027, 1, 1);
+        var fechaNoIncluida = LocalDate.of(2024, 1, 1);
+        var fechaNoIncluida2 = LocalDate.of(2025, 2, 1);
+
+        int intervalo = 2;
+
+        var f = new FrecuenciaC(Frecuencia.TipoFrecuencia.ANUAL, fecha, intervalo, null);
+
+        assertEquals(true, f.fechaEstaIncluida(fechaIncluida));
+        assertEquals(true, f.fechaEstaIncluida(fechaIncluida2));
+        assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida));
+        assertEquals(false, f.fechaEstaIncluida(fechaNoIncluida2));
+
     }
 }

@@ -83,8 +83,8 @@ public class CalendarioTest {
     @Test
     public void seModificaLaDescripcionDeUnaTareaCorrectamente() {
         var c = new Calendario();
-
         var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"", null);
+
         c.modificarTarea(tarea, Calendario.Elementos.DESCRIPCION, "nueva descripcion", null);
 
         assertEquals("nueva descripcion", tarea.getDescripcion());
@@ -117,9 +117,10 @@ public class CalendarioTest {
     @Test
     public void seModificaLaFechaDeUnEventoCorrectamente() {
         var c = new Calendario();
-
         var evento1 = c.crearEvento("evento1", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
+
         c.modificarEvento(evento1, Calendario.Elementos.FECHA, "", "2/6/2023", null);
+
         LocalDate fechaInicio1 = LocalDate.of(2023, 1, 1);
         LocalDate fechaFin1 = LocalDate.of(2023, 6, 2);
         assertEquals(fechaInicio1, evento1.getFechaInicio());
@@ -178,8 +179,10 @@ public class CalendarioTest {
     public void seModificaLaFrecuenciaDeUnEventoCorrectamente() {
         var c = new Calendario();
         var evento = c.crearEvento("evento", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
+
         LocalDate fechaInicio = LocalDate.of(2023,1,1);
         FrecuenciaC frecuencia = new FrecuenciaC(Frecuencia.TipoFrecuencia.DIARIA, fechaInicio, 3, 3);
+
         c.modificarEvento(evento, Calendario.Elementos.FRECUENCIA, "", "", frecuencia);
 
         assertEquals(frecuencia, evento.getFrecuencia());
