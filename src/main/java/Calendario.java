@@ -8,8 +8,8 @@ public class Calendario {
     enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO};
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
-    private LocalDate fechaActual;
-    private LocalTime horaActual;
+    private LocalDate fechaActual;//para la etapa 2
+    private LocalTime horaActual;//para la etapa 2
 
     public Calendario(){
         this.eventos = new ArrayList<>();
@@ -17,6 +17,7 @@ public class Calendario {
         this.fechaActual = LocalDate.now();
         this.horaActual = LocalTime.now();
     }
+
     public Evento crearEvento(String titulo, String descripcion, String fechaIni, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, FrecuenciaC frecuencia) {
         LocalDate fechaInicio = LocalDate.parse(fechaIni, DateTimeFormatter.ofPattern("d/M/yyyy"));
         LocalDate fechaFinal = LocalDate.parse(fechaFin, DateTimeFormatter.ofPattern("d/M/yyyy"));
@@ -51,10 +52,10 @@ public class Calendario {
         }
         switch (e) {
             case TITULO -> {
-                evento.modificarTitulo(nuevoValor1);
+                evento.setTitulo(nuevoValor1);
             }
             case DESCRIPCION -> {
-                evento.modificarDescripcion(nuevoValor1);
+                evento.setDescripcion(nuevoValor1);
             }
             case FECHA -> {
                 if (nuevoValor1.equals("")){
@@ -84,7 +85,7 @@ public class Calendario {
             }
             case FRECUENCIA -> {
                 if (frecuencia != null){
-                    evento.modificarFrecuencia(frecuencia);
+                    evento.setFrecuencia(frecuencia);
                 }
             }
             case DIACOMPLETO -> {
@@ -185,10 +186,23 @@ public class Calendario {
         ArrayList<Tarea> tareasDeLaFecha = new ArrayList<>();
         for (Tarea tarea : tareas) {
             if (tarea.ocurreEnFecha(fecha)) {
-                System.out.println("  -" + tarea.getTitulo());
+                //System.out.println("  -" + tarea.getTitulo());
                 tareasDeLaFecha.add(tarea);
             }
         }
         return tareasDeLaFecha;
+    }
+    /**
+     * muestra los eventos que hay en una fecha cualquiera
+     * */
+    public ArrayList<Evento> mostrarEventosDelDia(LocalDate fecha) {
+        ArrayList<Evento> eventosDeLaFecha = new ArrayList<>();
+        for (Evento evento : eventos) {
+            if (evento.ocurreEnFecha(fecha)) {
+                //System.out.println("  -" + evento.getTitulo());
+                eventosDeLaFecha.add(evento);
+            }
+        }
+        return eventosDeLaFecha;
     }
 }

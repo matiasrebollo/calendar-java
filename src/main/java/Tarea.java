@@ -48,7 +48,6 @@ public class Tarea{
     public void modificarFrecuencia(FrecuenciaC frecuencia){
         this.frecuencia = frecuencia;
     }
-
     public void marcarTodoElDia() {
         this.todoElDia = true;
         this.horario = LocalTime.MAX;
