@@ -31,13 +31,22 @@ public class Tarea{
     }
 
 
+    private void modificarTodasLasAlarmas() {
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, horario);
+        for (Alarma alarma : alarmas) {
+            alarma.actualizarFechaHoraAlarma(fechaHoraInicio);
+        }
+    }
+
     public void modificarHorario(LocalTime nuevoHorario) {
         this.horario = nuevoHorario;
         this.todoElDia = false;
+        modificarTodasLasAlarmas();
     }
     public void modificarFecha(LocalDate fechaNueva) {
         this.fecha = fechaNueva;
         this.frecuencia.setFechaInicio(fechaNueva);
+        modificarTodasLasAlarmas();
     }
     public void modificarTitulo(String tituloNuevo) {
         this.titulo = tituloNuevo;

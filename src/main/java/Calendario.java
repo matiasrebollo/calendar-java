@@ -162,6 +162,19 @@ public class Calendario {
         }
     }
 
+    public Alarma agregarAlarmaTarea(Tarea tarea, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+        Alarma alarma;
+        if (fecha.equals("") || horario.equals("")){
+            alarma = tarea.agregarAlarma(null, intervalo, unidad, efecto);
+        } else {
+            LocalDate fechaAlarma = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
+            LocalTime horarioAlarma = LocalTime.parse(horario, DateTimeFormatter.ofPattern("kk:mm"));
+            LocalDateTime fechaHoraAlarma = LocalDateTime.of(fechaAlarma, horarioAlarma);
+            alarma = tarea.agregarAlarma(fechaHoraAlarma, intervalo, unidad, efecto);
+        }
+        return alarma;
+    }
+
     public boolean existeTarea(Tarea tarea) {
         return this.tareas.contains(tarea);
     }
