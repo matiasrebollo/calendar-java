@@ -70,6 +70,7 @@ public class Evento {
             fechaHoraInicio = LocalDateTime.of(nuevaFechaInicio, fechaHoraInicio.toLocalTime());
             fechaHoraFin = LocalDateTime.of(nuevaFechaFin, fechaHoraFin.toLocalTime());
         }
+        modificarTodasLasAlarmas();
         this.frecuencia.setFechaInicio(nuevaFechaInicio);
     }
     public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
@@ -137,6 +138,8 @@ public class Evento {
         return true;
     }*/
 
+
+
     public String getTitulo() {
         return titulo;
     }
@@ -166,5 +169,12 @@ public class Evento {
     */
     public FrecuenciaC getFrecuencia(){
         return frecuencia;
+    }
+
+    /**
+     * Devuelve true si la tarea ocurrirá en la fecha recibida
+     * */
+    public boolean ocurreEnFecha(LocalDate fechaCualquiera){
+        return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
     }
 }

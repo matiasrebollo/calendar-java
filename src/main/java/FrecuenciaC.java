@@ -45,16 +45,11 @@ public class FrecuenciaC implements Frecuencia{
     public int getIntervalo() {
         return intervalo;
     }
-
     public LocalDate getFechaFin() {
         return fechaFin;
     }
 
-    /**
-     * En caso de ser frecuencia de tipo SEMANAL,
-     * agrega el dia de la semana al array si no fue agregado antes
-     * o lo quita del array si este ya estaba agregado
-     * */
+
     public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia){
         if (this.tipo != TipoFrecuencia.SEMANAL) {
             return;
@@ -65,16 +60,19 @@ public class FrecuenciaC implements Frecuencia{
         else {
             diasDeLaSemana.add(dia);
         }
+        this.fechaFin = calcularFechaFin();
     }
     public void setTipo(TipoFrecuencia tipo) {
         this.tipo = tipo;
+        this.fechaFin = calcularFechaFin();
     }
     public void setIntervalo(int cadaCuanto) {
         this.intervalo = cadaCuanto;
+        this.fechaFin = calcularFechaFin();
     }
-
     public void setFrecuenciaMensual(FrecuenciaMensual frecuenciaMensual) {
         this.frecuenciaMensual = frecuenciaMensual;
+        this.fechaFin = calcularFechaFin();
     }
     public void setFechaInicio(LocalDate fechaInicio){
         this.fechaInicio = fechaInicio;
@@ -84,6 +82,12 @@ public class FrecuenciaC implements Frecuencia{
     }
     public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+
+    private int calcularNroSemana(LocalDate fecha) {
+        int diaDelMes = fecha.getDayOfMonth();
+        return (diaDelMes - 1) / 7 + 1; // 7: cant de dias de una semana
     }
     private LocalDate fechaFinSemanal(LocalDate fechaAux) {
         int contador = 0;
@@ -100,11 +104,6 @@ public class FrecuenciaC implements Frecuencia{
             }
         }
         return fechaAux;
-    }
-
-    private int calcularNroSemana(LocalDate fecha) {
-        int diaDelMes = fecha.getDayOfMonth();
-        return (diaDelMes - 1) / 7 + 1; // 7: cant de dias de una semana
     }
     private LocalDate fechaFinMensual(LocalDate fechaAux){
         switch (frecuenciaMensual) {
@@ -135,7 +134,8 @@ public class FrecuenciaC implements Frecuencia{
         }
         return fechaAux;
     }
-    LocalDate calcularFechaFin(){
+
+    public LocalDate calcularFechaFin(){
         LocalDate fechaAux = fechaInicio;
         switch (this.tipo) {
             case CERO -> {
@@ -160,7 +160,6 @@ public class FrecuenciaC implements Frecuencia{
         }
         return fechaAux;
     }
-
 
     public LocalDate obtenerProximaFecha() {
         switch (tipo) {
@@ -214,13 +213,8 @@ public class FrecuenciaC implements Frecuencia{
         }
         return fechaProxima;
     }
-    /**
-     * Devuelve true si la fecha recibida está incluida en la frecuencia,
-     * es decir si es parte del ciclo de dis establecidos.
-     * Por ej. si la frecuencia cada semana los martes y jueves
-     * y recibe una fecha que corresponde a un martes, devolverá true
-     * */
-    public boolean fechaEstaIncluida(LocalDate fechaCualqueira){
+
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualqueira){
         if (fechaInicio.equals(fechaCualqueira) || fechaCualqueira.equals(fechaFin)) {
             return true;
         }

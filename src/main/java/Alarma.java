@@ -25,18 +25,10 @@ public class Alarma {
 
     private void calcularFechaHoraAlarma() {
         switch (unidad) {
-            case MINUTOS -> {
-                fechaHoraAlarma = fechaHoraEvento.minusMinutes(intervalo);
-            }
-            case HORAS -> {
-                fechaHoraAlarma = fechaHoraEvento.minusHours(intervalo);
-            }
-            case DIAS -> {
-                fechaHoraAlarma = fechaHoraEvento.minusDays(intervalo);
-            }
-            case SEMANAS -> {
-                fechaHoraAlarma = fechaHoraEvento.minusWeeks(intervalo);
-            }
+            case MINUTOS -> fechaHoraAlarma = fechaHoraEvento.minusMinutes(intervalo);
+            case HORAS -> fechaHoraAlarma = fechaHoraEvento.minusHours(intervalo);
+            case DIAS -> fechaHoraAlarma = fechaHoraEvento.minusDays(intervalo);
+            case SEMANAS -> fechaHoraAlarma = fechaHoraEvento.minusWeeks(intervalo);
         }
     }
 

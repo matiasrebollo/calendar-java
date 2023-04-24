@@ -104,7 +104,7 @@ public class Tarea{
      * Devuelve true si la tarea ocurrirá en la fecha recibida
      * */
     public boolean ocurreEnFecha(LocalDate fechaCualquiera){
-        return frecuencia.fechaEstaIncluida(fechaCualquiera);
+        return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
     }
 }
 
