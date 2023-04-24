@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Calendario {
-    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA};
+    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO};
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
     private LocalDate fechaActual;
@@ -29,6 +29,21 @@ public class Calendario {
         this.eventos.add(evento);
 
         return evento;
+    }
+    public Alarma agregarAlarmaEvento(Evento evento, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+        Alarma alarma;
+        if (fecha.equals("") || horario.equals("")){
+            alarma = evento.agregarAlarma(null, intervalo, unidad, efecto);
+        } else {
+            LocalDate fechaAlarma = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
+            LocalTime horarioAlarma = LocalTime.parse(horario, DateTimeFormatter.ofPattern("kk:mm"));
+            LocalDateTime fechaHoraAlarma = LocalDateTime.of(fechaAlarma, horarioAlarma);
+            alarma = evento.agregarAlarma(fechaHoraAlarma, intervalo, unidad, efecto);
+        }
+        return alarma;
+    }
+    public void destruirAlarmaEvento(Evento evento, Alarma alarma){
+        evento.destruirAlarma(alarma);
     }
     public void modificarEvento(Evento evento, Elementos e, String nuevoValor1, String nuevoValor2, FrecuenciaC frecuencia) {
         if(!existeEvento(evento)){
@@ -71,6 +86,9 @@ public class Calendario {
                 if (frecuencia != null){
                     evento.modificarFrecuencia(frecuencia);
                 }
+            }
+            case DIACOMPLETO -> {
+                evento.marcarTodoElDia();
             }
         }
     }

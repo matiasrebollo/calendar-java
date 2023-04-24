@@ -89,7 +89,6 @@ public class Evento {
             fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), nuevoHorarioFin);
         }
         modificarTodasLasAlarmas();
-
         this.todoElDia = (nuevoHorarioInicio == LocalTime.MIN && nuevoHorarioFin == LocalTime.MAX);
 
     }
@@ -113,10 +112,14 @@ public class Evento {
         if (fechaHoraAlarma == null){
             alarma = new Alarma(fechaHoraInicio, intervalo, unidad, efecto);
         } else {
-            alarma = new Alarma(fechaHoraAlarma, fechaHoraAlarma, efecto);
+            alarma = new Alarma(fechaHoraInicio, fechaHoraAlarma, efecto);
         }
         this.alarmas.add(alarma);
         return alarma;
+    }
+
+    public int cantidadAlarmas(){
+        return alarmas.size();
     }
 
     public void destruirAlarma(Alarma alarma){
@@ -137,8 +140,6 @@ public class Evento {
         }
         return true;
     }*/
-
-
 
     public String getTitulo() {
         return titulo;
@@ -171,10 +172,4 @@ public class Evento {
         return frecuencia;
     }
 
-    /**
-     * Devuelve true si la tarea ocurrirá en la fecha recibida
-     * */
-    public boolean ocurreEnFecha(LocalDate fechaCualquiera){
-        return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
-    }
 }
