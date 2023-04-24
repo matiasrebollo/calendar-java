@@ -39,7 +39,6 @@ public class Alarma {
         }
     }
 
-    //TEMPORAL etapa 1
     /**
      * Devuelve 0 si envia una notificacion
      * Devuelve 1 si reproduce un sonido

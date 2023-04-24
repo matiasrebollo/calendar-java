@@ -5,17 +5,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Calendario {
-    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO};
+    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO}
+
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
-    private LocalDate fechaActual;//para la etapa 2
-    private LocalTime horaActual;//para la etapa 2
 
     public Calendario(){
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
-        this.fechaActual = LocalDate.now();
-        this.horaActual = LocalTime.now();
     }
 
     public Evento crearEvento(String titulo, String descripcion, String fechaIni, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, FrecuenciaC frecuencia) {
@@ -103,18 +100,15 @@ public class Calendario {
         return this.eventos.contains(evento);
     }
 
-    //TAREA
     /**
      * Devuelve la tarea creada o null en caso de que no se cree
      * el formato de fecha debe ser "d/M/yyyy", por ej. "2/10/2022"
      * el formato de la hora debe ser "kk:mm", por ej. "20:05"
      * */
     public Tarea crearTarea(String titulo, String descripcion, String fecha, boolean todoElDia, String hora, FrecuenciaC frecuencia) {
-        //chequear que el formato de la fecha sea correcto (etapa 2)
         LocalDate fechaDate = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
 
         Tarea tarea;
-        //chequear que el formato de la hora sea correcto (etapa 2)
         if (hora.equals("")) {
             tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, null,frecuencia);
         }
@@ -190,32 +184,5 @@ public class Calendario {
     }
     public int cantidadTareas() {
         return tareas.size();
-    }
-
-    /**
-     * muestra las tareas que hay en una fecha cualquiera
-     * */
-    public ArrayList<Tarea> mostrarTareasDelDia(LocalDate fecha) {
-        ArrayList<Tarea> tareasDeLaFecha = new ArrayList<>();
-        for (Tarea tarea : tareas) {
-            if (tarea.ocurreEnFecha(fecha)) {
-                //System.out.println("  -" + tarea.getTitulo());
-                tareasDeLaFecha.add(tarea);
-            }
-        }
-        return tareasDeLaFecha;
-    }
-    /**
-     * muestra los eventos que hay en una fecha cualquiera
-     * */
-    public ArrayList<Evento> mostrarEventosDelDia(LocalDate fecha) {
-        ArrayList<Evento> eventosDeLaFecha = new ArrayList<>();
-        for (Evento evento : eventos) {
-            if (evento.ocurreEnFecha(fecha)) {
-                //System.out.println("  -" + evento.getTitulo());
-                eventosDeLaFecha.add(evento);
-            }
-        }
-        return eventosDeLaFecha;
     }
 }
