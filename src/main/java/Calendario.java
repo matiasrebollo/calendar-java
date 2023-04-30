@@ -5,30 +5,34 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Calendario {
-    enum Elementos {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO}
+    enum Modificar {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO}
+    enum Opcion {INICIO, FIN}
 
-    private ArrayList<Evento> eventos;
-    private ArrayList<Tarea> tareas;
+    private ArrayList<Evento2> eventos;
+    private ArrayList<Tarea2> tareas;
+    private ArrayList<ElementoCalendario> elementosCalendario;
 
     public Calendario(){
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
+        this.elementosCalendario = new ArrayList<>();
     }
 
-    public Evento crearEvento(String titulo, String descripcion, String fechaIni, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, FrecuenciaC frecuencia) {
-        LocalDate fechaInicio = LocalDate.parse(fechaIni, DateTimeFormatter.ofPattern("d/M/yyyy"));
+    public Evento2 crearEvento(String titulo, String descripcion, String fechaInicio, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, Frecuencia frecuencia) {
+        LocalDate fechaIni = LocalDate.parse(fechaInicio, DateTimeFormatter.ofPattern("d/M/yyyy"));
         LocalDate fechaFinal = LocalDate.parse(fechaFin, DateTimeFormatter.ofPattern("d/M/yyyy"));
         LocalTime horarioInicio = LocalTime.parse(horarioIni, DateTimeFormatter.ofPattern("kk:mm"));
         LocalTime horarioFinal = LocalTime.parse(horarioFin, DateTimeFormatter.ofPattern("kk:mm"));
 
-        LocalDateTime fechaHoraInicio = LocalDateTime.of(fechaInicio, horarioInicio);
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(fechaIni, horarioInicio);
         LocalDateTime fechaHoraFin = LocalDateTime.of(fechaFinal, horarioFinal);
-        var evento = new Evento(titulo, descripcion, fechaHoraInicio, fechaHoraFin, todoElDia, frecuencia);
+
+        var evento = new Evento2(titulo, descripcion, fechaHoraInicio, fechaHoraFin, todoElDia, frecuencia);
         this.eventos.add(evento);
 
         return evento;
     }
-    public Alarma agregarAlarmaEvento(Evento evento, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+    public Alarma agregarAlarmaEvento(Evento2 evento, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
         Alarma alarma;
         if (fecha.equals("") || horario.equals("")){
             alarma = evento.agregarAlarma(null, intervalo, unidad, efecto);
@@ -40,10 +44,11 @@ public class Calendario {
         }
         return alarma;
     }
-    public void destruirAlarmaEvento(Evento evento, Alarma alarma){
+    public void destruirAlarmaEvento(Evento2 evento, Alarma alarma){
         evento.destruirAlarma(alarma);
     }
-    public void modificarEvento(Evento evento, Elementos e, String nuevoValor1, String nuevoValor2, FrecuenciaC frecuencia) {
+
+    /*public void modificarEvento(Evento evento, Modificar e, String nuevoValor1, String nuevoValor2, Frecuencia frecuencia) {
         if(!existeEvento(evento)){
             return;
         }
@@ -89,32 +94,76 @@ public class Calendario {
                 evento.marcarTodoElDia();
             }
         }
+    }*/
+    public void modificarEvento(Evento2 evento, Modificar e, Opcion opcion, String nuevoValor,  Frecuencia frecuencia) {
+        if(!existeEvento(evento)){
+            return;
+        }
+        switch (e) {
+            case TITULO -> {
+                evento.setTitulo(nuevoValor);
+            }
+            case DESCRIPCION -> {
+                evento.setDescripcion(nuevoValor);
+            }
+            case FECHA -> {
+                LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("d/M/yyyy"));
+                switch (opcion) {
+                    case INICIO -> {
+                        evento.setFechaInicio(nuevaFecha);
+                    }
+                    case FIN -> {
+                        evento.setFechaFin(nuevaFecha);
+                    }
+                }
+            }
+            case HORARIO -> {
+                LocalTime nuevaHora = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
+                switch (opcion) {
+                    case INICIO -> {
+                        evento.setHoraInicio(nuevaHora);
+                    }
+                    case FIN -> {
+                        evento.setHoraFin(nuevaHora);
+                    }
+                }
+            }
+            case FRECUENCIA -> {
+                    evento.setFrecuencia(frecuencia);
+            }
+            case DIACOMPLETO -> {
+                evento.marcarTodoElDia();
+            }
+        }
     }
-    public void eliminarEvento(Evento evento) {
+
+    public void eliminarEvento(Evento2 evento) {
         if (existeEvento(evento)){
             this.eventos.remove(evento);
         }
     }
 
-    public boolean existeEvento(Evento evento){
+    public boolean existeEvento(Evento2 evento){
         return this.eventos.contains(evento);
     }
+
+
 
     /**
      * Devuelve la tarea creada o null en caso de que no se cree
      * el formato de fecha debe ser "d/M/yyyy", por ej. "2/10/2022"
      * el formato de la hora debe ser "kk:mm", por ej. "20:05"
      * */
-    public Tarea crearTarea(String titulo, String descripcion, String fecha, boolean todoElDia, String hora, FrecuenciaC frecuencia) {
+    public Tarea2 crearTarea(String titulo, String descripcion, String fecha, boolean todoElDia, String hora, Frecuencia frecuencia) {
         LocalDate fechaDate = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
 
-        Tarea tarea;
+        Tarea2 tarea;
         if (hora.equals("")) {
-            tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, null,frecuencia);
+            tarea = new Tarea2(titulo,descripcion, fechaDate, todoElDia, null,frecuencia);
         }
         else {
             LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
-            tarea = new Tarea(titulo,descripcion, fechaDate, todoElDia, horaTime,frecuencia);
+            tarea = new Tarea2(titulo,descripcion, fechaDate, todoElDia, horaTime,frecuencia);
         }
 
         this.tareas.add(tarea);
@@ -127,36 +176,37 @@ public class Calendario {
      * En el caso de la fecha el formato debe ser "d/M/yyyy"
      * En el caso de la hora el formato debe ser "kk:mm"
      * */
-    public void modificarTarea(Tarea tarea, Elementos e, String nuevoValor, FrecuenciaC frecuencia) {
+    public void modificarTarea(Tarea2 tarea, Modificar e, String nuevoValor, Frecuencia frecuencia) {
         if (!existeTarea(tarea)) {
             return;//La tarea no existe
         }
         switch (e) {
             case TITULO -> {
-                tarea.modificarTitulo(nuevoValor);
+                tarea.setTitulo(nuevoValor);
             }
             case DESCRIPCION -> {
-                tarea.modificarDescripcion(nuevoValor);
+                tarea.setDescripcion(nuevoValor);
             }
             case FECHA -> {
-                //falta chequear que el formato sea correcto (etapa 2)
                 LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("d/M/yyyy"));
-                tarea.modificarFecha(nuevaFecha);
+                tarea.setFechaInicio(nuevaFecha);
             }
             case HORARIO -> {
-                //falta chequear que el formato sea correcto (etapa 2)
                 LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
-                tarea.modificarHorario(nuevoHorario);
+                tarea.setHoraInicio(nuevoHorario);
             }
             case FRECUENCIA -> {
                 if (frecuencia != null){
-                    tarea.modificarFrecuencia(frecuencia);
+                    tarea.setFrecuencia(frecuencia);
                 }
+            }
+            case DIACOMPLETO -> {
+                tarea.marcarTodoElDia();
             }
         }
     }
 
-    public Alarma agregarAlarmaTarea(Tarea tarea, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+    public Alarma agregarAlarmaTarea(Tarea2 tarea, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
         Alarma alarma;
         if (fecha.equals("") || horario.equals("")){
             alarma = tarea.agregarAlarma(null, intervalo, unidad, efecto);
@@ -169,11 +219,11 @@ public class Calendario {
         return alarma;
     }
 
-    public boolean existeTarea(Tarea tarea) {
+    public boolean existeTarea(Tarea2 tarea) {
         return this.tareas.contains(tarea);
     }
 
-    public void eliminarTarea(Tarea tarea) {
+    public void eliminarTarea(Tarea2 tarea) {
         if (existeTarea(tarea)) {
             this.tareas.remove(tarea);
         }
