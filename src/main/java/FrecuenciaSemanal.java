@@ -1,12 +1,22 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
 import static java.time.temporal.ChronoUnit.DAYS;
 
 public class FrecuenciaSemanal implements EstrategiaFrecuencia {
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin,
-                                      ArrayList<DayOfWeek> dias, Frecuencia.FrecuenciaMensual frecuenciaMensual){
+
+    private ArrayList<DayOfWeek> diasDeLaSemana = new ArrayList<>();
+
+    public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia) {
+        if (diasDeLaSemana.contains(dia)){
+            diasDeLaSemana.remove(dia);
+        }
+        else {
+            diasDeLaSemana.add(dia);
+        }
+    }
+
+    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
         if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
             return fechaFin;
         }
@@ -14,7 +24,7 @@ public class FrecuenciaSemanal implements EstrategiaFrecuencia {
         int contador = 0;
         while (contador < ocurrencias) {
             var diaActual = fechaAux.getDayOfWeek();
-            if (dias.contains(diaActual)) {
+            if (diasDeLaSemana.contains(diaActual)) {
                 contador++;
             }
             if (contador < ocurrencias) {
@@ -26,11 +36,11 @@ public class FrecuenciaSemanal implements EstrategiaFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, ArrayList<DayOfWeek> dias,
-                                         Frecuencia.FrecuenciaMensual frecuenciaMensual, LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo,
+                                         LocalDate fechaFin){
         fechaProxima = fechaProxima.plusDays(1);
         var diaSemana = fechaProxima.getDayOfWeek();
-        while (!dias.contains(diaSemana)) {
+        while (!diasDeLaSemana.contains(diaSemana)) {
             fechaProxima = fechaProxima.plusDays(1);
             if (fechaProxima.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
                 fechaProxima = fechaProxima.plusWeeks(intervalo - 1);
@@ -42,15 +52,18 @@ public class FrecuenciaSemanal implements EstrategiaFrecuencia {
         }
         return fechaProxima;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin,
-                                               int intervalo, ArrayList<DayOfWeek> dias, Frecuencia.FrecuenciaMensual frecuenciaMensual){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }
-        else if (fechaInicio.isBefore(fechaCualquiera) && fechaCualquiera.isBefore(fechaFin)){
+        if (fechaFin.isAfter(fechaInicio)){
+
+        }
+        //else if (fechaInicio.isBefore(fechaCualquiera) && fechaCualquiera.isBefore(fechaFin)){
+        else if (fechaInicio.isBefore(fechaCualquiera)) {
             int diferenciaDeDias = (int)DAYS.between(fechaInicio, fechaCualquiera);
             DayOfWeek diaCualquiera = fechaCualquiera.getDayOfWeek();
-            return (dias.contains(diaCualquiera) && ((diferenciaDeDias/7) % (intervalo)) == 0);
+            return (diasDeLaSemana.contains(diaCualquiera) && ((diferenciaDeDias/7) % (intervalo)) == 0);
         }
         return false;
     }

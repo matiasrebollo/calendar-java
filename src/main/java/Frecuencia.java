@@ -1,27 +1,22 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 
 public class Frecuencia{
-    //enum TipoFrecuencia {CERO, DIARIA, SEMANAL, MENSUAL, ANUAL}
-    enum FrecuenciaMensual {MISMONUMERO, MISMODIA} //ej. todos los meses, el dia 7 o todos los meses, el 3er lunes
 
     private LocalDate fechaInicio;
-    private EstrategiaFrecuencia tipo;
-    private FrecuenciaMensual frecuenciaMensual;
     private int intervalo;
-    private ArrayList<DayOfWeek> diasDeLaSemana = new ArrayList<>();
-    private LocalDate fechaFin;
     private int ocurrencias;
-
+    private LocalDate fechaFin;
+    private EstrategiaFrecuencia tipo;
     private LocalDate fechaProxima;
+
+
 
     //recibe una fecha fin
     public Frecuencia(EstrategiaFrecuencia tipo, LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
         this.tipo = tipo;
         this.intervalo = intervalo;
-        frecuenciaMensual = FrecuenciaMensual.MISMONUMERO;//por defecto
         if (fechaFin == null) {
             this.fechaFin = LocalDate.MAX;
         }
@@ -29,7 +24,8 @@ public class Frecuencia{
             this.fechaFin = fechaFin;
         }
         this.ocurrencias = -1; //-1 representa indefinidas repeticiones
-        this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
+        //this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
+        this.agregarOQuitarDiaDeLaSemana(fechaInicio.getDayOfWeek());
         this.fechaInicio = fechaInicio;
         this.fechaProxima = fechaInicio;
     }
@@ -40,9 +36,9 @@ public class Frecuencia{
         this.intervalo = intervalo;
         this.fechaInicio = fechaInicio;
         this.ocurrencias = ocurrencias;
-        this.frecuenciaMensual = FrecuenciaMensual.MISMONUMERO;//por defecto
-        this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
-        this.fechaFin = tipo.calcularFechaFin(this.intervalo, this.ocurrencias, this.fechaInicio, null, diasDeLaSemana, frecuenciaMensual);
+        //this.diasDeLaSemana.add(fechaInicio.getDayOfWeek());
+        agregarOQuitarDiaDeLaSemana(fechaInicio.getDayOfWeek());
+        this.fechaFin = calcularFechaFin();
         this.fechaProxima = fechaInicio;
     }
 
@@ -60,32 +56,30 @@ public class Frecuencia{
      * o lo quita si este ya estaba agregado
      * */
     public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia){
-        if (this.tipo instanceof FrecuenciaSemanal) {
-            if (diasDeLaSemana.contains(dia)){
-                diasDeLaSemana.remove(dia);
-            }
-            else {
-                diasDeLaSemana.add(dia);
-            }
-            this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin, diasDeLaSemana, frecuenciaMensual);
+        if (tipo instanceof FrecuenciaSemanal) {
+            ((FrecuenciaSemanal) tipo).agregarOQuitarDiaDeLaSemana(dia);
+            this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
         }
     }
+
     public void setTipo(EstrategiaFrecuencia tipo) {
         this.tipo = tipo;
-        this.fechaFin = this.tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin, diasDeLaSemana, frecuenciaMensual);
+        this.fechaFin = this.tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
     }
     public void setIntervalo(int cadaCuanto) {
         this.intervalo = cadaCuanto;
-        this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin, diasDeLaSemana, frecuenciaMensual);
+        this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
     }
-    public void setFrecuenciaMensual(FrecuenciaMensual frecuenciaMensual) {
-        this.frecuenciaMensual = frecuenciaMensual;
-        this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin, diasDeLaSemana, this.frecuenciaMensual);
+    public void modificarTipoFrecuenciaMensual(FrecuenciaMensual.Tipo tipoFrecuenciaMensual) {
+        if (tipo instanceof  FrecuenciaMensual) {
+            ((FrecuenciaMensual) tipo).setTipoFrecuenciaMensual(tipoFrecuenciaMensual);
+        }
+        this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
     }
     public void setFechaInicio(LocalDate fechaInicio){
         this.fechaInicio = fechaInicio;
         if (this.ocurrencias > 0){
-            this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, this.fechaInicio, fechaFin, diasDeLaSemana, frecuenciaMensual);
+            this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, this.fechaInicio, fechaFin);
         }
     }
     public void setFechaFin(LocalDate fechaFin) {
@@ -114,7 +108,7 @@ public class Frecuencia{
         return fechaAux;
     }
     private LocalDate fechaFinMensual(LocalDate fechaAux){
-        switch (frecuenciaMensual) {
+        switch (tipoFrecuenciaMensual) {
             case MISMONUMERO -> {
                 for (int i = 0; i < ocurrencias-1; i++) {
                     fechaAux = fechaAux.plus(intervalo, ChronoUnit.MONTHS);//sumo 1 mes
@@ -148,7 +142,7 @@ public class Frecuencia{
      * Devuelve la última fecha correspondiente a la frecuencia
      * */
     public LocalDate calcularFechaFin(){//Deberia ser privada, es publica para hacer las pruebas
-        return tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin, diasDeLaSemana, frecuenciaMensual);
+        return tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
         /*if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
             return fechaFin;
         }
@@ -183,7 +177,7 @@ public class Frecuencia{
      * o null si no hay proxima
      * */
     public LocalDate obtenerProximaFecha() {
-        return tipo.obtenerFechaProxima(fechaProxima, intervalo, diasDeLaSemana, frecuenciaMensual, fechaFin);
+        return tipo.obtenerFechaProxima(fechaProxima, intervalo, fechaFin);
         /*switch (tipo) {
             case CERO -> {
                 return null;
@@ -203,7 +197,7 @@ public class Frecuencia{
                 }
             }
             case MENSUAL -> {
-                switch (frecuenciaMensual) {
+                switch (tipoFrecuenciaMensual) {
                     case MISMONUMERO -> {
                         fechaProxima = fechaProxima.plusMonths(intervalo);
                     }
@@ -243,8 +237,9 @@ public class Frecuencia{
      * Por ej. si la frecuencia cada semana los martes y jueves
      * y recibe una fecha que corresponde a un martes, devolverá true
      * */
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera){
-        return tipo.fechaCorrespondeAFrecuencia(fechaCualquiera, fechaInicio, fechaFin, intervalo, diasDeLaSemana, frecuenciaMensual);
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera) {
+        return tipo.fechaCorrespondeAFrecuencia(fechaCualquiera, fechaInicio, fechaFin, intervalo);
+
         /*if (fechaInicio.equals(fechaCualqueira) || fechaCualqueira.equals(fechaFin)) {
             return true;
         }
@@ -270,7 +265,7 @@ public class Frecuencia{
                     if ((diferenciaDeMeses % intervalo) != 0) {
                         return false;
                     }
-                    switch (frecuenciaMensual) {
+                    switch (tipoFrecuenciaMensual) {
                         case MISMONUMERO -> {
                             return (diaDelMes == diaDelMesCualquiera);
                         }

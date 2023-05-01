@@ -6,12 +6,22 @@ import java.util.ArrayList;
 import static java.time.temporal.ChronoUnit.MONTHS;
 
 public class FrecuenciaMensual implements EstrategiaFrecuencia {
+    enum Tipo {MISMODIA, MISMONUMERO}//ej. todos los meses, el dia 7 o todos los meses, el 3er lunes
+
+    private Tipo frecuenciaMensual;
+
+    public FrecuenciaMensual(Tipo tipoFrecuenciaMensual) {
+        this.frecuenciaMensual = tipoFrecuenciaMensual;
+    }
+    public void setTipoFrecuenciaMensual(Tipo tipoFrecuenciaMensual) {
+        this.frecuenciaMensual = tipoFrecuenciaMensual;
+    }
+
     private int calcularNroSemana(LocalDate fecha) {
         int diaDelMes = fecha.getDayOfMonth();
         return (diaDelMes - 1) / 7 + 1; // 7: cant de dias de una semana
     }
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin,
-                                      ArrayList<DayOfWeek> dias, Frecuencia.FrecuenciaMensual frecuenciaMensual){
+    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
         if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
             return fechaFin;
         }
@@ -44,8 +54,8 @@ public class FrecuenciaMensual implements EstrategiaFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, ArrayList<DayOfWeek> dias,
-                                         Frecuencia.FrecuenciaMensual frecuenciaMensual, LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo,
+                                         LocalDate fechaFin){
         switch (frecuenciaMensual) {
             case MISMONUMERO -> {
                 fechaProxima = fechaProxima.plusMonths(intervalo);
@@ -74,7 +84,7 @@ public class FrecuenciaMensual implements EstrategiaFrecuencia {
         return fechaProxima;
     }
     public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin,
-                                               int intervalo, ArrayList<DayOfWeek> dias, Frecuencia.FrecuenciaMensual frecuenciaMensual){
+                                               int intervalo){
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }
