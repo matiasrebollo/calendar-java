@@ -2,12 +2,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public class Evento2 extends ElementoCalendario{
+public class Evento extends ElementoCalendario{
     private LocalDateTime fechaHoraInicio;
     private LocalDateTime fechaHoraFin;
 
 
-    public Evento2(String titulo, String descripcion, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, boolean todoElDia, Frecuencia frecuencia){
+    public Evento(String titulo, String descripcion, LocalDateTime fechaHoraInicio, LocalDateTime fechaHoraFin, boolean todoElDia, Frecuencia frecuencia){
         super(titulo,descripcion, fechaHoraInicio.toLocalDate(), todoElDia, fechaHoraInicio.toLocalTime(),frecuencia);
         this.fechaHoraFin = fechaHoraFin;
         this.fechaHoraInicio = LocalDateTime.of(fechaHoraInicio.toLocalDate(), fechaHoraInicio.toLocalTime());

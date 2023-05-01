@@ -1,10 +1,10 @@
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class Tarea2 extends ElementoCalendario{
+public class Tarea extends ElementoCalendario{
     private boolean completada;
 
-    public Tarea2(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario, Frecuencia frecuencia) {
+    public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario, Frecuencia frecuencia) {
         super(titulo,descripcion,fecha,todoElDia,horario,frecuencia);
         this.completada = false;
     }
