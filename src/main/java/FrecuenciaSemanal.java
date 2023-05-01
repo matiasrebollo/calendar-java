@@ -35,8 +35,7 @@ public class FrecuenciaSemanal implements EstrategiaFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo,
-                                         LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
         fechaProxima = fechaProxima.plusDays(1);
         var diaSemana = fechaProxima.getDayOfWeek();
         while (!dias.contains(diaSemana)) {
@@ -51,8 +50,7 @@ public class FrecuenciaSemanal implements EstrategiaFrecuencia {
         }
         return fechaProxima;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin,
-                                               int intervalo){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }

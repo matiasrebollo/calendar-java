@@ -54,8 +54,7 @@ public class FrecuenciaMensual implements EstrategiaFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo,
-                                         LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
         switch (frecuenciaMensual) {
             case MISMONUMERO -> {
                 fechaProxima = fechaProxima.plusMonths(intervalo);
@@ -83,8 +82,7 @@ public class FrecuenciaMensual implements EstrategiaFrecuencia {
         }
         return fechaProxima;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin,
-                                               int intervalo){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }
