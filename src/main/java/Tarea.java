@@ -2,7 +2,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-
+/*
 public class Tarea{
     private String titulo;
     private String descripcion;
@@ -82,7 +82,7 @@ public class Tarea{
      * si la tarea no está completada, la marca como completada
      * Devuelve true si al final queda como completada o false en caso contrario
      */
-    public boolean marcarTareaCompletada() {
+   /* public boolean marcarTareaCompletada() {
         if (this.completada == false) {
             this.completada = true;
         }
@@ -112,10 +112,10 @@ public class Tarea{
     /**
      * Devuelve true si la tarea ocurrirá en la fecha recibida
      * */
-    public boolean ocurreEnFecha(LocalDate fechaCualquiera){
+    /*public boolean ocurreEnFecha(LocalDate fechaCualquiera){
         return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
     }
-}
+}*/
 
 
 

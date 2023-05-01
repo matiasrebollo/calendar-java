@@ -64,7 +64,7 @@ public class AlarmaTest {
         LocalDate fecha = LocalDate.of(2023,1,1);
         LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, LocalTime.of(20, 0));
         LocalDateTime fechaHoraFin = LocalDateTime.of(fecha, LocalTime.of(22, 30));
-        Evento e = new Evento("Evento1", "",fechaHoraInicio, fechaHoraFin,false,null);
+        Evento2 e = new Evento2("Evento1", "",fechaHoraInicio, fechaHoraFin,false,null);
         Alarma alarma = e.agregarAlarma(null, 30, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);
 
         LocalDateTime fechaHoraEsperada = LocalDateTime.of(fecha, LocalTime.of(19, 30));
@@ -78,11 +78,11 @@ public class AlarmaTest {
         LocalDate fecha = LocalDate.of(2023,1,1);
         LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, LocalTime.of(20, 0));
         LocalDateTime fechaHoraFin = LocalDateTime.of(fecha, LocalTime.of(22, 30));
-        Evento e = new Evento("Evento1", "",fechaHoraInicio, fechaHoraFin,false,null);
+        Evento2 e = new Evento2("Evento1", "",fechaHoraInicio, fechaHoraFin,false,null);
         Alarma alarma = e.agregarAlarma(null, 30, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);
 
         LocalDateTime fechaHoraEsperada = LocalDateTime.of(fecha, LocalTime.of(21, 0));
-        e.modificarHorario(LocalTime.of(21,30), null);
+        e.setHoraInicio(LocalTime.of(21,30));
 
         LocalDateTime fechaHoraDevuelta = alarma.getFechaHoraAlarma();
 

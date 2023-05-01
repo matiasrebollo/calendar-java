@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class Evento {
+/*public class Evento {
     private String titulo;
     private String descripcion;
     private LocalDateTime fechaHoraInicio;
@@ -67,7 +67,7 @@ public class Evento {
      * Modifica la fecha de inicio y fin del evento.
      * Si recibe null en alguno, esa fecha no la modifica
      * */
-    public void modificarFecha(LocalDate nuevaFechaInicio, LocalDate nuevaFechaFin){
+    /*public void modificarFecha(LocalDate nuevaFechaInicio, LocalDate nuevaFechaFin){
         if (nuevaFechaInicio == null){
             fechaHoraFin = LocalDateTime.of(nuevaFechaFin, fechaHoraFin.toLocalTime());
         } else if (nuevaFechaFin == null){
@@ -83,7 +83,7 @@ public class Evento {
      * Modifica el horario de inicio y fin del evento.
      * Si recibe null en alguno, ese horario no lo modifica
      * */
-    public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
+   /* public void modificarHorario(LocalTime nuevoHorarioInicio, LocalTime nuevoHorarioFin){
         if (nuevoHorarioInicio == null){
             fechaHoraFin = LocalDateTime.of(fechaHoraFin.toLocalDate(), nuevoHorarioFin);
 
@@ -111,7 +111,7 @@ public class Evento {
      * Crea una Alarma con los datos recibidos.
      * Devuelve la alarma creada o null en caso de error
      * */
-    public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
+    /*public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
         Alarma alarma;
         if (fechaHoraAlarma == null){
             alarma = new Alarma(fechaHoraInicio, intervalo, unidad, efecto);
@@ -132,8 +132,8 @@ public class Evento {
     /**
      * Devuelve true si el evento ocurrirá en la fecha recibida
      * */
-    public boolean ocurreEnFecha(LocalDate fechaCualquiera){
+   /* public boolean ocurreEnFecha(LocalDate fechaCualquiera){
         return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
     }
-}
+}*/
 
