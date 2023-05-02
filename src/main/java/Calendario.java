@@ -5,17 +5,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Calendario {
-    enum Modificar {TITULO, DESCRIPCION, FECHA, HORARIO, FRECUENCIA, DIACOMPLETO}
-    enum Opcion {INICIO, FIN}
-
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
-    private ArrayList<ElementoCalendario> elementosCalendario;
+
 
     public Calendario(){
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();
-        this.elementosCalendario = new ArrayList<>();
     }
 
     public Evento crearEvento(String titulo, String descripcion, String fechaInicio, String fechaFin, String horarioIni, String horarioFin, boolean todoElDia, Frecuencia frecuencia) {
@@ -33,48 +29,6 @@ public class Calendario {
         return evento;
     }
 
-    public void modificarEvento(Evento evento, Modificar e, Opcion opcion, String nuevoValor,  Frecuencia frecuencia) {
-        if(!existeEvento(evento)){
-            return;
-        }
-        switch (e) {
-            case TITULO -> {
-                evento.setTitulo(nuevoValor);
-            }
-            case DESCRIPCION -> {
-                evento.setDescripcion(nuevoValor);
-            }
-            case FECHA -> {
-                LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("d/M/yyyy"));
-                switch (opcion) {
-                    case INICIO -> {
-                        evento.setFechaInicio(nuevaFecha);
-                    }
-                    case FIN -> {
-                        evento.setFechaFin(nuevaFecha);
-                    }
-                }
-            }
-            case HORARIO -> {
-                LocalTime nuevaHora = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
-                switch (opcion) {
-                    case INICIO -> {
-                        evento.setHoraInicio(nuevaHora);
-                    }
-                    case FIN -> {
-                        evento.setHoraFin(nuevaHora);
-                    }
-                }
-            }
-            case FRECUENCIA -> {
-                    evento.setFrecuencia(frecuencia);
-            }
-            case DIACOMPLETO -> {
-                evento.marcarTodoElDia();
-            }
-        }
-    }
-
     public void eliminarEvento(Evento evento) {
         if (existeEvento(evento)){
             this.eventos.remove(evento);
@@ -84,8 +38,6 @@ public class Calendario {
     public boolean existeEvento(Evento evento){
         return this.eventos.contains(evento);
     }
-
-
 
     /**
      * Devuelve la tarea creada o null en caso de que no se cree
@@ -106,42 +58,6 @@ public class Calendario {
 
         this.tareas.add(tarea);
         return tarea;
-    }
-
-    /**
-     * Recibe la tarea a modificar, el elemento que desea modificar
-     * y el nuevo valor de ese elemento
-     * En el caso de la fecha el formato debe ser "d/M/yyyy"
-     * En el caso de la hora el formato debe ser "kk:mm"
-     * */
-    public void modificarTarea(Tarea tarea, Modificar e, String nuevoValor, Frecuencia frecuencia) {
-        if (!existeTarea(tarea)) {
-            return;//La tarea no existe
-        }
-        switch (e) {
-            case TITULO -> {
-                tarea.setTitulo(nuevoValor);
-            }
-            case DESCRIPCION -> {
-                tarea.setDescripcion(nuevoValor);
-            }
-            case FECHA -> {
-                LocalDate nuevaFecha = LocalDate.parse(nuevoValor, DateTimeFormatter.ofPattern("d/M/yyyy"));
-                tarea.setFechaInicio(nuevaFecha);
-            }
-            case HORARIO -> {
-                LocalTime nuevoHorario = LocalTime.parse(nuevoValor, DateTimeFormatter.ofPattern("kk:mm"));
-                tarea.setHoraInicio(nuevoHorario);
-            }
-            case FRECUENCIA -> {
-                if (frecuencia != null){
-                    tarea.setFrecuencia(frecuencia);
-                }
-            }
-            case DIACOMPLETO -> {
-                tarea.marcarTodoElDia();
-            }
-        }
     }
 
     public boolean existeTarea(Tarea tarea) {
