@@ -1,11 +1,9 @@
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.MONTHS;
 
-public class FrecuenciaAnual implements EstrategiaFrecuencia {
+public class FrecuenciaAnual implements TipoFrecuencia {
 
     public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
         if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {

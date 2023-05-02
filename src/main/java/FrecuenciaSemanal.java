@@ -3,7 +3,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-public class FrecuenciaSemanal implements EstrategiaFrecuencia {
+public class FrecuenciaSemanal implements TipoFrecuencia {
 
     private ArrayList<DayOfWeek> dias = new ArrayList<>();
 
@@ -48,6 +48,7 @@ public class FrecuenciaSemanal implements EstrategiaFrecuencia {
         if (fechaProxima.isAfter(fechaFin)){
             return null;
         }
+
         return fechaProxima;
     }
     public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){

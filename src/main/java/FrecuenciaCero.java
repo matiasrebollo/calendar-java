@@ -1,8 +1,6 @@
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
-public class FrecuenciaCero implements EstrategiaFrecuencia{
+public class FrecuenciaCero implements TipoFrecuencia {
     public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin) {
         return fechaFin;
     }

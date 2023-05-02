@@ -8,7 +8,6 @@ public class Calendario {
     private ArrayList<Evento> eventos;
     private ArrayList<Tarea> tareas;
 
-
     public Calendario(){
         this.eventos = new ArrayList<>();
         this.tareas = new ArrayList<>();

@@ -279,7 +279,6 @@ public class FrecuenciaTest{
         var f = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMONUMERO), fecha, intervalo, null);
 
         assertEquals(true, f.fechaCorrespondeAFrecuencia(fechaIncluida));
-        System.out.println(f.calcularFechaFin().toString());
         assertEquals(false, f.fechaCorrespondeAFrecuencia(fechaNoIncluida));
     }
     @Test

@@ -1,11 +1,10 @@
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.MONTHS;
 
-public class FrecuenciaMensual implements EstrategiaFrecuencia {
+public class FrecuenciaMensual implements TipoFrecuencia {
     enum Tipo {MISMODIA, MISMONUMERO}//ej. todos los meses, el dia 7 o todos los meses, el 3er lunes
 
     private Tipo frecuenciaMensual;

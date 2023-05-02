@@ -1,10 +1,8 @@
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-public class FrecuenciaDiaria implements EstrategiaFrecuencia{
+public class FrecuenciaDiaria implements TipoFrecuencia {
 
     public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
         if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {

@@ -8,13 +8,13 @@ public class Frecuencia{
     private int intervalo;
     private int ocurrencias;
     private LocalDate fechaFin;
-    private EstrategiaFrecuencia tipo;
+    private TipoFrecuencia tipo;
     private LocalDate fechaProxima;
 
 
 
     //recibe una fecha fin
-    public Frecuencia(EstrategiaFrecuencia tipo, LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
+    public Frecuencia(TipoFrecuencia tipo, LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
         this.tipo = tipo;
         this.intervalo = intervalo;
         this.fechaInicio = fechaInicio;
@@ -30,7 +30,7 @@ public class Frecuencia{
     }
 
     //recibe una cantidad de ocurrencias
-    public Frecuencia(EstrategiaFrecuencia tipo, LocalDate fechaInicio, int intervalo, int ocurrencias) {
+    public Frecuencia(TipoFrecuencia tipo, LocalDate fechaInicio, int intervalo, int ocurrencias) {
         this.tipo = tipo;
         this.fechaProxima = fechaInicio;
         this.intervalo = intervalo;
@@ -60,7 +60,7 @@ public class Frecuencia{
         }
     }
 
-    public void setTipo(EstrategiaFrecuencia tipo) {
+    public void setTipo(TipoFrecuencia tipo) {
         this.tipo = tipo;
         this.fechaFin = this.tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
     }

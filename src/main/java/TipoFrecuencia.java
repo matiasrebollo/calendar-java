@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 
-public interface EstrategiaFrecuencia {
+public interface TipoFrecuencia {
 
     LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin);
 
