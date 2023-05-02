@@ -32,21 +32,6 @@ public class Calendario {
 
         return evento;
     }
-    public Alarma agregarAlarmaEvento(Evento evento, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
-        Alarma alarma;
-        if (fecha.equals("") || horario.equals("")){
-            alarma = evento.agregarAlarma(null, intervalo, unidad, efecto);
-        } else {
-            LocalDate fechaAlarma = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
-            LocalTime horarioAlarma = LocalTime.parse(horario, DateTimeFormatter.ofPattern("kk:mm"));
-            LocalDateTime fechaHoraAlarma = LocalDateTime.of(fechaAlarma, horarioAlarma);
-            alarma = evento.agregarAlarma(fechaHoraAlarma, intervalo, unidad, efecto);
-        }
-        return alarma;
-    }
-    public void destruirAlarmaEvento(Evento evento, Alarma alarma){
-        evento.destruirAlarma(alarma);
-    }
 
     public void modificarEvento(Evento evento, Modificar e, Opcion opcion, String nuevoValor,  Frecuencia frecuencia) {
         if(!existeEvento(evento)){
@@ -157,19 +142,6 @@ public class Calendario {
                 tarea.marcarTodoElDia();
             }
         }
-    }
-
-    public Alarma agregarAlarmaTarea(Tarea tarea, String fecha, String horario, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
-        Alarma alarma;
-        if (fecha.equals("") || horario.equals("")){
-            alarma = tarea.agregarAlarma(null, intervalo, unidad, efecto);
-        } else {
-            LocalDate fechaAlarma = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("d/M/yyyy"));
-            LocalTime horarioAlarma = LocalTime.parse(horario, DateTimeFormatter.ofPattern("kk:mm"));
-            LocalDateTime fechaHoraAlarma = LocalDateTime.of(fechaAlarma, horarioAlarma);
-            alarma = tarea.agregarAlarma(fechaHoraAlarma, intervalo, unidad, efecto);
-        }
-        return alarma;
     }
 
     public boolean existeTarea(Tarea tarea) {

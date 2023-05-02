@@ -210,10 +210,11 @@ public class CalendarioTest {
     public void seAgregaUnaAlarmaAUnEventoCorrectamente() {
         var c = new Calendario();
         var evento = c.crearEvento("evento", "", "2/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
-        c.agregarAlarmaEvento(evento, "", "", 2, Alarma.UnidadesDeTiempo.HORAS, Alarma.EfectosAlarma.NOTIFICACION);
+        evento.agregarAlarma(null, 2, Alarma.UnidadesDeTiempo.HORAS, Alarma.EfectosAlarma.NOTIFICACION);
         assertEquals(1, evento.cantidadAlarmas());
 
-        c.agregarAlarmaEvento(evento, "1/1/2023", "23:30", 0, null, Alarma.EfectosAlarma.NOTIFICACION);
+        LocalDateTime fechaYHora = LocalDateTime.of(LocalDate.of(2023,1,1), LocalTime.of(23,30));
+        evento.agregarAlarma(fechaYHora, 0, null, Alarma.EfectosAlarma.NOTIFICACION);
         assertEquals(2, evento.cantidadAlarmas());
     }
 
@@ -221,9 +222,9 @@ public class CalendarioTest {
     public void seDestruyeUnaAlarmaDeUnEventoCorrectamente() {
         var c = new Calendario();
         var evento = c.crearEvento("evento", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
-        var alarma = c.agregarAlarmaEvento(evento, "", "", 2, Alarma.UnidadesDeTiempo.HORAS, Alarma.EfectosAlarma.NOTIFICACION);
+        var alarma = evento.agregarAlarma(null, 2, Alarma.UnidadesDeTiempo.HORAS, Alarma.EfectosAlarma.NOTIFICACION);
         assertEquals(1, evento.cantidadAlarmas());
-        c.destruirAlarmaEvento(evento, alarma);
+        evento.destruirAlarma(alarma);
         assertEquals(0, evento.cantidadAlarmas());
     }
 }

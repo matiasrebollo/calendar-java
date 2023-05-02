@@ -54,7 +54,7 @@ public class Frecuencia{
      * o lo quita si este ya estaba agregado
      * */
     public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia){
-        if (tipo instanceof FrecuenciaSemanal) {
+        if (tipo instanceof FrecuenciaSemanal) { //no se nos ocurrio una forma de no usar instanceof
             ((FrecuenciaSemanal) tipo).agregarOQuitarDiaDeLaSemana(dia);
             this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
         }
