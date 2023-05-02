@@ -115,7 +115,6 @@ public class FrecuenciaTest{
         int intervalo = 1;
         int ocurrencias = 3;
         var f  = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMONUMERO), fecha, intervalo,ocurrencias);
-        //f.setTipoFrecuenciaMensual(MISMONUMERO);
         var fechaEsperada = LocalDate.of(2023,3, 1);
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -128,9 +127,7 @@ public class FrecuenciaTest{
         int intervalo = 1;
         int ocurrencias = 4;
         var f  = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMODIA), fecha, intervalo, ocurrencias);
-        //f.setTipoFrecuenciaMensual(MISMODIA);
         var fechaEsperada = LocalDate.of(2023,4, 3);
-
         var fechaDevuelta = f.calcularFechaFin();
 
         assertEquals(fechaEsperada, fechaDevuelta);
@@ -141,7 +138,6 @@ public class FrecuenciaTest{
         int intervalo = 1;
         int ocurrencias = 4;
         var f  = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMODIA), fecha, intervalo, ocurrencias);
-        ////f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
         var fechaEsperada = LocalDate.of(2023,5, 9);
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -154,7 +150,6 @@ public class FrecuenciaTest{
         int intervalo = 1;
         int ocurrencias = 4;
         var f  = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMODIA), fecha, intervalo, ocurrencias);
-        ////f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
         var fechaEsperada = LocalDate.of(2023,4, 24);
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -167,7 +162,6 @@ public class FrecuenciaTest{
         int intervalo = 2;
         int ocurrencias = 5;
         var f  = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMONUMERO), fecha, intervalo,ocurrencias);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMONUMERO);
         var fechaEsperada = LocalDate.of(2023,9, 1);//2mes*(5-1) = +8 meses
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -180,7 +174,6 @@ public class FrecuenciaTest{
         int intervalo = 2;
         int ocurrencias = 1000;
         var f  = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMONUMERO), fecha, intervalo,ocurrencias);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMONUMERO);
         var fechaEsperada = LocalDate.of(2189,7, 1);//2mes*(1000-1) = +1998 meses
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -195,7 +188,6 @@ public class FrecuenciaTest{
         int intervalo = 1;
         int ocurrencias = 3;
         var f  = new Frecuencia(new FrecuenciaAnual(), fecha, intervalo,ocurrencias);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMONUMERO);
         var fechaEsperada = LocalDate.of(2025,1, 1);
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -208,7 +200,6 @@ public class FrecuenciaTest{
         int intervalo = 5;
         int ocurrencias = 4;
         var f  = new Frecuencia(new FrecuenciaAnual(), fecha, intervalo,ocurrencias);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMONUMERO);
         var fechaEsperada = LocalDate.of(2038,1, 1);//5anios*(4-1) = +15anios
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -221,7 +212,6 @@ public class FrecuenciaTest{
         int intervalo = 5;
         int ocurrencias = 1000;
         var f  = new Frecuencia(new FrecuenciaAnual(), fecha, intervalo,ocurrencias);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMONUMERO);
         var fechaEsperada = LocalDate.of(7018,1, 1);//5anio*(1000-1) = +495anios
 
         var fechaDevuelta = f.calcularFechaFin();
@@ -292,7 +282,6 @@ public class FrecuenciaTest{
         int intervalo = 2;
 
         var f = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMODIA), fecha, intervalo, null);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
 
         assertEquals(true, f.fechaCorrespondeAFrecuencia(fechaIncluida));
         assertEquals(true, f.fechaCorrespondeAFrecuencia(fechaIncluida2));
@@ -362,8 +351,7 @@ public class FrecuenciaTest{
         var fechaEsperada = LocalDate.of(2023, 5, 7);
 
         var f = new Frecuencia(new FrecuenciaMensual(FrecuenciaMensual.Tipo.MISMODIA), fecha, intervalo, null);
-        //f.setFrecuenciaMensual(Frecuencia.FrecuenciaMensual.MISMODIA);
-        var fechaDevuelta = f.obtenerProximaFecha();
+                var fechaDevuelta = f.obtenerProximaFecha();
 
         assertEquals(fechaEsperada, fechaDevuelta);
     }
