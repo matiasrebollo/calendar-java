@@ -1,13 +1,17 @@
 import java.time.LocalDate;
 
-public class FrecuenciaCero implements TipoFrecuencia {
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin) {
+public class FrecuenciaCero extends Frecuencia {
+    public FrecuenciaCero(LocalDate fecha) {
+        super(fecha, 1, fecha);
+    }
+
+    public LocalDate calcularFechaFin() {
         return fechaFin;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(){
         return null;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera){
         return fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin);
     }
 }

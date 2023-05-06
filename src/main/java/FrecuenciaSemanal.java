@@ -3,9 +3,19 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-public class FrecuenciaSemanal implements TipoFrecuencia {
+public class FrecuenciaSemanal extends Frecuencia {
 
     private ArrayList<DayOfWeek> dias = new ArrayList<>();
+
+    public FrecuenciaSemanal(LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
+        super(fechaInicio, intervalo, fechaFin);
+        this.dias.add(fechaInicio.getDayOfWeek());
+    }
+    public FrecuenciaSemanal(LocalDate fechaInicio, int intervalo, int ocurrencias) {
+        super(fechaInicio, intervalo, ocurrencias);
+        this.dias.add(fechaInicio.getDayOfWeek());
+        super.fechaFin = calcularFechaFin();
+    }
 
     public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia) {
         if (dias.contains(dia)) {
@@ -15,8 +25,8 @@ public class FrecuenciaSemanal implements TipoFrecuencia {
             dias.add(dia);
         }
     }
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
-        if (ocurrencias == -1) {
+    public LocalDate calcularFechaFin(){
+        if (fechaFin != null && ocurrencias == -1) {
             return fechaFin;
         }
         LocalDate fechaAux = fechaInicio;
@@ -35,7 +45,8 @@ public class FrecuenciaSemanal implements TipoFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
+
+    public LocalDate obtenerFechaProxima() {
         fechaProxima = fechaProxima.plusDays(1);
         var diaSemana = fechaProxima.getDayOfWeek();
         while (!dias.contains(diaSemana)) {
@@ -51,7 +62,8 @@ public class FrecuenciaSemanal implements TipoFrecuencia {
 
         return fechaProxima;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
+
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera) {
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }

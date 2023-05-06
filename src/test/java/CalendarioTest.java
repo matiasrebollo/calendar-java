@@ -189,7 +189,7 @@ public class CalendarioTest {
         var evento = c.crearEvento("evento", "", "1/1/2023", "30/1/2023", "00:00", "00:30" , false, null);
 
         LocalDate fechaInicio = LocalDate.of(2023,1,1);
-        Frecuencia frecuencia = new Frecuencia(new FrecuenciaDiaria(), fechaInicio, 3, 3);
+        var frecuencia = new FrecuenciaDiaria(fechaInicio, 3, 3);
 
         evento.setFrecuencia(frecuencia);
 
@@ -202,7 +202,7 @@ public class CalendarioTest {
         var tarea = c.crearTarea("tarea1", "", "2/5/2023",true,"20:30", null);
         LocalDate fecha = LocalDate.of(2023,5,2);
 
-        Frecuencia frecuencia = new Frecuencia(new FrecuenciaDiaria(), fecha, 3, null);
+        var frecuencia = new FrecuenciaDiaria(fecha, 3, null);
         tarea.setFrecuencia(frecuencia);
 
         assertEquals(frecuencia, tarea.getFrecuencia());

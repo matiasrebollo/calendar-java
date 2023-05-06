@@ -3,10 +3,18 @@ import java.time.Month;
 
 import static java.time.temporal.ChronoUnit.MONTHS;
 
-public class FrecuenciaAnual implements TipoFrecuencia {
+public class FrecuenciaAnual extends Frecuencia {
 
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
-        if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
+    public FrecuenciaAnual(LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
+        super(fechaInicio, intervalo, fechaFin);
+    }
+    public FrecuenciaAnual(LocalDate fechaInicio, int intervalo, int ocurrencias) {
+        super(fechaInicio, intervalo, ocurrencias);
+        super.fechaFin = calcularFechaFin();
+    }
+
+    public LocalDate calcularFechaFin(){
+        if (fechaFin != null && ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
             return fechaFin;
         }
         LocalDate fechaAux = fechaInicio;
@@ -15,14 +23,15 @@ public class FrecuenciaAnual implements TipoFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
+
+    public LocalDate obtenerFechaProxima(){
         fechaProxima = fechaProxima.plusYears(intervalo);
         if (fechaProxima.isAfter(fechaFin)){
             return null;
         }
         return fechaProxima;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera){
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }

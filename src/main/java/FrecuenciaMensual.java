@@ -4,24 +4,34 @@ import java.time.temporal.ChronoUnit;
 
 import static java.time.temporal.ChronoUnit.MONTHS;
 
-public class FrecuenciaMensual implements TipoFrecuencia {
+public class FrecuenciaMensual extends Frecuencia {
     enum Tipo {MISMODIA, MISMONUMERO}//ej. todos los meses, el dia 7 o todos los meses, el 3er lunes
 
     private Tipo frecuenciaMensual;
 
-    public FrecuenciaMensual(Tipo tipoFrecuenciaMensual) {
+    public FrecuenciaMensual(LocalDate fechaInicio, int intervalo, LocalDate fechaFin, Tipo tipoFrecuenciaMensual) {
+        super(fechaInicio, intervalo, fechaFin);
         this.frecuenciaMensual = tipoFrecuenciaMensual;
     }
+    public FrecuenciaMensual(LocalDate fechaInicio, int intervalo, int ocurrencias, Tipo tipoFrecuenciaMensual) {
+        super(fechaInicio,intervalo,ocurrencias);
+        this.frecuenciaMensual = tipoFrecuenciaMensual;
+        super.fechaFin = calcularFechaFin();
+    }
+
+
     public void setTipoFrecuenciaMensual(Tipo tipoFrecuenciaMensual) {
         this.frecuenciaMensual = tipoFrecuenciaMensual;
+        this.calcularFechaFin();
     }
 
     private int calcularNroSemana(LocalDate fecha) {
         int diaDelMes = fecha.getDayOfMonth();
         return (diaDelMes - 1) / 7 + 1; // 7: cant de dias de una semana
     }
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
-        if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
+
+    public LocalDate calcularFechaFin() {
+        if (fechaFin != null && ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
             return fechaFin;
         }
         LocalDate fechaAux = fechaInicio;
@@ -53,7 +63,7 @@ public class FrecuenciaMensual implements TipoFrecuencia {
         }
         return fechaAux;
     }
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(){
         switch (frecuenciaMensual) {
             case MISMONUMERO -> {
                 fechaProxima = fechaProxima.plusMonths(intervalo);
@@ -81,7 +91,7 @@ public class FrecuenciaMensual implements TipoFrecuencia {
         }
         return fechaProxima;
     }
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera) {
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }

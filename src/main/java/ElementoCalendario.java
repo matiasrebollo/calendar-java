@@ -20,7 +20,7 @@ public class ElementoCalendario {
         this.fechaInicio = fechaInicio;
         this.frecuencia = frecuencia;
         if (frecuencia == null) {
-            this.frecuencia = new Frecuencia(new FrecuenciaCero(), fechaInicio,1, null);
+            this.frecuencia = new FrecuenciaCero(fechaInicio);
         }
         this.horaInicio = horaInicio;
         this.todoElDia = todoElDia;
@@ -54,7 +54,7 @@ public class ElementoCalendario {
     }
     public void setFrecuencia(Frecuencia frecuencia){
         if (frecuencia == null) {
-            this.frecuencia = new Frecuencia(new FrecuenciaCero(), fechaInicio,1, null);
+            this.frecuencia = new FrecuenciaCero(fechaInicio);
         }
         else {
             this.frecuencia = frecuencia;

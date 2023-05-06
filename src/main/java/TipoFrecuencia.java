@@ -1,4 +1,4 @@
-import java.time.LocalDate;
+/*import java.time.LocalDate;
 
 public interface TipoFrecuencia {
 
@@ -8,3 +8,4 @@ public interface TipoFrecuencia {
 
     boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo);
 }
+*/

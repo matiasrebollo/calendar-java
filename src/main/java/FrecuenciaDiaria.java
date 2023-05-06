@@ -2,10 +2,18 @@ import java.time.LocalDate;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
-public class FrecuenciaDiaria implements TipoFrecuencia {
+public class FrecuenciaDiaria extends Frecuencia {
 
-    public LocalDate calcularFechaFin(int intervalo, int ocurrencias, LocalDate fechaInicio, LocalDate fechaFin){
-        if (ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
+    public FrecuenciaDiaria(LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
+        super(fechaInicio, intervalo, fechaFin);
+    }
+    public FrecuenciaDiaria(LocalDate fechaInicio, int intervalo, int ocurrencias) {
+        super(fechaInicio, intervalo, ocurrencias);
+        super.fechaFin = calcularFechaFin();
+    }
+
+    public LocalDate calcularFechaFin(){
+        if (fechaFin != null && ocurrencias == -1 && fechaFin.equals(LocalDate.MAX)) {
             return fechaFin;
         }
         LocalDate fechaAux = fechaInicio;
@@ -15,7 +23,7 @@ public class FrecuenciaDiaria implements TipoFrecuencia {
         return fechaAux;
     }
 
-    public LocalDate obtenerFechaProxima(LocalDate fechaProxima, int intervalo, LocalDate fechaFin){
+    public LocalDate obtenerFechaProxima(){
         fechaProxima = fechaProxima.plusDays(intervalo);
         if (fechaProxima.isAfter(fechaFin)){
             return null;
@@ -23,7 +31,7 @@ public class FrecuenciaDiaria implements TipoFrecuencia {
         return fechaProxima;
     }
 
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera, LocalDate fechaInicio, LocalDate fechaFin, int intervalo){
+    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera){
         if (fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin)) {
             return true;
         }
