@@ -11,7 +11,6 @@ public abstract class Frecuencia{
     protected LocalDate fechaProxima;
 
 
-
     //recibe una fecha fin
     public Frecuencia(LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
         this.intervalo = intervalo;
@@ -40,19 +39,6 @@ public abstract class Frecuencia{
     public LocalDate getFechaFin() {
         return fechaFin;
     }
-
-
-    /**
-     * En caso de ser frecuencia de tipo SEMANAL,
-     * agrega el dia de la semana a la frecuencia si no fue agregado antes
-     * o lo quita si este ya estaba agregado
-     *
-    public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia){
-        if (tipo instanceof FrecuenciaSemanal) { //no se nos ocurrio una forma de no usar instanceof
-            ((FrecuenciaSemanal) tipo).agregarOQuitarDiaDeLaSemana(dia);
-            this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
-        }
-    }*/
 
     public void setIntervalo(int cadaCuanto) {
         this.intervalo = cadaCuanto;

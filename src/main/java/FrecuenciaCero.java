@@ -1,6 +1,8 @@
 import java.time.LocalDate;
 
 public class FrecuenciaCero extends Frecuencia {
+    //esta frecuencia representa una única vez
+
     public FrecuenciaCero(LocalDate fecha) {
         super(fecha, 1, fecha);
     }

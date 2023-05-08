@@ -10,7 +10,7 @@ public class FrecuenciaAnual extends Frecuencia {
     }
     public FrecuenciaAnual(LocalDate fechaInicio, int intervalo, int ocurrencias) {
         super(fechaInicio, intervalo, ocurrencias);
-        super.fechaFin = calcularFechaFin();
+        //super.fechaFin = calcularFechaFin();
     }
 
     public LocalDate calcularFechaFin(){

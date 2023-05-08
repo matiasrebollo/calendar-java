@@ -17,6 +17,12 @@ public class FrecuenciaSemanal extends Frecuencia {
         super.fechaFin = calcularFechaFin();
     }
 
+
+    /**
+     * agrega el dia de la semana a la frecuencia si no fue agregado antes
+     * o lo quita si este ya estaba agregado
+     *
+     */
     public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia) {
         if (dias.contains(dia)) {
             dias.remove(dia);
@@ -24,6 +30,7 @@ public class FrecuenciaSemanal extends Frecuencia {
         else {
             dias.add(dia);
         }
+        fechaFin = calcularFechaFin();
     }
     public LocalDate calcularFechaFin(){
         if (fechaFin != null && ocurrencias == -1) {
