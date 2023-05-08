@@ -2,7 +2,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 
-public class Frecuencia{
+public abstract class Frecuencia{
 
     protected LocalDate fechaInicio;
     protected int intervalo;
@@ -56,14 +56,13 @@ public class Frecuencia{
 
     public void setIntervalo(int cadaCuanto) {
         this.intervalo = cadaCuanto;
-        //Nose como resolverlo
-        //this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, fechaInicio, fechaFin);
+        this.fechaFin = calcularFechaFin();
     }
 
     public void setFechaInicio(LocalDate fechaInicio){
         this.fechaInicio = fechaInicio;
         if (this.ocurrencias > 0){
-            //this.fechaFin = tipo.calcularFechaFin(intervalo, ocurrencias, this.fechaInicio, fechaFin);
+            this.fechaFin = calcularFechaFin();
         }
     }
 
@@ -75,18 +74,14 @@ public class Frecuencia{
     /**
      * Devuelve la última fecha correspondiente a la frecuencia
      **/
-    public LocalDate calcularFechaFin(){//Deberia ser privada, es publica para hacer las pruebas
-        return null;//temporal
-    }
+    public abstract LocalDate calcularFechaFin();
 
 
     /**
      * Devuelve la proxima fecha correspondiente a la frecuencia
      * o null si no hay proxima
      **/
-    public LocalDate obtenerProximaFecha() {
-        return null;//temporal
-    }
+    public abstract LocalDate obtenerFechaProxima();
 
 
     /**
@@ -95,7 +90,6 @@ public class Frecuencia{
      * Por ej. si la frecuencia cada semana los martes y jueves
      * y recibe una fecha que corresponde a un martes, devolverá true
      **/
-    public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera){
-        return false; //temporal
-    }
+    public abstract boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera);
 }
+
