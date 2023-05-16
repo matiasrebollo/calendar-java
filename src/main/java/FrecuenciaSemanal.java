@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-public class FrecuenciaSemanal extends Frecuencia {
+public class FrecuenciaSemanal extends Frecuencia implements Serializable {
 
     private ArrayList<DayOfWeek> dias = new ArrayList<>();
 

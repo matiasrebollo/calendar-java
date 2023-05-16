@@ -1,8 +1,8 @@
-import java.time.DayOfWeek;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 
-public abstract class Frecuencia{
+public abstract class Frecuencia implements Serializable {
 
     protected LocalDate fechaInicio;
     protected int intervalo;

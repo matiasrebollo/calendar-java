@@ -1,9 +1,13 @@
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class ElementoCalendario {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)//para que lea todos los atributos
+public class ElementoCalendario implements Serializable {
     private String titulo;
     private String descripcion;
     private boolean todoElDia;
@@ -11,8 +15,6 @@ public class ElementoCalendario {
     private LocalTime horaInicio;
     private Frecuencia frecuencia;
     private ArrayList<Alarma> alarmas = new ArrayList<>();
-
-
 
     public ElementoCalendario(String titulo, String descripcion, LocalDate fechaInicio, boolean todoElDia, LocalTime horaInicio, Frecuencia frecuencia) {
         this.titulo = titulo;

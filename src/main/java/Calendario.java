@@ -1,11 +1,23 @@
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Calendario {
+public class Calendario implements Serializable {
+    @JsonProperty("Eventos")
     private ArrayList<Evento> eventos;
+
+    @JsonProperty("Tareas")
     private ArrayList<Tarea> tareas;
 
     public Calendario(){
@@ -74,5 +86,24 @@ public class Calendario {
     }
     public int cantidadTareas() {
         return tareas.size();
+    }
+
+    public void serializarJson(String nombreArchivo) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible
+
+        try {
+            String leido = objectMapper.writeValueAsString(this);//copia la información en un string
+
+            // Guardar el string en un archivo de texto formato json
+            BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo));
+            writer.write(leido);
+            writer.close();
+
+            System.out.println("Objeto guardado en el archivo " + nombreArchivo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

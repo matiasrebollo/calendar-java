@@ -1,7 +1,10 @@
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class Tarea extends ElementoCalendario{
+    @JsonProperty
     private boolean completada;
 
     public Tarea(String titulo, String descripcion, LocalDate fecha, boolean todoElDia, LocalTime horario, Frecuencia frecuencia) {

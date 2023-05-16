@@ -1,9 +1,13 @@
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Alarma {
+public class Alarma implements Serializable {
     enum UnidadesDeTiempo {MINUTOS, HORAS, DIAS, SEMANAS}
     enum EfectosAlarma {NOTIFICACION, SONIDO, EMAIL}
 
+    @JsonProperty
     private LocalDateTime fechaHoraEvento;
     private LocalDateTime fechaHoraAlarma;
     private int intervalo;
@@ -62,5 +66,9 @@ public class Alarma {
 
     public LocalDateTime getFechaHoraAlarma() {
         return fechaHoraAlarma;
+    }
+
+    public EfectosAlarma getEfecto() {
+        return efecto;
     }
 }
