@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 public class FrecuenciaCero extends Frecuencia {
@@ -15,5 +18,19 @@ public class FrecuenciaCero extends Frecuencia {
     }
     public boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera){
         return fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin);
+    }
+
+
+
+    @JsonCreator
+    private FrecuenciaCero(@JsonProperty("fechaInicio") LocalDate fechaInicio,
+                           @JsonProperty("intervalo")int intervalo,
+                           @JsonProperty("ocurrencias") int ocurrencias,
+                           @JsonProperty("fechaFin") LocalDate fechaFin,
+                           @JsonProperty("fechaProxima") LocalDate fechaProxima){
+        super(fechaInicio,intervalo,fechaFin);
+        this.ocurrencias = ocurrencias;
+        this.fechaProxima = fechaProxima;
+
     }
 }

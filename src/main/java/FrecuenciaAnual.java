@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.time.Month;
 
@@ -48,5 +51,16 @@ public class FrecuenciaAnual extends Frecuencia {
             return (diaDelMes == diaDelMesCualquiera && mes.equals(mesCualquiera));
         }
         return false;
+    }
+
+    @JsonCreator
+    private FrecuenciaAnual(@JsonProperty("fechaInicio") LocalDate fechaInicio,
+                            @JsonProperty("intervalo")int intervalo,
+                            @JsonProperty("ocurrencias") int ocurrencias,
+                            @JsonProperty("fechaFin") LocalDate fechaFin,
+                            @JsonProperty("fechaProxima") LocalDate fechaProxima){
+        super(fechaInicio,intervalo,ocurrencias);
+        this.fechaFin = fechaFin;
+        this.fechaProxima = fechaProxima;
     }
 }

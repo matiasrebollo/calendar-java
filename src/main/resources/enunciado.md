@@ -34,3 +34,10 @@ Lógica de negocio (etapa 1)
         - Reproducir un sonido.
         - Enviar un email.
           Nota: dado que en la primera etapa no se implementa la interacción con el usuario, no se deben implementar los efectos de las alarmas; pero sí deben tener pruebas asociadas.
+
+Persistencia (Etapa 2)
+======================
+ * Agregar la capacidad de guardar el estado del calendario y recuperarlo luego. 
+   Queda a libre elección el formato de serialización. Se puede diseñar un formato 
+   propio (de texto o binario), o se puede usar un formato estándar como XML o JSON.
+ * Agregar las pruebas asociadas.

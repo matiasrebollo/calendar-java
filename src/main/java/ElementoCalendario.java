@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)//para que lea todos los atributos
+
 public class ElementoCalendario implements Serializable {
     private String titulo;
     private String descripcion;
@@ -31,6 +32,9 @@ public class ElementoCalendario implements Serializable {
         }
     }
 
+    /**
+    * Actualiza la fecha y hora de cada alarma del array
+    * */
     private void modificarTodasLasAlarmas() {
         LocalDateTime fechaInicioHoraInicio = LocalDateTime.of(fechaInicio, horaInicio);
         for (Alarma alarma : alarmas) {
@@ -41,12 +45,12 @@ public class ElementoCalendario implements Serializable {
     public void setHoraInicio(LocalTime nuevoHorario) {
         this.horaInicio = nuevoHorario;
         this.todoElDia = false;
-        modificarTodasLasAlarmas();
+        this.modificarTodasLasAlarmas();
     }
     public void setFechaInicio(LocalDate fechaInicioNueva) {
         this.fechaInicio = fechaInicioNueva;
         this.frecuencia.setFechaInicio(fechaInicioNueva);
-        modificarTodasLasAlarmas();
+        this.modificarTodasLasAlarmas();
     }
     public void setTitulo(String tituloNuevo) {
         this.titulo = tituloNuevo;
@@ -83,6 +87,15 @@ public class ElementoCalendario implements Serializable {
         this.alarmas.add(alarma);
         return alarma;
     }
+
+    /**
+     * Recibe un array de alarmas ya cargado y las copia en las alarmas propias
+     * Se utiliza únicamente en la deserialización
+     * */
+    protected void copiarAlarmas(ArrayList<Alarma> alarmas) {
+        this.alarmas = alarmas;
+    }
+
     public void destruirAlarma(Alarma alarma){
         this.alarmas.remove(alarma);
     }
@@ -107,10 +120,12 @@ public class ElementoCalendario implements Serializable {
         return horaInicio;
     }
 
+
     /**
-     * Devuelve true si la tarea ocurrirá en la fechaInicio recibida
+     * Devuelve true si la tarea ocurrirá en la fecha recibida
      * */
     public boolean ocurreEnFecha(LocalDate fechaCualquiera){
         return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
     }
+
 }

@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -40,5 +43,17 @@ public class FrecuenciaDiaria extends Frecuencia {
             return (diferenciaDeDias % intervalo == 0);
         }
         return false;
+    }
+
+    @JsonCreator
+    private FrecuenciaDiaria(@JsonProperty("fechaInicio") LocalDate fechaInicio,
+                           @JsonProperty("intervalo")int intervalo,
+                           @JsonProperty("ocurrencias") int ocurrencias,
+                           @JsonProperty("fechaFin") LocalDate fechaFin,
+                           @JsonProperty("fechaProxima") LocalDate fechaProxima){
+        super(fechaInicio,intervalo,fechaFin);
+        this.ocurrencias = ocurrencias;
+        this.fechaProxima = fechaProxima;
+
     }
 }

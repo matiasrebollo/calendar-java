@@ -1,11 +1,12 @@
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
-
 import static java.time.temporal.ChronoUnit.DAYS;
-public class FrecuenciaSemanal extends Frecuencia implements Serializable {
 
+public class FrecuenciaSemanal extends Frecuencia{
     private ArrayList<DayOfWeek> dias = new ArrayList<>();
 
     public FrecuenciaSemanal(LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
@@ -20,9 +21,8 @@ public class FrecuenciaSemanal extends Frecuencia implements Serializable {
 
 
     /**
-     * agrega el dia de la semana a la frecuencia si no fue agregado antes
+     * Agrega el día de la semana a la frecuencia si no fue agregado antes
      * o lo quita si este ya estaba agregado
-     *
      */
     public void agregarOQuitarDiaDeLaSemana(DayOfWeek dia) {
         if (dias.contains(dia)) {
@@ -81,5 +81,19 @@ public class FrecuenciaSemanal extends Frecuencia implements Serializable {
             return (dias.contains(diaCualquiera) && ((diferenciaDeDias/7) % (intervalo)) == 0);
         }
         return false;
+    }
+
+
+    @JsonCreator
+    private FrecuenciaSemanal(@JsonProperty("fechaInicio") LocalDate fechaInicio,
+                              @JsonProperty("intervalo")int intervalo,
+                              @JsonProperty("ocurrencias") int ocurrencias,
+                              @JsonProperty("fechaFin") LocalDate fechaFin,
+                              @JsonProperty("fechaProxima") LocalDate fechaProxima,
+                              @JsonProperty("dias") ArrayList<DayOfWeek> dias){
+        super(fechaInicio,intervalo,ocurrencias);
+        this.fechaFin = fechaFin;
+        this.fechaProxima = fechaProxima;
+        this.dias = dias;
     }
 }

@@ -1,9 +1,12 @@
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
-public class Evento extends ElementoCalendario implements Serializable {
+public class Evento extends ElementoCalendario{
     private LocalDate fechaFin;
     private LocalTime horaFin;
 
@@ -35,5 +38,23 @@ public class Evento extends ElementoCalendario implements Serializable {
     public void marcarTodoElDia() {
         super.marcarTodoElDia();
         this.horaFin = LocalTime.MAX;
+    }
+
+
+    @JsonCreator
+    private Evento(
+            @JsonProperty("titulo") String titulo,
+            @JsonProperty("descripcion") String descripcion,
+            @JsonProperty("fechaInicio") LocalDate fechaInicio,
+            @JsonProperty("todoElDia") boolean todoElDia,
+            @JsonProperty("horaInicio") LocalTime horaInicio,
+            @JsonProperty("alarmas") ArrayList<Alarma> alarmas,
+            @JsonProperty("fechaFin") LocalDate fechaFin,
+            @JsonProperty("horaFin") LocalTime horaFin) {
+        super(titulo, descripcion, fechaInicio, todoElDia, horaInicio,null);
+        super.copiarAlarmas(alarmas);
+        this.fechaFin = fechaFin;
+        this.horaFin = horaFin;
+
     }
 }

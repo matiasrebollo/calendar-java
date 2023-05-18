@@ -1,3 +1,6 @@
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -118,5 +121,19 @@ public class FrecuenciaMensual extends Frecuencia {
             }
         }
         return false;
+    }
+
+
+    @JsonCreator
+    private FrecuenciaMensual(@JsonProperty("fechaInicio") LocalDate fechaInicio,
+                              @JsonProperty("intervalo")int intervalo,
+                              @JsonProperty("ocurrencias") int ocurrencias,
+                              @JsonProperty("fechaFin") LocalDate fechaFin,
+                              @JsonProperty("fechaProxima") LocalDate fechaProxima,
+                              @JsonProperty("frecuenciaMensual") Tipo frecuenciaMensual){
+        super(fechaInicio,intervalo,ocurrencias);
+        this.fechaFin = fechaFin;
+        this.fechaProxima = fechaProxima;
+        this.frecuenciaMensual = frecuenciaMensual;
     }
 }

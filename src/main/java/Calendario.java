@@ -1,12 +1,7 @@
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -88,11 +83,7 @@ public class Calendario implements Serializable {
         return tareas.size();
     }
 
-    public void serializarJson(String nombreArchivo) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible
-
+    public void serializar(ObjectMapper objectMapper, String nombreArchivo) {
         try {
             String leido = objectMapper.writeValueAsString(this);//copia la información en un string
 
@@ -104,6 +95,16 @@ public class Calendario implements Serializable {
             System.out.println("Objeto guardado en el archivo " + nombreArchivo);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static Calendario deserializar(ObjectMapper objectMapper) {
+        try {
+            File archivo = new File("Datos1.json");
+            return objectMapper.readValue(archivo, Calendario.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

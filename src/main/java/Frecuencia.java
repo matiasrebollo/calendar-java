@@ -1,9 +1,22 @@
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
 
-public abstract class Frecuencia implements Serializable {
+@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = FrecuenciaCero.class, name = "FrecuenciaCero"),
+        @JsonSubTypes.Type(value = FrecuenciaDiaria.class, name = "FrecuenciaDiaria"),
+        @JsonSubTypes.Type(value = FrecuenciaSemanal.class, name = "FrecuenciaSemanal"),
+        @JsonSubTypes.Type(value = FrecuenciaMensual.class, name = "FrecuenciaMensual"),
+        @JsonSubTypes.Type(value = FrecuenciaAnual.class, name = "FrecuenciaAnual")
+})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)//para que lea todos los atributos
 
+public abstract class Frecuencia implements Serializable {
     protected LocalDate fechaInicio;
     protected int intervalo;
     protected int ocurrencias;
@@ -11,7 +24,7 @@ public abstract class Frecuencia implements Serializable {
     protected LocalDate fechaProxima;
 
 
-    //recibe una fecha fin
+    //constructor que recibe una fecha fin
     public Frecuencia(LocalDate fechaInicio, int intervalo, LocalDate fechaFin) {
         this.intervalo = intervalo;
         this.fechaInicio = fechaInicio;
@@ -25,7 +38,7 @@ public abstract class Frecuencia implements Serializable {
         this.fechaProxima = fechaInicio;
     }
 
-    //recibe una cantidad de ocurrencias
+    //constructor que recibe una cantidad de ocurrencias
     public Frecuencia(LocalDate fechaInicio, int intervalo, int ocurrencias) {
         this.fechaProxima = fechaInicio;
         this.intervalo = intervalo;
@@ -44,14 +57,12 @@ public abstract class Frecuencia implements Serializable {
         this.intervalo = cadaCuanto;
         this.fechaFin = calcularFechaFin();
     }
-
     public void setFechaInicio(LocalDate fechaInicio){
         this.fechaInicio = fechaInicio;
         if (this.ocurrencias > 0){
             this.fechaFin = calcularFechaFin();
         }
     }
-
     public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
     }
