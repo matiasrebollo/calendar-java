@@ -1,7 +1,3 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import java.time.LocalDate;
 
 public class Main {
@@ -31,18 +27,18 @@ public class Main {
 
 
         //Serializar
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible
+       // ObjectMapper objectMapper = new ObjectMapper();
+      //  objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
+        //objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible
 
 
-        c.serializar(objectMapper, "datos1.json");
+//        c.serializar(objectMapper);
 
 
 
-        Calendario c2 = Calendario.deserializar(objectMapper);
+  //      Calendario c2 = Calendario.deserializar(objectMapper);
 
-        c2.serializar(objectMapper, "datos2.json");
+        //c2.serializar(objectMapper);
 
 
 

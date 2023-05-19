@@ -1,5 +1,7 @@
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -82,25 +84,35 @@ public class Calendario implements Serializable {
     public int cantidadTareas() {
         return tareas.size();
     }
+    public Evento obtenerEvento(int n) {
+        return eventos.get(n);
+    }
+    public Tarea obtenerTarea(int n) {
+        return tareas.get(n);
+    }
 
-    public void serializar(ObjectMapper objectMapper, String nombreArchivo) {
+    public void serializar(ObjectMapper objectMapper) {
+        objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible (que no aparezca todo en una linea)
         try {
             String leido = objectMapper.writeValueAsString(this);//copia la información en un string
 
             // Guardar el string en un archivo de texto formato json
-            BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("Datos.json"));
             writer.write(leido);
             writer.close();
 
-            System.out.println("Objeto guardado en el archivo " + nombreArchivo);
+            //System.out.println("Objeto guardado en el archivo " + nombreArchivo);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static Calendario deserializar(ObjectMapper objectMapper) {
+        objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible (que no aparezca todo en una linea)
         try {
-            File archivo = new File("Datos1.json");
+            File archivo = new File("Datos.json");
             return objectMapper.readValue(archivo, Calendario.class);
         } catch (IOException e) {
             e.printStackTrace();

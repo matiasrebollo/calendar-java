@@ -1,10 +1,14 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class CalendarioTest {
 
@@ -238,5 +242,43 @@ public class CalendarioTest {
         evento.setTitulo("nuevo titulo");
         assertEquals("nuevo titulo", evento.getTitulo());
         assertEquals(true, c.existeEvento(evento));
+    }
+
+    @Test
+    public void serializacion() throws IOException {
+        var c = new Calendario();
+
+        LocalDateTime fechaHoraEvento = LocalDateTime.of(2023,1,1,8,0);
+        Frecuencia f = new FrecuenciaDiaria(fechaHoraEvento.toLocalDate(),2,10);
+        var evento = c.crearEvento("evento1", "", "1/1/2023", "30/1/2023", "08:00", "10:30" , false, f);
+        var tarea1 = c.crearTarea("Tarea 1", "es la primer tarea","2/2/2023",true, "", null);
+
+        c.serializar(new ObjectMapper());
+
+        assertEquals(true, Files.exists(Path.of("Datos.json")));//existe el archivo
+
+        String contenido = Files.readString(Path.of("Datos.json"));
+        assertNotNull(contenido);
+    }
+
+    @Test
+    public void deserializacion() throws IOException {
+        LocalDateTime fechaHoraEvento = LocalDateTime.of(2023,1,1,8,0);
+        LocalDateTime fechaHoraFinEvento = LocalDateTime.of(2023,1,1,10,30);
+        Frecuencia f = new FrecuenciaDiaria(fechaHoraEvento.toLocalDate(),2,10);
+        var eventoOriginal = new Evento("evento1","",fechaHoraEvento,fechaHoraFinEvento,
+                                    false,f);
+
+
+        var c = Calendario.deserializar(new ObjectMapper());
+
+        assertNotEquals(null,c);
+        assertEquals(1,c.cantidadEventos());
+
+        var e1 = c.obtenerEvento(0);
+
+        assertEquals(eventoOriginal.getTitulo(), e1.getTitulo());
+
+        //Agregar mas pruebas
     }
 }
