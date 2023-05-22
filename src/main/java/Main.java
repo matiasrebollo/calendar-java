@@ -28,12 +28,6 @@ public class Main {
                 false,"20:30",frecuencia2);
 
 
-        //Serializar
-       // ObjectMapper objectMapper = new ObjectMapper();
-      //  objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
-        //objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible
-
-
         c.serializar(new ObjectMapper(),"Datos1.json");
 
         Calendario c2 = Calendario.deserializar(new ObjectMapper(), "Datos1.json");
