@@ -264,21 +264,29 @@ public class CalendarioTest {
     @Test
     public void deserializacion() throws IOException {
         LocalDateTime fechaHoraEvento = LocalDateTime.of(2023,1,1,8,0);
-        LocalDateTime fechaHoraFinEvento = LocalDateTime.of(2023,1,1,10,30);
+        LocalDateTime fechaHoraFinEvento = LocalDateTime.of(2023,1,30,10,30);
+        LocalDate fechaTarea = LocalDate.of(2023,2,2);
         Frecuencia f = new FrecuenciaDiaria(fechaHoraEvento.toLocalDate(),2,10);
         var eventoOriginal = new Evento("evento1","",fechaHoraEvento,fechaHoraFinEvento,
                                     false,f);
-
+        var tareaOriginal = new Tarea("Tarea 1", "es la primer tarea", fechaTarea, true, null, null);
 
         var c = Calendario.deserializar(new ObjectMapper());
 
         assertNotEquals(null,c);
         assertEquals(1,c.cantidadEventos());
+        assertEquals(1,c.cantidadTareas());
 
         var e1 = c.obtenerEvento(0);
+        var t1 = c.obtenerTarea(0);
 
         assertEquals(eventoOriginal.getTitulo(), e1.getTitulo());
-
-        //Agregar mas pruebas
+        assertEquals(eventoOriginal.getDescripcion(), e1.getDescripcion());
+        assertEquals(eventoOriginal.getFechaInicio(), e1.getFechaInicio());
+        assertEquals(eventoOriginal.getFechaFin(), e1.getFechaFin());
+        assertEquals(tareaOriginal.getTitulo(), t1.getTitulo());
+        assertEquals(tareaOriginal.getDescripcion(), t1.getDescripcion());
+        assertEquals(tareaOriginal.getFechaInicio(), t1.getFechaInicio());
+        assertEquals(tareaOriginal.getHoraInicio(), t1.getHoraInicio());
     }
 }
