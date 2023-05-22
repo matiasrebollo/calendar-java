@@ -91,14 +91,17 @@ public class Calendario implements Serializable {
         return tareas.get(n);
     }
 
-    public void serializar(ObjectMapper objectMapper) {
+
+
+    public void serializar(ObjectMapper objectMapper, String nombreArchivo) {
         objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible (que no aparezca todo en una linea)
+
         try {
             String leido = objectMapper.writeValueAsString(this);//copia la información en un string
 
             // Guardar el string en un archivo de texto formato json
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Datos.json"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo));
             writer.write(leido);
             writer.close();
 
@@ -108,11 +111,11 @@ public class Calendario implements Serializable {
         }
     }
 
-    public static Calendario deserializar(ObjectMapper objectMapper) {
+    public static Calendario deserializar(ObjectMapper objectMapper, String nombreArchivo) {
         objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible (que no aparezca todo en una linea)
         try {
-            File archivo = new File("Datos.json");
+            File archivo = new File(nombreArchivo);
             return objectMapper.readValue(archivo, Calendario.class);
         } catch (IOException e) {
             e.printStackTrace();

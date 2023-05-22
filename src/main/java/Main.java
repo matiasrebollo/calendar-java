@@ -1,10 +1,12 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDate;
 
 public class Main {
 
 
     public static void main(String[] args) {
-        //inicializo un calendario con eventos y tareas
+
         var c = new Calendario();
 
         //evento 1
@@ -32,13 +34,13 @@ public class Main {
         //objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible
 
 
-//        c.serializar(objectMapper);
+        c.serializar(new ObjectMapper(),"Datos1.json");
 
+        Calendario c2 = Calendario.deserializar(new ObjectMapper(), "Datos1.json");
 
-
-  //      Calendario c2 = Calendario.deserializar(objectMapper);
-
-        //c2.serializar(objectMapper);
+        //TEMPORAL
+        //Para comparar a ojo Datos1 y Datos2 (para ver las cosas que no podemos testear)
+        c2.serializar(new ObjectMapper(),"Datos2.json");
 
 
 

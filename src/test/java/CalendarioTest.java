@@ -253,11 +253,11 @@ public class CalendarioTest {
         var evento = c.crearEvento("evento1", "", "1/1/2023", "30/1/2023", "08:00", "10:30" , false, f);
         var tarea1 = c.crearTarea("Tarea 1", "es la primer tarea","2/2/2023",true, "", null);
 
-        c.serializar(new ObjectMapper());
+        c.serializar(new ObjectMapper(), "DatosTest.json");
 
-        assertEquals(true, Files.exists(Path.of("Datos.json")));//existe el archivo
+        assertEquals(true, Files.exists(Path.of("DatosTest.json")));//existe el archivo
 
-        String contenido = Files.readString(Path.of("Datos.json"));
+        String contenido = Files.readString(Path.of("DatosTest.json"));
         assertNotNull(contenido);
     }
 
@@ -271,7 +271,7 @@ public class CalendarioTest {
                                     false,f);
         var tareaOriginal = new Tarea("Tarea 1", "es la primer tarea", fechaTarea, true, null, null);
 
-        var c = Calendario.deserializar(new ObjectMapper());
+        var c = Calendario.deserializar(new ObjectMapper(), "DatosTest.json");
 
         assertNotEquals(null,c);
         assertEquals(1,c.cantidadEventos());
