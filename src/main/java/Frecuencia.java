@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 
-@JsonTypeInfo( use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = FrecuenciaCero.class, name = "FrecuenciaCero"),
         @JsonSubTypes.Type(value = FrecuenciaDiaria.class, name = "FrecuenciaDiaria"),
