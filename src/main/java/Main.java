@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class Main {
@@ -28,13 +29,24 @@ public class Main {
                 false,"20:30",frecuencia2);
 
 
-        c.serializar(new ObjectMapper(),"Datos1.json");
+        try {
+            c.serializar(new ObjectMapper(),"Datos1.json");
+            System.out.println("Objeto guardado en el archivo " + "Datos1.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        Calendario c2 = Calendario.deserializar(new ObjectMapper(), "Datos1.json");
 
-        //TEMPORAL
-        //Para comparar a ojo Datos1 y Datos2 (para ver las cosas que no podemos testear)
-        c2.serializar(new ObjectMapper(),"Datos2.json");
+        try {
+            Calendario c2 = Calendario.deserializar(new ObjectMapper(), "Datos1.json");
+            //TEMPORAL
+            //Para comparar a ojo Datos1 y Datos2 (para ver las cosas que no podemos testear)
+            c2.serializar(new ObjectMapper(),"Datos2.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
 
 

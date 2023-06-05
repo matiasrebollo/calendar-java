@@ -93,33 +93,22 @@ public class Calendario implements Serializable {
 
 
 
-    public void serializar(ObjectMapper objectMapper, String nombreArchivo) {
-        objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
+    public void serializar(ObjectMapper objectMapper, String nombreArchivo) throws IOException{
+        objectMapper.registerModule(new JavaTimeModule());//para poder serializar los LocalDateTime
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible (que no aparezca todo en una linea)
 
-        try {
-            String leido = objectMapper.writeValueAsString(this);//copia la información en un string
+        String leido = objectMapper.writeValueAsString(this);//copia la información en un string
 
-            // Guardar el string en un archivo de texto formato json
-            BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo));
-            writer.write(leido);
-            writer.close();
-
-            //System.out.println("Objeto guardado en el archivo " + nombreArchivo);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Guardar el string en un archivo de texto formato json
+        BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo));
+        writer.write(leido);
+        writer.close();
     }
 
-    public static Calendario deserializar(ObjectMapper objectMapper, String nombreArchivo) {
+    public static Calendario deserializar(ObjectMapper objectMapper, String nombreArchivo) throws IOException{
         objectMapper.registerModule(new JavaTimeModule());//para poder escribir LocalDateTime
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);  // Habilitar formato legible (que no aparezca todo en una linea)
-        try {
-            File archivo = new File(nombreArchivo);
-            return objectMapper.readValue(archivo, Calendario.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+
+        File archivo = new File(nombreArchivo);
+        return objectMapper.readValue(archivo, Calendario.class);
     }
 }
