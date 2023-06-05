@@ -161,7 +161,7 @@ public class App extends Application {
          * Mejorar las proporciones, tamaños  (estetica)
          * Abrir un cuadro por encima cuando se haga click en agregarEvento, que tenga una especie de formulario
          *
-         * Aplicar toodo lo del calendario
+         * Aplicar lo del calendario
          * que se vean los eventos y tareas en las fechas correspondientes ordenados por hora
          *
          */
