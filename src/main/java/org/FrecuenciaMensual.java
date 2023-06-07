@@ -1,3 +1,5 @@
+package org;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,7 +10,7 @@ import java.time.temporal.ChronoUnit;
 import static java.time.temporal.ChronoUnit.MONTHS;
 
 public class FrecuenciaMensual extends Frecuencia {
-    enum Tipo {MISMODIA, MISMONUMERO}//ej. todos los meses, el dia 7 o todos los meses, el 3er lunes
+    public enum Tipo {MISMODIA, MISMONUMERO}//ej. todos los meses, el dia 7 o todos los meses, el 3er lunes
 
     private Tipo frecuenciaMensual;
 

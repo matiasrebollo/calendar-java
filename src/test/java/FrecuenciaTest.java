@@ -1,4 +1,4 @@
-import org.junit.Assert;
+import org.*;
 import org.junit.Test;
 
 import java.time.DayOfWeek;

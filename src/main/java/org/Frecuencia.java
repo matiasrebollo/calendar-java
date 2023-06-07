@@ -1,3 +1,5 @@
+package org;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -8,11 +10,11 @@ import java.time.LocalDate;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = FrecuenciaCero.class, name = "FrecuenciaCero"),
-        @JsonSubTypes.Type(value = FrecuenciaDiaria.class, name = "FrecuenciaDiaria"),
-        @JsonSubTypes.Type(value = FrecuenciaSemanal.class, name = "FrecuenciaSemanal"),
-        @JsonSubTypes.Type(value = FrecuenciaMensual.class, name = "FrecuenciaMensual"),
-        @JsonSubTypes.Type(value = FrecuenciaAnual.class, name = "FrecuenciaAnual")
+        @JsonSubTypes.Type(value = FrecuenciaCero.class, name = "org.FrecuenciaCero"),
+        @JsonSubTypes.Type(value = FrecuenciaDiaria.class, name = "org.FrecuenciaDiaria"),
+        @JsonSubTypes.Type(value = FrecuenciaSemanal.class, name = "org.FrecuenciaSemanal"),
+        @JsonSubTypes.Type(value = FrecuenciaMensual.class, name = "org.FrecuenciaMensual"),
+        @JsonSubTypes.Type(value = FrecuenciaAnual.class, name = "org.FrecuenciaAnual")
 })
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)//para que lea todos los atributos
 

@@ -1,4 +1,5 @@
-import org.junit.Assert;
+import org.Alarma;
+import org.Evento;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -9,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class AlarmaTest {
     private Alarma crearAlarma() {
-        // Crear una instancia de Alarma 5 minutos antes
+        // Crear una instancia de org.Alarma 5 minutos antes
         LocalDateTime fechaHoraEvento = LocalDateTime.of(2023, 4, 30, 12, 0); // Ejemplo de fecha y hora de evento
         int intervalo = 5; // Ejemplo de intervalo
         Alarma.UnidadesDeTiempo unidad = Alarma.UnidadesDeTiempo.MINUTOS; // Ejemplo de unidad de tiempo

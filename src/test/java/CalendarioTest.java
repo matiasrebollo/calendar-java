@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -251,7 +252,7 @@ public class CalendarioTest {
         LocalDateTime fechaHoraEvento = LocalDateTime.of(2023,1,1,8,0);
         Frecuencia f = new FrecuenciaDiaria(fechaHoraEvento.toLocalDate(),2,10);
         var evento = c.crearEvento("evento1", "", "1/1/2023", "30/1/2023", "08:00", "10:30" , false, f);
-        var tarea1 = c.crearTarea("Tarea 1", "es la primer tarea","2/2/2023",true, "", null);
+        var tarea1 = c.crearTarea("org.Tarea 1", "es la primer tarea","2/2/2023",true, "", null);
 
         c.serializar(new ObjectMapper(), "DatosTest.json");
 
@@ -269,7 +270,7 @@ public class CalendarioTest {
         Frecuencia f = new FrecuenciaDiaria(fechaHoraEvento.toLocalDate(),2,10);
         var eventoOriginal = new Evento("evento1","",fechaHoraEvento,fechaHoraFinEvento,
                                     false,f);
-        var tareaOriginal = new Tarea("Tarea 1", "es la primer tarea", fechaTarea, true, null, null);
+        var tareaOriginal = new Tarea("org.Tarea 1", "es la primer tarea", fechaTarea, true, null, null);
 
         var c = Calendario.deserializar(new ObjectMapper(), "DatosTest.json");
 

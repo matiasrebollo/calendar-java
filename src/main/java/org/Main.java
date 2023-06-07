@@ -1,3 +1,5 @@
+package org;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class Main {
         t1.agregarAlarma(null,10, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);
 
         //tarea 2
-        c.crearTarea("Tarea2", "esta es la Tarea 2","7/5/2023",
+        c.crearTarea("Tarea2", "esta es la org.Tarea 2","7/5/2023",
                 false,"20:30",frecuencia2);
 
 

@@ -1,3 +1,5 @@
+package org;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,8 +10,8 @@ import java.time.LocalDateTime;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)//para que incluya todos los atributos en el json
 public class Alarma implements Serializable {
-    enum UnidadesDeTiempo {MINUTOS, HORAS, DIAS, SEMANAS}
-    enum EfectosAlarma {NOTIFICACION, SONIDO, EMAIL}
+    public enum UnidadesDeTiempo {MINUTOS, HORAS, DIAS, SEMANAS}
+    public enum EfectosAlarma {NOTIFICACION, SONIDO, EMAIL}
 
     private LocalDateTime fechaHoraEvento;
     private LocalDateTime fechaHoraAlarma;

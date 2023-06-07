@@ -1,3 +1,5 @@
+package org;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -204,7 +206,7 @@ public class App extends Application {
         var barraIzquierda = new StackPane(new Label("  "));
         var barraDerecha = new StackPane(new Label("  "));
 
-        var botonAgregarEvento = new Button("agregar evento/Tarea");
+        var botonAgregarEvento = new Button("agregar evento/org.Tarea");
         botonAgregarEvento.setOnAction(actionEvent -> {
             //habria que lanzar como una ventana (cuadro) donde se pueda poner los datos del evento con un boton para confirmar
             System.out.println("Se agrego el evento");

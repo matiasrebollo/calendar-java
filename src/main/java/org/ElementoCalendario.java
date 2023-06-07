@@ -1,3 +1,5 @@
+package org;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import java.io.Serializable;
@@ -73,7 +75,7 @@ public class ElementoCalendario implements Serializable {
     }
 
     /**
-     * Crea una Alarma con los datos recibidos.
+     * Crea una org.Alarma con los datos recibidos.
      * Devuelve la alarma creada o null en caso de error
      * */
     public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
