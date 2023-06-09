@@ -3,12 +3,14 @@ package org;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -57,6 +59,71 @@ public class App extends Application {
         }
     }
 
+    private Node contenidoCentroMes() {
+        BorderStroke borde = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT);
+        int n = 1;
+        var lunes = new VBox(new Label("Lunes"));
+        var martes = new VBox(new Label("Martes"));
+        var miercoles = new VBox(new Label("Miercoles"));
+        var jueves = new VBox(new Label("Jueves"));
+        var viernes = new VBox(new Label("Viernes"));
+        var sabado = new VBox(new Label("Sabado"));
+        var domingo = new VBox(new Label("Domingo"));
+        VBox[] dias = {lunes, martes, miercoles, jueves, viernes, sabado, domingo};
+        for (VBox dia: dias){
+            dia.setAlignment(Pos.TOP_CENTER);
+            HBox.setHgrow(dia, Priority.ALWAYS);
+        }
+        var diasSemana = new HBox(lunes, martes, miercoles, jueves, viernes, sabado, domingo);
+        diasSemana.setAlignment(Pos.TOP_CENTER);
+
+        var dia1 = new VBox(new Label("1"));
+        var dia2 = new VBox(new Label("2"));
+        var dia3 = new VBox(new Label("3"));
+        var dia4 = new VBox(new Label("4"));
+        var dia5 = new VBox(new Label("5"));
+        var dia6 = new VBox(new Label("6"));
+        var dia7 = new VBox(new Label("7"));
+        VBox[] primerSemana = {dia1, dia2, dia3, dia4, dia5, dia6, dia7};
+        for (VBox dias1 : primerSemana){
+            dias1.setAlignment(Pos.TOP_CENTER);
+            dias1.getChildren().addAll(new Label(""), new Label(""), new Label(""));
+            dias1.setBorder(new Border(borde));
+            HBox.setHgrow(dias1, Priority.ALWAYS);
+        }
+        var fila1 = new HBox(dia1, dia2, dia3, dia4, dia5, dia6, dia7);
+        fila1.setAlignment(Pos.TOP_CENTER);
+        fila1.setBorder(new Border(borde));
+
+        var dia8 = new VBox(new Label("8"));
+        var dia9 = new VBox(new Label("9"));
+        var dia10 = new VBox(new Label("10"));
+        var dia11 = new VBox(new Label("11"));
+        var dia12 = new VBox(new Label("12"));
+        var dia13 = new VBox(new Label("13"));
+        var dia14 = new VBox(new Label("14"));
+        VBox[] segundaSemana = {dia8, dia9, dia10, dia11, dia12, dia13, dia14};
+        for (VBox dias2 : segundaSemana){
+            dias2.setAlignment(Pos.TOP_CENTER);
+            dias2.getChildren().addAll(new Label(""), new Label(""), new Label(""));
+            dias2.setBorder(new Border(borde));
+            HBox.setHgrow(dias2, Priority.ALWAYS);
+        }
+        var fila2 = new HBox(dia8, dia9, dia10, dia11, dia12, dia13, dia14);
+        fila2.setAlignment(Pos.TOP_CENTER);
+
+        fila2.setBorder(new Border(borde));
+
+        var centroMes = new VBox(diasSemana);
+        centroMes.getChildren().addAll(fila1, fila2);
+        centroMes.setSpacing(10);
+
+        //quedaria hacer lo mismo para los dias que quedan, igualmente siento que esta mal. No puedo centrar todo correctamente,
+        //y menos se me ocurre hacer que los numeros coincidan con los dias segun el mes. I NEED HELP
+        return centroMes;
+
+    }
+
     //Contenido del centro
     private Node contenidoCentroSemana() {
         int n = 1;//numero del lunes seleccionado (mejorar)
@@ -87,9 +154,7 @@ public class App extends Application {
     private Node contenidoCentroDia(){
         return null;
     }
-    private Node contenidoCentroMes(){
-        return null;
-    }
+
 
 
     //Barra superior...
@@ -200,8 +265,8 @@ public class App extends Application {
         var barraSuperior = contenidoBarraSuperior();
         barraSuperior.setStyle("-fx-background-color: red;");//para probar. Despues lo saco
 
-        var contenidoCentro = contenidoCentroSemana();
-        contenidoCentro.setStyle("-fx-background-color: green;");//para probar. Despues lo saco
+        var contenidoCentro = contenidoCentroMes();
+        //contenidoCentro.setStyle("-fx-background-color: green;");//para probar. Despues lo saco
 
         var barraIzquierda = new StackPane(new Label("  "));
         var barraDerecha = new StackPane(new Label("  "));
