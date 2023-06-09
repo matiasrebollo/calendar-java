@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -75,28 +76,28 @@ public class App extends Application {
             HBox.setHgrow(dia, Priority.ALWAYS);
         }
         var diasSemana = new HBox(lunes, martes, miercoles, jueves, viernes, sabado, domingo);
-        diasSemana.setAlignment(Pos.TOP_CENTER);
+        diasSemana.setAlignment(Pos.TOP_LEFT);
 
-        var dia1 = new VBox(new Label("1"));
-        var dia2 = new VBox(new Label("2"));
-        var dia3 = new VBox(new Label("3"));
-        var dia4 = new VBox(new Label("4"));
-        var dia5 = new VBox(new Label("5"));
-        var dia6 = new VBox(new Label("6"));
-        var dia7 = new VBox(new Label("7"));
+        var dia1 = new VBox(new Label("01"));
+        var dia2 = new VBox(new Label("02"));
+        var dia3 = new VBox(new Label("03"));
+        var dia4 = new VBox(new Label("04"));
+        var dia5 = new VBox(new Label("05"));
+        var dia6 = new VBox(new Label("06"));
+        var dia7 = new VBox(new Label("07"));
         VBox[] primerSemana = {dia1, dia2, dia3, dia4, dia5, dia6, dia7};
         for (VBox dias1 : primerSemana){
-            dias1.setAlignment(Pos.TOP_CENTER);
+            dias1.setAlignment(Pos.TOP_LEFT);
             dias1.getChildren().addAll(new Label(""), new Label(""), new Label(""));
             dias1.setBorder(new Border(borde));
             HBox.setHgrow(dias1, Priority.ALWAYS);
         }
         var fila1 = new HBox(dia1, dia2, dia3, dia4, dia5, dia6, dia7);
-        fila1.setAlignment(Pos.TOP_CENTER);
+        fila1.setAlignment(Pos.TOP_LEFT);
         fila1.setBorder(new Border(borde));
 
-        var dia8 = new VBox(new Label("8"));
-        var dia9 = new VBox(new Label("9"));
+        var dia8 = new VBox(new Label("08"));
+        var dia9 = new VBox(new Label("09"));
         var dia10 = new VBox(new Label("10"));
         var dia11 = new VBox(new Label("11"));
         var dia12 = new VBox(new Label("12"));
@@ -104,19 +105,73 @@ public class App extends Application {
         var dia14 = new VBox(new Label("14"));
         VBox[] segundaSemana = {dia8, dia9, dia10, dia11, dia12, dia13, dia14};
         for (VBox dias2 : segundaSemana){
-            dias2.setAlignment(Pos.TOP_CENTER);
+            dias2.setAlignment(Pos.TOP_LEFT);
             dias2.getChildren().addAll(new Label(""), new Label(""), new Label(""));
             dias2.setBorder(new Border(borde));
             HBox.setHgrow(dias2, Priority.ALWAYS);
         }
         var fila2 = new HBox(dia8, dia9, dia10, dia11, dia12, dia13, dia14);
-        fila2.setAlignment(Pos.TOP_CENTER);
-
+        fila2.setAlignment(Pos.TOP_LEFT);
         fila2.setBorder(new Border(borde));
 
+        var dia15 = new VBox(new Label("15"));
+        var dia16 = new VBox(new Label("16"));
+        var dia17 = new VBox(new Label("17"));
+        var dia18 = new VBox(new Label("18"));
+        var dia19 = new VBox(new Label("19"));
+        var dia20 = new VBox(new Label("20"));
+        var dia21 = new VBox(new Label("21"));
+        VBox[] tercerSemana = {dia15, dia16, dia17, dia18, dia19, dia20, dia21};
+        for (VBox dias3 : tercerSemana){
+            dias3.setAlignment(Pos.TOP_LEFT);
+            dias3.getChildren().addAll(new Label(""), new Label(""), new Label(""));
+            dias3.setBorder(new Border(borde));
+            HBox.setHgrow(dias3, Priority.ALWAYS);
+        }
+        var fila3 = new HBox(dia15, dia16, dia17, dia18, dia19, dia20, dia21);
+        fila3.setAlignment(Pos.TOP_LEFT);
+        fila3.setBorder(new Border(borde));
+
+        var dia22 = new VBox(new Label("22"));
+        var dia23 = new VBox(new Label("23"));
+        var dia24 = new VBox(new Label("24"));
+        var dia25 = new VBox(new Label("25"));
+        var dia26 = new VBox(new Label("26"));
+        var dia27 = new VBox(new Label("27"));
+        var dia28 = new VBox(new Label("28"));
+        VBox[] cuartaSemana = {dia22, dia23, dia24, dia25, dia26, dia27, dia28};
+        for (VBox dias4 : cuartaSemana){
+            dias4.setAlignment(Pos.TOP_LEFT);
+            dias4.getChildren().addAll(new Label(""), new Label(""), new Label(""));
+            dias4.setBorder(new Border(borde));
+            HBox.setHgrow(dias4, Priority.ALWAYS);
+        }
+        var fila4 = new HBox(dia22, dia23, dia24, dia25, dia26, dia27, dia28);
+        fila4.setAlignment(Pos.TOP_LEFT);
+        fila4.setBorder(new Border(borde));
+
+        var dia29 = new VBox(new Label("29"));
+        var dia30 = new VBox(new Label("30"));
+        var dia31 = new VBox(new Label("31"));
+        var diaaux1 = new VBox(new Label("01"));
+        var diaaux2 = new VBox(new Label("02"));
+        var diaaux3 = new VBox(new Label("03"));
+        var diaaux4 = new VBox(new Label("04"));
+        VBox[] quintaSemana = {dia29, dia30, dia31, diaaux1, diaaux2, diaaux3, diaaux4};
+        for (VBox dias5 : quintaSemana){
+            dias5.setAlignment(Pos.TOP_LEFT);
+            dias5.getChildren().addAll(new Label(""), new Label(""), new Label(""));
+            dias5.setBorder(new Border(borde));
+            HBox.setHgrow(dias5, Priority.ALWAYS);
+        }
+        var fila5 = new HBox(dia29, dia30, dia31, diaaux1, diaaux2, diaaux3, diaaux4);
+        fila5.setAlignment(Pos.TOP_LEFT);
+        fila5.setBorder(new Border(borde));
+
         var centroMes = new VBox(diasSemana);
-        centroMes.getChildren().addAll(fila1, fila2);
-        centroMes.setSpacing(10);
+        centroMes.getChildren().addAll(fila1, fila2, fila3, fila4, fila5);
+        VBox.setMargin(diasSemana, new Insets(10, 0,0,0));
+        VBox.setMargin(fila1, new Insets(10,0,0,0));
 
         //quedaria hacer lo mismo para los dias que quedan, igualmente siento que esta mal. No puedo centrar todo correctamente,
         //y menos se me ocurre hacer que los numeros coincidan con los dias segun el mes. I NEED HELP
