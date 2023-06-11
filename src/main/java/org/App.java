@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -262,6 +263,7 @@ public class App extends Application {
         labelEvento.textAlignmentProperty().set(TextAlignment.LEFT);
         labelEvento.setOnMouseClicked(a -> {
             //mostrar todos los datos del evento
+            //...
         });
 
         //si el evento ocurre este dia de la semana...
@@ -328,20 +330,17 @@ public class App extends Application {
             if (newValue.intValue() == 0) {
                 this.modalidad = Modalidades.DIA;
                 this.formatter = FORMATTER_FECHA;
-                this.contenidoCentro = contenidoCentroDia();
-                contenedor.setCenter(contenidoCentro);
+                contenedor.setCenter(contenidoCentroDia());
             }
             else if (newValue.intValue() == 1) {
                 modalidad = Modalidades.SEMANA;
                 formatter = FORMATTER_FECHA;
-                this.contenidoCentro = contenidoCentroSemana();
-                contenedor.setCenter(contenidoCentro);
+                contenedor.setCenter(contenidoCentroSemana());
             }
             else if (newValue.intValue() == 2) {
                 modalidad = Modalidades.MES;
                 formatter = DateTimeFormatter.ofPattern("MM/yyyy");//Estaria bueno que diga "Mayo 2023"
-                contenidoCentro = contenidoCentroMes();
-                contenedor.setCenter(contenidoCentro);
+                contenedor.setCenter(contenidoCentroMes());
             }
         });
         return choiceBox;
@@ -419,70 +418,127 @@ public class App extends Application {
     //barra inferior...
 
 
-    private ChoiceBox choiceBoxDeFrecuencia(){
+    private ChoiceBox choiceBoxDeFrecuencia(VBox caja){
         var choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll("Ninguna","Diaria");//lo que pide el enunciado
         choiceBox.setValue("Ninguna");
+        var spinner = new Spinner<>(0,31,0);//numero entre 0 y 31
+        spinner.setPrefWidth(70);
+        var labelIntervalo = new Label("Intervalo", spinner);
+
+        choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() == 0) {
+                caja.getChildren().remove(labelIntervalo);
+            }
+            else if (newValue.intValue() == 1) {
+                caja.getChildren().add(labelIntervalo);
+            }
+
+        });
 
         return choiceBox;
     }
-    private void abrirVentanaEmergente() {
-        Dialog<Tarea> dialog = new Dialog<>();
-        dialog.setTitle("Agregar un Tarea");
-        var tituloField = new TextField();
-        var descripcionField = new TextField();
-        var fechaInicio = new DatePicker();
-        var todoElDia = new CheckBox();
-        var horario = new TextField();//debe ingresar en formato "hh:mm"
-        var frecuencia = choiceBoxDeFrecuencia();
-        var intervalo = new Spinner<>(0,31,0);//numero entre 0 y 31
-
-        //contenido del formulario
-        dialog.getDialogPane().setContent(
-                new VBox(14,
-                        new Label("Titulo:"), tituloField,
-                        new Label("Descripcion:"), descripcionField,
-                        new Label("Fecha de Inicio"), fechaInicio,
-                        new Label("Todo el dia", todoElDia),
-                        new Label("Horario 'hh:mm'"), horario,
-                        new Label("Frecuencia"), frecuencia,
-                        new Label("Intervalo", intervalo))
-                );
-
-        // Configurar los botones de Aceptar y Cancelar
-        ButtonType btnAceptar = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
-        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().addAll(btnAceptar, btnCancelar);
-
-        // Validar los campos de texto antes de aceptar
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == btnAceptar) {
-                if (fechaInicio.getValue() == null){
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Campos Vacíos");
-                    alert.showAndWait();
-                    return null;
-                }
-                Calendario c = new Calendario();//Temporal (el calendario tiene que ser un atributo)
-                var tarea = c.crearTarea(tituloField.getText(),descripcionField.getText(),
-                        fechaInicio.getValue().format(FORMATTER_FECHA),
-                        todoElDia.allowIndeterminateProperty().getValue(),
-                        horario.getText(),null);
-
-                return tarea;
-            }
-            return null;
-        });
-
-        // Mostrar el diálogo y esperar hasta que se cierre
-        dialog.showAndWait();
-
-        System.out.println("Titulo ingresado: " + tituloField.getText());
-        System.out.println("Descripcion: " + descripcionField.getText());
-        System.out.println("fecha: " + fechaInicio.getValue());
-        System.out.println("Horario: " + horario.getText());
+    private CheckBox crearCheckBox(VBox caja, Node horario) {
+     CheckBox checkBox = new CheckBox();
+     checkBox.setOnAction(actionEvent -> {
+         if (checkBox.isSelected())
+             caja.getChildren().get(6).setVisible(false);
+         else
+             caja.getChildren().get(6).setVisible(true);
+     });
+     return checkBox;
     }
+    //private void abrirVentanaEmergente() {
+    //        Dialog<Tarea> dialog = new Dialog<>();
+    //        dialog.setTitle("Agregar un Tarea");
+    //        var tituloField = new TextField();
+    //        var descripcionField = new TextField();
+    //        var fechaInicio = new DatePicker();
+    //        var todoElDia = new CheckBox();
+    //        var horario = new TextField();//debe ingresar en formato "hh:mm"
+    //        var frecuencia = choiceBoxDeFrecuencia();
+    //        var intervalo = new Spinner<>(0,31,0);//numero entre 0 y 31
+    //
+    //        //contenido del formulario
+    //        dialog.getDialogPane().setContent(
+    //                new VBox(14,
+    //                        new Label("Titulo:"), tituloField,
+    //                        new Label("Descripcion:"), descripcionField,
+    //                        new Label("Fecha de Inicio"), fechaInicio,
+    //                        new Label("Todo el dia", todoElDia),
+    //                        new Label("Horario 'hh:mm'"), horario,
+    //                        new Label("Frecuencia"), frecuencia,
+    //                        new Label("Intervalo", intervalo))
+    //                );
+    //
+    //        // Configurar los botones de Aceptar y Cancelar
+    //        ButtonType btnAceptar = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
+    //        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+    //        dialog.getDialogPane().getButtonTypes().addAll(btnAceptar, btnCancelar);
+    //
+    //        // Validar los campos de texto antes de aceptar
+    //        dialog.setResultConverter(dialogButton -> {
+    //            if (dialogButton == btnAceptar) {
+    //                if (fechaInicio.getValue() == null){
+    //                    Alert alert = new Alert(Alert.AlertType.WARNING);
+    //                    alert.setTitle("Campos Vacíos");
+    //                    alert.showAndWait();
+    //                    return null;
+    //                }
+    //                Calendario c = new Calendario();//Temporal (el calendario tiene que ser un atributo)
+    //                var tarea = c.crearTarea(tituloField.getText(),descripcionField.getText(),
+    //                        fechaInicio.getValue().format(FORMATTER_FECHA),
+    //                        todoElDia.allowIndeterminateProperty().getValue(),
+    //                        horario.getText(),null);
+    //
+    //                return tarea;
+    //            }
+    //            return null;
+    //        });
+    //
+    //        // Mostrar el diálogo y esperar hasta que se cierre
+    //        dialog.showAndWait();
+    //
+    //        System.out.println("Titulo ingresado: " + tituloField.getText());
+    //        System.out.println("Descripcion: " + descripcionField.getText());
+    //        System.out.println("fecha: " + fechaInicio.getValue());
+    //        System.out.println("Horario: " + horario.getText());
+    //    }
 
+
+    private Node contenidoTareaDeVentanaEmergente(){
+
+        var tituloField = new TextField();
+        var descripcionField = new TextArea();
+        var fechaField = new TextField();
+        var horarioField = new TextField();
+        var labelHorario = new Label("Horario: ", horarioField);
+        var todoElDiaCheck = new CheckBox();
+
+        
+        var contenido = new VBox(new Label("Titulo: "), tituloField, new Label("Descripcion:"),descripcionField,
+                                 new Label("Fecha: "), fechaField, labelHorario);
+        
+        
+        contenido.getChildren().add(new Label("Todo el dia: ", crearCheckBox(contenido,labelHorario)));
+        contenido.getChildren().add(new Label("Frecuencia: "));
+        contenido.getChildren().add(choiceBoxDeFrecuencia(contenido));
+
+        return contenido;
+    }
+    private void abrirVentanaEmergente2(){
+        var ventana = new Stage();
+
+        var contenido = (VBox) contenidoTareaDeVentanaEmergente();
+        ventana.setTitle("Agregar Tarea");
+
+        var escena = new Scene(contenido,250,430);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.initOwner(ventanaPrincipal);
+        ventana.setResizable(false);
+        ventana.setScene(escena);
+        ventana.showAndWait();
+    }
     /**
      * Contiene un boton para agregar Tareas al Calendario y otro para agregar Eventos
      * */
@@ -490,7 +546,7 @@ public class App extends Application {
         var botonAgregarEvento = new Button("agregar Evento");
         var botonAgregarTarea = new Button("agregar Tarea");
         botonAgregarTarea.setOnAction(actionEvent -> {
-            abrirVentanaEmergente();
+            abrirVentanaEmergente2();
 
             System.out.println("Se agrego el evento");
         });
@@ -507,11 +563,13 @@ public class App extends Application {
 
 
 
+    private Stage ventanaPrincipal;
     @Override
     public void start(Stage stage) throws Exception {
         fechaActual = LocalDate.now();
         horaActual = LocalTime.now();
         fechaSeleccionada = fechaActual;
+        ventanaPrincipal = stage;
 
 
         contenidoCentro = contenidoCentroSemana();
@@ -537,11 +595,12 @@ public class App extends Application {
         /**
          * COSAS QUE FALTAN:
          * contenidoCentro Dia y ContenidoCentro Mes. (la barra inferior y superior van a ser las mismas)
+         * Al hacer  click en un evento mostrar la info
 
          * Mejorar las proporciones, tamaños  (estetica)
-         * Abrir un cuadro por encima cuando se haga click en agregarEvento, que tenga una especie de formulario (averiguar como se hace)
-         *
-         * Aplicar lo del calendario
+
+         * Usar los datos ingresados para crear un evento/tarea
+
          * que se vean los eventos y tareas en las fechas correspondientes ordenados por hora
          *
          */
