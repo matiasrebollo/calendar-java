@@ -10,12 +10,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -34,19 +36,25 @@ public class App extends Application {
     private BorderPane contenedor;
 
 
+    private void irAlLunes(){
+        while (!fechaSeleccionada.getDayOfWeek().equals(DayOfWeek.MONDAY)) {//para tener el lunes seleccionado y simplificar cosas
+            fechaSeleccionada = fechaSeleccionada.minusDays(1);
+        }
+    }
+    private void irAlPrimerDiaDelMes(){
+        while (fechaSeleccionada.getDayOfMonth() != 1) {//para tener el dia 1 del mes
+            fechaSeleccionada = fechaSeleccionada.minusDays(1);
+        }
+    }
     private void retrocederFecha() {
         switch (modalidad) {
             case DIA -> fechaSeleccionada = fechaSeleccionada.minusDays(1);
             case SEMANA -> {
-                while (!fechaSeleccionada.getDayOfWeek().equals(DayOfWeek.MONDAY)) {//para tener el lunes seleccionado y simplificar cosas
-                    fechaSeleccionada = fechaSeleccionada.minusDays(1);
-                }
+                irAlLunes();
                 fechaSeleccionada = fechaSeleccionada.minusWeeks(1);
             }
             case MES -> {
-                while (fechaSeleccionada.getDayOfMonth() != 1) {//para tener el dia 1 del mes
-                    fechaSeleccionada = fechaSeleccionada.minusDays(1);
-                }
+                irAlPrimerDiaDelMes();
                 fechaSeleccionada = fechaSeleccionada.minusMonths(1);
             }
         }
@@ -55,20 +63,15 @@ public class App extends Application {
         switch (modalidad) {
             case DIA -> fechaSeleccionada = fechaSeleccionada.plusDays(1);
             case SEMANA -> {
-                while (!fechaSeleccionada.getDayOfWeek().equals(DayOfWeek.MONDAY)) {//para tener el lunes seleccionado y simplificar cosas
-                    fechaSeleccionada = fechaSeleccionada.minusDays(1);
-                }
+                irAlLunes();
                 fechaSeleccionada = fechaSeleccionada.plusWeeks(1);
             }
             case MES -> {
-                while (fechaSeleccionada.getDayOfMonth() != 1) {//para tener el dia 1 del mes
-                    fechaSeleccionada = fechaSeleccionada.minusDays(1);
-                }
+                irAlPrimerDiaDelMes();
                 fechaSeleccionada = fechaSeleccionada.plusMonths(1);
             }
         }
     }
-
 
     /**
      * Recibe un día de la semana y
@@ -88,6 +91,7 @@ public class App extends Application {
     }
 
 
+    //Contenido del centro
     private Node contenidoCentroMes() {
         BorderStroke borde = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT);
         int n = 1;
@@ -210,7 +214,6 @@ public class App extends Application {
         return centroMes;
     }
 
-    //Contenido del centro
     private void actualizarContenidoCentro() {
         switch (modalidad) {
             case DIA -> contenedor.setCenter(contenidoCentroDia());
@@ -218,31 +221,89 @@ public class App extends Application {
             case MES -> contenedor.setCenter(contenidoCentroMes());
         }
     }
+
+    /**
+     * Recibe un numero del 0 al 6 y devuelve el nombre del dia de la semana
+     * 0 -> "Lunes"
+     * */
+    private String nDiaDeLaSemana(int n) {
+        if (n == 0)
+            return "Lunes\n";
+        if (n == 1)
+            return "Martes\n";
+        if (n == 2)
+            return "Miercoles\n";
+        if (n == 3)
+            return "Jueves\n";
+        if (n == 4)
+            return "Viernes\n";
+        if (n == 5)
+            return "Sabado\n";
+        if (n == 6)
+            return "Domingo\n";
+        return "";
+    }
+
+    //tengo que tener todos los eventos que ocurren en la semana actual
+    /**
+     * Recibe una columna de uno de los dias de la semana, y
+     * agrega todos los eventos que ocurren en ese dia en la columna recibida
+     * */
+    private void mostrarEventosEnLaInterfazSemana(VBox columnaDia, DayOfWeek diaSemana){
+        //un evento de ejemplo:
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(2023,6,12,14,30);
+        LocalDateTime fechaHoraFin = LocalDateTime.of(2023,6,12,18,30);
+        var evento1 = new Evento("Evento 1", "Este es el evento 1",
+                                fechaHoraInicio,fechaHoraFin,false,null);
+
+        var labelEvento = new Label(evento1.getHoraInicio().format(DateTimeFormatter.ofPattern("hh:mm")) + "-" +
+                                    evento1.getHoraFin().format(DateTimeFormatter.ofPattern("hh:mm")) + ": " +
+                                    evento1.getTitulo());
+        labelEvento.textAlignmentProperty().set(TextAlignment.LEFT);
+        labelEvento.setOnMouseClicked(a -> {
+            //mostrar todos los datos del evento
+        });
+
+        //si el evento ocurre este dia de la semana...
+        if (evento1.getFechaInicio().getDayOfWeek().equals(diaSemana)) {
+            columnaDia.getChildren().add(labelEvento);
+        }
+    }
+    /**
+     *
+     */
     private Node contenidoCentroSemana() {
         int n = fechaSeleccionada.getDayOfMonth();
-        int max = fechaSeleccionada.lengthOfMonth();
         BorderStroke borde = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT);
+        var contenido = new HBox();
+        contenido.setAlignment(Pos.TOP_CENTER);
 
-        var columnaLunes = new VBox(new Label("Lunes\n" + n));
-        var columnaMartes = new VBox(new Label("Martes\n" + (n+1)));
-        var columnaMiercoles = new VBox(new Label("Miercoles\n" + (n+2)));
-        var columnaJueves = new VBox(new Label("Jueves\n" + (n+3)));
-        var columnaViernes = new VBox(new Label("Viernes\n" + (n+4)));
-        var columnaSabado = new VBox(new Label("Sabado\n" + (n+5)));
-        var columnaDomingo = new VBox(new Label("Domingo\n" + (n+6)));
+        int j = 1;//numero de dia del mes siguiente
+        for (int i = 0; i < 7; i++) {
+            var col = new VBox();
+            var stackPane = new StackPane();
+            stackPane.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");//borde inferior
+            var label = new Label();
+            label.setTextAlignment(TextAlignment.CENTER);
+            String dia = nDiaDeLaSemana(i);//calcular dia
 
-        //Ajusto las propiedades de cada columna
-        VBox[] columnas = {columnaLunes, columnaMartes, columnaMiercoles, columnaJueves, columnaViernes, columnaSabado, columnaDomingo};
-        for (VBox col: columnas) {
-            col.setAlignment(Pos.TOP_CENTER);
+            if (n+i > fechaSeleccionada.lengthOfMonth()) {//si me paso del mes
+                label.setText(dia+j);
+                j++;
+            }
+            else{
+                label.setText(dia+(n+i));
+            }
+            stackPane.getChildren().add(label);
+            col.getChildren().add(stackPane);
+
             col.setBorder(new Border(borde));
+            mostrarEventosEnLaInterfazSemana(col,fechaSeleccionada.plusDays(i).getDayOfWeek());
             HBox.setHgrow(col, Priority.ALWAYS);
+
+            contenido.getChildren().add(col);
         }
-
-        var contenidoCentro = new HBox(columnaLunes, columnaMartes, columnaMiercoles, columnaJueves, columnaViernes, columnaSabado, columnaDomingo);
-        contenidoCentro.setAlignment(Pos.TOP_CENTER);
-
-        return contenidoCentro;
+        return contenido;
     }
 
     private Node contenidoCentroDia(){
@@ -269,12 +330,14 @@ public class App extends Application {
                 this.formatter = FORMATTER_FECHA;
                 this.contenidoCentro = contenidoCentroDia();
                 contenedor.setCenter(contenidoCentro);
-            } else if (newValue.intValue() == 1) {
+            }
+            else if (newValue.intValue() == 1) {
                 modalidad = Modalidades.SEMANA;
                 formatter = FORMATTER_FECHA;
                 this.contenidoCentro = contenidoCentroSemana();
                 contenedor.setCenter(contenidoCentro);
-            } else if (newValue.intValue() == 2) {
+            }
+            else if (newValue.intValue() == 2) {
                 modalidad = Modalidades.MES;
                 formatter = DateTimeFormatter.ofPattern("MM/yyyy");//Estaria bueno que diga "Mayo 2023"
                 contenidoCentro = contenidoCentroMes();
@@ -289,8 +352,8 @@ public class App extends Application {
      * */
     private Node labelFechaHoraActual() {
         var labelFechaHora = new Label(horaActual.format(FORMATTER_HORA) +"\n"+ fechaActual.format(FORMATTER_FECHA));
-        labelFechaHora.setAlignment(Pos.CENTER);//para centrar en el espacio
         labelFechaHora.setTextAlignment(TextAlignment.CENTER);//para centrar el texto
+        labelFechaHora.setFont(Font.font(15));//para agrandar el tamaño de la fuente
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {//realiza cada 1 segundo
             fechaActual = LocalDate.now();
@@ -305,29 +368,32 @@ public class App extends Application {
 
     /**
      * Crea un VBox que contiene la fecha seleccionada y dos botones
-     * con flechas para avanzar o retroceder esa fecha
+     * con flechas para avanzar o retroceder esa fecha.
+     * Al pulsar alguno de los botones se actualiza el contenido centro
      */
     private Node bloqueSeleccionarFecha() {
-        var fecha = new Label(this.fechaSeleccionada.format(formatter));
+        var labelFecha = new Label(this.fechaSeleccionada.format(formatter));
+        labelFecha.setFont(Font.font(20));
+
         var flechaIzquierda = new Button("<-");
+        flechaIzquierda.setFont(Font.font(15));
         flechaIzquierda.setOnAction(actionEvent -> {
             retrocederFecha();
-            fecha.setText(this.fechaSeleccionada.format(formatter));
+            labelFecha.setText(this.fechaSeleccionada.format(formatter));
             actualizarContenidoCentro();
-            //this.contenedor.setCenter(contenidoCentro);
         });
         var flechaDerecha = new Button("->");
+        flechaDerecha.setFont(Font.font(15));
         flechaDerecha.setOnAction(actionEvent -> {
             avanzarFecha();
-            fecha.setText(this.fechaSeleccionada.format(formatter));
+            labelFecha.setText(this.fechaSeleccionada.format(formatter));
             actualizarContenidoCentro();
-            //this.contenedor.setCenter(contenidoCentroSemana());
         });
 
         var flechas = new TilePane(flechaIzquierda, flechaDerecha);
         flechas.setAlignment(Pos.CENTER);
 
-        var contenedor = new VBox(fecha, flechas);
+        var contenedor = new VBox(labelFecha, flechas);
         contenedor.setAlignment(Pos.CENTER);
         return contenedor;
     }
@@ -351,10 +417,13 @@ public class App extends Application {
 
 
     //barra inferior...
+
+
     private ChoiceBox choiceBoxDeFrecuencia(){
         var choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Ninguna","Diaria", "Semanal", "Mensual", "Anual");
+        choiceBox.getItems().addAll("Ninguna","Diaria");//lo que pide el enunciado
         choiceBox.setValue("Ninguna");
+
         return choiceBox;
     }
     private void abrirVentanaEmergente() {
@@ -363,17 +432,21 @@ public class App extends Application {
         var tituloField = new TextField();
         var descripcionField = new TextField();
         var fechaInicio = new DatePicker();
+        var todoElDia = new CheckBox();
         var horario = new TextField();//debe ingresar en formato "hh:mm"
         var frecuencia = choiceBoxDeFrecuencia();
+        var intervalo = new Spinner<>(0,31,0);//numero entre 0 y 31
 
         //contenido del formulario
         dialog.getDialogPane().setContent(
-                new VBox(30,
+                new VBox(14,
                         new Label("Titulo:"), tituloField,
                         new Label("Descripcion:"), descripcionField,
                         new Label("Fecha de Inicio"), fechaInicio,
+                        new Label("Todo el dia", todoElDia),
                         new Label("Horario 'hh:mm'"), horario,
-                        new Label("Frecuencia"), frecuencia)
+                        new Label("Frecuencia"), frecuencia,
+                        new Label("Intervalo", intervalo))
                 );
 
         // Configurar los botones de Aceptar y Cancelar
@@ -390,29 +463,43 @@ public class App extends Application {
                     alert.showAndWait();
                     return null;
                 }
-                return new Tarea(tituloField.getText(),descripcionField.getText(),
-                                 fechaInicio.getValue(),true,null,null);
+                Calendario c = new Calendario();//Temporal (el calendario tiene que ser un atributo)
+                var tarea = c.crearTarea(tituloField.getText(),descripcionField.getText(),
+                        fechaInicio.getValue().format(FORMATTER_FECHA),
+                        todoElDia.allowIndeterminateProperty().getValue(),
+                        horario.getText(),null);
+
+                return tarea;
             }
             return null;
         });
 
         // Mostrar el diálogo y esperar hasta que se cierre
-        dialog.showAndWait().ifPresent(result -> {
-            var titulo = result.getTitulo();
-            // Realizar acciones con los valores del formulario (por ejemplo, iniciar sesión)
-            System.out.println("Titulo: " + titulo);
-        });
+        dialog.showAndWait();
+
+        System.out.println("Titulo ingresado: " + tituloField.getText());
+        System.out.println("Descripcion: " + descripcionField.getText());
+        System.out.println("fecha: " + fechaInicio.getValue());
+        System.out.println("Horario: " + horario.getText());
     }
 
+    /**
+     * Contiene un boton para agregar Tareas al Calendario y otro para agregar Eventos
+     * */
     public Node contenidoBarraInferior() {
-        var botonAgregarEvento = new Button("agregar evento/Tarea");
-        botonAgregarEvento.setOnAction(actionEvent -> {
+        var botonAgregarEvento = new Button("agregar Evento");
+        var botonAgregarTarea = new Button("agregar Tarea");
+        botonAgregarTarea.setOnAction(actionEvent -> {
             abrirVentanaEmergente();
-            //habria que lanzar como una ventana (cuadro) donde se pueda poner los datos del evento con un boton para confirmar
+
             System.out.println("Se agrego el evento");
+        });
+        botonAgregarEvento.setOnAction(actionEvent -> {
+
         });
 
         var barraInferior = new StackPane(botonAgregarEvento);
+        barraInferior.getChildren().add(botonAgregarTarea);
         return barraInferior;
     }
 
@@ -427,15 +514,14 @@ public class App extends Application {
         fechaSeleccionada = fechaActual;
 
 
-        contenidoCentro = contenidoCentroMes();
+        contenidoCentro = contenidoCentroSemana();
         //contenidoCentro.setStyle("-fx-background-color: green;");//para probar. Despues lo saco
 
         var barraSuperior = contenidoBarraSuperior();
-        barraSuperior.setStyle("-fx-background-color: #683b3b;");//para probar. Despues lo saco
+        barraSuperior.setStyle("-fx-background-color: #34a9c9;");//para probar. Despues lo saco
 
         var barraIzquierda = new StackPane(new Label("  "));//para agregar un espacio de margen
         var barraDerecha = new StackPane(new Label("  "));//para agregar un espacio de margen
-
 
         var barraInferior = contenidoBarraInferior();
 
@@ -451,7 +537,7 @@ public class App extends Application {
         /**
          * COSAS QUE FALTAN:
          * contenidoCentro Dia y ContenidoCentro Mes. (la barra inferior y superior van a ser las mismas)
-         * cambiar la forma de mostrar cuando se indique (cambiar el contenido centro)
+
          * Mejorar las proporciones, tamaños  (estetica)
          * Abrir un cuadro por encima cuando se haga click en agregarEvento, que tenga una especie de formulario (averiguar como se hace)
          *
