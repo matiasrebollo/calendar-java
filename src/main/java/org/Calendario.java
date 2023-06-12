@@ -113,4 +113,13 @@ public class Calendario implements Serializable {
         File archivo = new File(nombreArchivo);
         return objectMapper.readValue(archivo, Calendario.class);
     }
+
+    public ArrayList<ElementoCalendario> mostrarEventosYTareasMes(LocalDate fecha){
+        LocalDate primerDiaMes = fecha.withDayOfMonth(1);
+        for (int i = 0; i < fecha.lengthOfMonth(); i++){
+            for (int j = 0; j < cantidadEventos() + cantidadTareas(); j++){
+
+            }
+        }
+    }
 }

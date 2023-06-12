@@ -87,13 +87,33 @@ public class App extends Application {
         return cuantos;
     }
 
+    private void mostrarEventosEnLaInterfazMes(VBox casilla, int dia){
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(2023,6,12,14,30);
+        LocalDateTime fechaHoraFin = LocalDateTime.of(2023,6,12,18,30);
+        var evento1 = new Evento("Evento 1", "Este es el evento 1",
+                fechaHoraInicio,fechaHoraFin,false,null);
+        var labelEvento = new Label(evento1.getTitulo());
+
+        labelEvento.textAlignmentProperty().set(TextAlignment.LEFT);
+        labelEvento.setOnMouseClicked(a -> {
+            //mostrar todos los datos del evento
+            //...
+        });
+
+        if (evento1.getFechaInicio().getDayOfYear() == dia){
+            casilla.getChildren().add(labelEvento);
+        }
+    }
+
     private void crearDias(int[] auxiliares, HBox fila, int posicionDiaUno, int cantidadDiasMes, BorderStroke borde){
         int semana = 7;
         for (int i = 1; i <= semana; i++){
             String numero;
+            boolean aux = false;
             if (auxiliares[1] < posicionDiaUno || auxiliares[0] > cantidadDiasMes){
                 numero = "00";
                 auxiliares[1]++;
+                aux = true;
             } else {
                 numero = String.valueOf(auxiliares[0]);
                 if (numero.length() == 1){
@@ -104,8 +124,12 @@ public class App extends Application {
             var dia = new VBox(new Label(numero));
             dia.setAlignment(Pos.TOP_LEFT);
             dia.setBorder(new Border(borde));
-            if (numero.equals("00")){
+            /*if (numero.equals("00")){
                 dia.setStyle("-fx-background-color: #f2f2f2;");
+            }*/
+            if (!aux && auxiliares[0] < cantidadDiasMes){
+                mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
+                        (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());
             }
             HBox.setHgrow(dia, Priority.ALWAYS);
             VBox.setVgrow(dia, Priority.ALWAYS);
@@ -515,7 +539,7 @@ public class App extends Application {
         ventanaPrincipal = stage;
 
 
-        contenidoCentro = contenidoCentroMes();
+        contenidoCentro = contenidoCentroSemana();
         //contenidoCentro.setStyle("-fx-background-color: green;");//para probar. Despues lo saco
 
         var barraSuperior = contenidoBarraSuperior();
