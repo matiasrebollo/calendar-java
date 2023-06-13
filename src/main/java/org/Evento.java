@@ -57,6 +57,10 @@ public class Evento extends ElementoCalendario{
         super.copiarAlarmas(alarmas);
         this.fechaFin = fechaFin;
         this.horaFin = horaFin;
+    }
 
+    @Override
+    protected String getTypename() {
+        return "Evento";
     }
 }

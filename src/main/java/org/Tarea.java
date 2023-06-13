@@ -43,6 +43,11 @@ public class Tarea extends ElementoCalendario{
         super.copiarAlarmas(alarmas);
         this.completada = completada;
     }
+
+    @Override
+    protected String getTypename() {
+        return "Tarea";
+    }
 }
 
 
