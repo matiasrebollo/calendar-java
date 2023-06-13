@@ -28,6 +28,8 @@ public class App extends Application {
 
     private Calendario calendario;
     private LocalDate fechaSeleccionada;
+    private Label labelFecha = new Label();
+
     private LocalDate fechaActual;
     private LocalTime horaActual;
 
@@ -307,17 +309,23 @@ public class App extends Application {
             if (newValue.intValue() == 0) {
                 this.modalidad = Modalidades.DIA;
                 this.formatter = FORMATTER_FECHA;
-                contenedor.setCenter(contenidoCentroDia());
+                //contenedor.setCenter(contenidoCentroDia());
+                actualizarContenidoCentro();
             }
             else if (newValue.intValue() == 1) {
                 modalidad = Modalidades.SEMANA;
                 formatter = FORMATTER_FECHA;
+                irAlLunes();
+                labelFecha.setText(fechaSeleccionada.format(formatter));
                 contenedor.setCenter(contenidoCentroSemana());
             }
             else if (newValue.intValue() == 2) {
                 modalidad = Modalidades.MES;
                 formatter = DateTimeFormatter.ofPattern("MM/yyyy");//Estaria bueno que diga "Mayo 2023"
+                irAlPrimerDiaDelMes();
+                labelFecha.setText(fechaSeleccionada.format(formatter));
                 contenedor.setCenter(contenidoCentroMes());
+                //actualizarContenidoCentro();
             }
         });
         return choiceBox;
@@ -348,7 +356,7 @@ public class App extends Application {
      * Al pulsar alguno de los botones se actualiza el contenido centro
      */
     private Node bloqueSeleccionarFecha() {
-        var labelFecha = new Label(this.fechaSeleccionada.format(formatter));
+        labelFecha = new Label(this.fechaSeleccionada.format(formatter));
         labelFecha.setFont(Font.font(20));
 
         var flechaIzquierda = new Button("<-");
@@ -444,19 +452,21 @@ public class App extends Application {
 
      * Devuelve un HBox con los dos botones.
      * */
-    private HBox crearBotonesVentanaTarea(Stage ventana, TextField tituloField, TextArea descripcionField,
-                                          DatePicker fechaPicker, Spinner horaSpinner, Spinner minutosSpinner,
-                                          CheckBox todoElDiaBox, ChoiceBox frecuenciaChoice,
-                                          Spinner intervaloSpinner, Spinner ocurrenciasSpinner, CheckBox infinitas) {
+    private HBox crearBotonesVentanaTarea(Stage ventana, List<Control> camposFormulario) {
+        var fechaPicker = (DatePicker) camposFormulario.get(2);
+        var frecuenciaChoice = (ChoiceBox) camposFormulario.get(6);
+        var infinitas = (CheckBox) camposFormulario.get(9);
         var botonAceptar = new Button("Aceptar");
         botonAceptar.setOnAction(e -> {//leer los datos ingresados por el usuario
             if (fechaPicker.getValue() != null && fechaPicker.getValue().getMonth() != null) {
+                var titulo = ((TextField) camposFormulario.get(0)).getText();
+                var descripcion = ((TextArea) camposFormulario.get(1)).getText();
                 var fecha = fechaPicker.getValue();
-                var horaString = horaSpinner.getValue().toString() + ":" + minutosSpinner.getValue().toString();
-                var titulo = tituloField.getText();
-                var descripcion = descripcionField.getText();
-                int intervalo = (int) intervaloSpinner.getValue();
-                int ocurrencias = (int) ocurrenciasSpinner.getValue();
+                var horaString = ((Spinner) camposFormulario.get(3)).getValue().toString() + ":" +
+                                 ((Spinner) camposFormulario.get(4)).getValue().toString();
+                var todoElDia = ((CheckBox) camposFormulario.get(5)).isSelected();
+                int intervalo = (int) ((Spinner) camposFormulario.get(7)).getValue();
+                int ocurrencias = (int) ((Spinner) camposFormulario.get(8)).getValue();
                 Frecuencia frecuencia = null;
 
                 if (frecuenciaChoice.getValue().equals(frecuenciaChoice.getItems().get(0))) {//opcion "Ninguna"
@@ -469,18 +479,17 @@ public class App extends Application {
                         frecuencia = new FrecuenciaDiaria(fecha,intervalo, ocurrencias);
                 }
                 String fechaString = fechaPicker.getValue().toString();
-
-                //calendario.crearTarea(titulo,descripcion,fechaString,todoElDiaBox.isSelected(),horaString,frecuencia);
+                //calendario.crearTarea(titulo,descripcion,fechaString,todoElDia,horaString,frecuencia);
 
                 String frecuenciaString = frecuenciaChoice.getValue().toString();
                 System.out.println("Titulo: " + titulo);
                 System.out.println("Descripcion: " + descripcion);
                 System.out.println("Fecha: " + fechaString);
                 System.out.println("Hora: " + horaString);
-                System.out.println("Todo el dia: " + todoElDiaBox.isSelected());
+                System.out.println("Todo el dia: " + todoElDia);
                 System.out.println("Frecuencia: " + frecuenciaString);
                 System.out.println("intervalo: "+ intervalo);
-                System.out.println("Ocurrencias: " + ocurrenciasSpinner.getValue());
+                System.out.println("Ocurrencias: " + ocurrencias);
             }
         });
         var botonCancelar = new Button("Cancelar");
@@ -545,8 +554,7 @@ public class App extends Application {
                                                 horaSpinner, minutosSpinner, todoEldiaBox,frecuenciaChoice,
                                                 intervaloSpinner,ocurrenciasSpinner, infinitasCheckBox);
 
-        var botones = crearBotonesVentanaTarea(ventana, tituloField,descripcionField,fechaField,horaSpinner,
-                minutosSpinner, todoEldiaBox,frecuenciaChoice,intervaloSpinner, ocurrenciasSpinner, infinitasCheckBox);
+        var botones = crearBotonesVentanaTarea(ventana, camposFormulario);
 
         var contenido = new BorderPane();
         contenido.setCenter(formulario);
@@ -634,8 +642,7 @@ public class App extends Application {
 
         /*
           COSAS QUE FALTAN:
-          contenidoCentro Dia y ContenidoCentro Mes. (la barra inferior y superior van a ser las mismas)
-          Al hacer  click en un evento mostrar la info
+          Al hacer click en un evento mostrar la info
 
           Mejorar las proporciones, tamaños  (estetica)
 
@@ -647,7 +654,7 @@ public class App extends Application {
 
 
 
-        var sceneSemana = new Scene(contenedor, 640, 480);
+        var sceneSemana = new Scene(contenedor, 800, 540);
         stage.setScene(sceneSemana);
         stage.show();
     }
