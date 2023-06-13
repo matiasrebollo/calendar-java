@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class App extends Application {
     enum Modalidades {DIA, SEMANA, MES};
@@ -25,11 +26,11 @@ public class App extends Application {
     private static final DateTimeFormatter FORMATTER_HORA = DateTimeFormatter.ofPattern("HH:mm:ss");
     private DateTimeFormatter formatter = FORMATTER_FECHA;
 
+    private Calendario calendario;
     private LocalDate fechaSeleccionada;
     private LocalDate fechaActual;
     private LocalTime horaActual;
 
-    private Node contenidoCentro;
     private BorderPane contenedor;
 
 
@@ -124,9 +125,9 @@ public class App extends Application {
             var dia = new VBox(new Label(numero));
             dia.setAlignment(Pos.TOP_LEFT);
             dia.setBorder(new Border(borde));
-            /*if (numero.equals("00")){
-                dia.setStyle("-fx-background-color: #f2f2f2;");
-            }*/
+            if (numero.equals("00")){
+                dia.setStyle("-fx-background-color: #c22d2d;");
+            }
             if (!aux && auxiliares[0] < cantidadDiasMes){
                 mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
                         (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());
@@ -139,9 +140,15 @@ public class App extends Application {
 
     //Contenido del centro
     private Node contenidoCentroMes() {
-
         BorderStroke borde = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT);
-        var lunes = new VBox(new Label("Lunes"));
+
+        var diasSemana = new HBox();
+        for (int i = 0; i < 7; i++) {
+            var diaLabel = new StackPane(new Label(nombreDiaDeLaSemana(i)));
+            HBox.setHgrow(diaLabel,Priority.ALWAYS);
+            diasSemana.getChildren().add(diaLabel);
+        }
+        /*var lunes = new VBox(new Label("Lunes"));
         var martes = new VBox(new Label("Martes"));
         var miercoles = new VBox(new Label("Miercoles"));
         var jueves = new VBox(new Label("Jueves"));
@@ -152,9 +159,9 @@ public class App extends Application {
         for (VBox dia: dias){
             dia.setAlignment(Pos.TOP_CENTER);
             HBox.setHgrow(dia, Priority.ALWAYS);
-        }
-        var diasSemana = new HBox(lunes, martes, miercoles, jueves, viernes, sabado, domingo);
-        diasSemana.setAlignment(Pos.TOP_LEFT);
+        }*/
+        //var diasSemana = new HBox(lunes, martes, miercoles, jueves, viernes, sabado, domingo);
+        //diasSemana.setAlignment(Pos.TOP_LEFT);
 
         Month mes = this.fechaSeleccionada.getMonth();
         int diasMes = this.fechaSeleccionada.lengthOfMonth();
@@ -173,7 +180,7 @@ public class App extends Application {
             centroMes.getChildren().add(fila);
         }
 
-        if (auxiliares[0] <= diasMes){
+        if (auxiliares[0] <= diasMes){//si falta un fila, se agrega una mas...
             HBox fila6 = new HBox();
             crearDias(auxiliares, fila6, posicion, diasMes, borde);
             VBox.setVgrow(fila6, Priority.ALWAYS);
@@ -194,7 +201,7 @@ public class App extends Application {
      * Recibe un numero del 0 al 6 y devuelve el nombre del dia de la semana
      * 0 -> "Lunes"
      * */
-    private String nDiaDeLaSemana(int n) {
+    private String nombreDiaDeLaSemana(int n) {
         if (n == 0)
             return "Lunes\n";
         if (n == 1)
@@ -254,7 +261,7 @@ public class App extends Application {
             stackPane.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");//borde inferior
             var label = new Label();
             label.setTextAlignment(TextAlignment.CENTER);
-            String dia = nDiaDeLaSemana(i);//calcular dia
+            String dia = nombreDiaDeLaSemana(i);//calcular dia
 
             if (n+i > fechaSeleccionada.lengthOfMonth()) {//si me paso del mes
                 label.setText(dia+j);
@@ -275,8 +282,11 @@ public class App extends Application {
         return contenido;
     }
 
+    /**
+     *
+     * */
     private Node contenidoCentroDia(){
-        return null;
+        return new VBox(new Label("algo de prueba"));
     }
 
 
@@ -376,136 +386,198 @@ public class App extends Application {
         var espacioCentro =  bloqueSeleccionarFecha();
 
         HBox.setHgrow(espacioCentro,Priority.ALWAYS);
-        var contenedor = new HBox(espacioIzquierda, espacioCentro, espacioDerecha);
-        return contenedor;
+        return new HBox(espacioIzquierda, espacioCentro, espacioDerecha);
     }
 
 
 
+
+
+
+    //____________________________________________________________________________________________________
     //barra inferior...
-
-
-    private ChoiceBox choiceBoxDeFrecuencia(VBox caja){
+    //
+    /***
+     * crea una ChoiceBox con las opciones de frecuencia:
+     * "Ninguna": quita los items de Frecuencia de la caja
+     * "Diaria": agrega los items de Frecuencia en la caja
+     * "Semanal":...
+     */
+    private ChoiceBox choiceBoxDeFrecuencia(VBox contenedor, VBox frecuenciaItems){
         var choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll("Ninguna","Diaria");//lo que pide el enunciado
         choiceBox.setValue("Ninguna");
-        var spinner = new Spinner<>(0,31,0);//numero entre 0 y 31
-        spinner.setPrefWidth(70);
-        var labelIntervalo = new Label("Intervalo", spinner);
 
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.intValue() == 0) {
-                caja.getChildren().remove(labelIntervalo);
-            }
-            else if (newValue.intValue() == 1) {
-                caja.getChildren().add(labelIntervalo);
-            }
-
+            if (newValue.intValue() == 0)
+                contenedor.getChildren().remove(frecuenciaItems);
+            else if (newValue.intValue() == 1)
+                contenedor.getChildren().add(frecuenciaItems);
         });
-
         return choiceBox;
     }
-    private CheckBox crearCheckBox(VBox caja, Node horario) {
-     CheckBox checkBox = new CheckBox();
-     checkBox.setOnAction(actionEvent -> {
-         if (checkBox.isSelected())
-             caja.getChildren().get(6).setVisible(false);
-         else
-             caja.getChildren().get(6).setVisible(true);
-     });
-     return checkBox;
+
+
+    /**
+     * crea un checkBox que
+     * si está seleccionado oculta el elemento número 7 del contenedor
+     * si NO está seleccionado visibiliza el elemento numero 7 del contenedor
+     * */
+    private CheckBox crearCheckBox(VBox formulario) {
+        CheckBox checkBox = new CheckBox();
+        checkBox.setOnAction(actionEvent -> {
+            if (checkBox.isSelected())
+                formulario.getChildren().get(7).setVisible(false);
+            else
+                formulario.getChildren().get(7).setVisible(true);
+        });
+        return checkBox;
     }
-    //private void abrirVentanaEmergente() {
-    //        Dialog<Tarea> dialog = new Dialog<>();
-    //        dialog.setTitle("Agregar un Tarea");
-    //        var tituloField = new TextField();
-    //        var descripcionField = new TextField();
-    //        var fechaInicio = new DatePicker();
-    //        var todoElDia = new CheckBox();
-    //        var horario = new TextField();//debe ingresar en formato "hh:mm"
-    //        var frecuencia = choiceBoxDeFrecuencia();
-    //        var intervalo = new Spinner<>(0,31,0);//numero entre 0 y 31
-    //
-    //        //contenido del formulario
-    //        dialog.getDialogPane().setContent(
-    //                new VBox(14,
-    //                        new Label("Titulo:"), tituloField,
-    //                        new Label("Descripcion:"), descripcionField,
-    //                        new Label("Fecha de Inicio"), fechaInicio,
-    //                        new Label("Todo el dia", todoElDia),
-    //                        new Label("Horario 'hh:mm'"), horario,
-    //                        new Label("Frecuencia"), frecuencia,
-    //                        new Label("Intervalo", intervalo))
-    //                );
-    //
-    //        // Configurar los botones de Aceptar y Cancelar
-    //        ButtonType btnAceptar = new ButtonType("Aceptar", ButtonBar.ButtonData.OK_DONE);
-    //        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-    //        dialog.getDialogPane().getButtonTypes().addAll(btnAceptar, btnCancelar);
-    //
-    //        // Validar los campos de texto antes de aceptar
-    //        dialog.setResultConverter(dialogButton -> {
-    //            if (dialogButton == btnAceptar) {
-    //                if (fechaInicio.getValue() == null){
-    //                    Alert alert = new Alert(Alert.AlertType.WARNING);
-    //                    alert.setTitle("Campos Vacíos");
-    //                    alert.showAndWait();
-    //                    return null;
-    //                }
-    //                Calendario c = new Calendario();//Temporal (el calendario tiene que ser un atributo)
-    //                var tarea = c.crearTarea(tituloField.getText(),descripcionField.getText(),
-    //                        fechaInicio.getValue().format(FORMATTER_FECHA),
-    //                        todoElDia.allowIndeterminateProperty().getValue(),
-    //                        horario.getText(),null);
-    //
-    //                return tarea;
-    //            }
-    //            return null;
-    //        });
-    //
-    //        // Mostrar el diálogo y esperar hasta que se cierre
-    //        dialog.showAndWait();
-    //
-    //        System.out.println("Titulo ingresado: " + tituloField.getText());
-    //        System.out.println("Descripcion: " + descripcionField.getText());
-    //        System.out.println("fecha: " + fechaInicio.getValue());
-    //        System.out.println("Horario: " + horario.getText());
-    //    }
 
 
-    private Node contenidoTareaDeVentanaEmergente(){
+    /**
+     * Recibe la ventana (Stage) y todos los campos del formulario
+     * Crea 2 botones:
+     * Aceptar: lee todos los datos recibidos y si la fecha es válida
+     *          crea la tarea en el calendario
+     * Cancelar: cierra la ventana
 
+     * Devuelve un HBox con los dos botones.
+     * */
+    private HBox crearBotonesVentanaTarea(Stage ventana, TextField tituloField, TextArea descripcionField,
+                                          DatePicker fechaPicker, Spinner horaSpinner, Spinner minutosSpinner,
+                                          CheckBox todoElDiaBox, ChoiceBox frecuenciaChoice,
+                                          Spinner intervaloSpinner, Spinner ocurrenciasSpinner, CheckBox infinitas) {
+        var botonAceptar = new Button("Aceptar");
+        botonAceptar.setOnAction(e -> {//leer los datos ingresados por el usuario
+            if (fechaPicker.getValue() != null && fechaPicker.getValue().getMonth() != null) {
+                var fecha = fechaPicker.getValue();
+                var horaString = horaSpinner.getValue().toString() + ":" + minutosSpinner.getValue().toString();
+                var titulo = tituloField.getText();
+                var descripcion = descripcionField.getText();
+                int intervalo = (int) intervaloSpinner.getValue();
+                int ocurrencias = (int) ocurrenciasSpinner.getValue();
+                Frecuencia frecuencia = null;
+
+                if (frecuenciaChoice.getValue().equals(frecuenciaChoice.getItems().get(0))) {//opcion "Ninguna"
+                    frecuencia = new FrecuenciaCero(fecha);
+                    System.out.println("una sola vez");
+                } else if (frecuenciaChoice.getValue().equals(frecuenciaChoice.getItems().get(1))) {//opcion "Diaria"
+                    if (infinitas.isSelected())
+                        frecuencia = new FrecuenciaDiaria(fecha, intervalo, null);
+                    else
+                        frecuencia = new FrecuenciaDiaria(fecha,intervalo, ocurrencias);
+                }
+                String fechaString = fechaPicker.getValue().toString();
+
+                //calendario.crearTarea(titulo,descripcion,fechaString,todoElDiaBox.isSelected(),horaString,frecuencia);
+
+                String frecuenciaString = frecuenciaChoice.getValue().toString();
+                System.out.println("Titulo: " + titulo);
+                System.out.println("Descripcion: " + descripcion);
+                System.out.println("Fecha: " + fechaString);
+                System.out.println("Hora: " + horaString);
+                System.out.println("Todo el dia: " + todoElDiaBox.isSelected());
+                System.out.println("Frecuencia: " + frecuenciaString);
+                System.out.println("intervalo: "+ intervalo);
+                System.out.println("Ocurrencias: " + ocurrenciasSpinner.getValue());
+            }
+        });
+        var botonCancelar = new Button("Cancelar");
+        botonCancelar.setOnAction(actionEvent -> {
+            ventana.close();
+        });
+
+        var botones = new HBox(5, botonAceptar, botonCancelar);
+        botones.setAlignment(Pos.CENTER);
+        return botones;
+    }
+
+    /***
+     * Crea un VBox con los items recibidos
+     */
+    private VBox itemsDeFrecuencia(Spinner intervalo, Spinner ocurrencias, CheckBox infinitas) {
+        var caja = new VBox();
+        intervalo.setPrefWidth(70);
+        ocurrencias.setPrefWidth(70);
+        var label = new Label("intervalo:",intervalo);
+        var label2 = new Label("Infinitas", infinitas);
+        var label3 = new Label("ocurrencias", ocurrencias);
+        caja.getChildren().addAll(label, label2, label3);
+        infinitas.setOnAction(e -> {
+            if (infinitas.isSelected())
+                caja.getChildren().get(2).setVisible(false);
+            else
+                caja.getChildren().get(2).setVisible(true);
+        });
+        return caja;
+    }
+
+    private BorderPane contenidoVentanaTarea(Stage ventana) {
         var tituloField = new TextField();
-        var descripcionField = new TextArea();
-        var fechaField = new TextField();
-        var horarioField = new TextField();
-        var labelHorario = new Label("Horario: ", horarioField);
-        var todoElDiaCheck = new CheckBox();
+        var descripcionField = new TextArea(); descripcionField.setPrefHeight(90);//ajusto el tamaño
+        var fechaField = new DatePicker();
+        var horaSpinner = new Spinner<>(0,23, 0); horaSpinner.setPrefWidth(60);
+        var minutosSpinner = new Spinner<>(0,59,0); minutosSpinner.setPrefWidth(60);
+        var hBoxHora = new HBox(new Label(" Hora "), horaSpinner, new Label(" Minutos "), minutosSpinner);
+        hBoxHora.setAlignment(Pos.CENTER_LEFT);
+        var horarioVbox = new VBox(new Label("Horario:"), hBoxHora);
 
-        
-        var contenido = new VBox(new Label("Titulo: "), tituloField, new Label("Descripcion:"),descripcionField,
-                                 new Label("Fecha: "), fechaField, labelHorario);
-        
-        
-        contenido.getChildren().add(new Label("Todo el dia: ", crearCheckBox(contenido,labelHorario)));
-        contenido.getChildren().add(new Label("Frecuencia: "));
-        contenido.getChildren().add(choiceBoxDeFrecuencia(contenido));
+        var intervaloSpinner = new Spinner<>(1,31,0);
+        var ocurrenciasSpinner = new Spinner<>(1,1000,0);
+        var infinitasCheckBox = new CheckBox();
+        var frecuenciaItems = itemsDeFrecuencia(intervaloSpinner,ocurrenciasSpinner,infinitasCheckBox);
+
+        VBox formulario = new VBox(5);//5px de espacio entre bloques
+
+        var frecuenciaChoice = choiceBoxDeFrecuencia(formulario, frecuenciaItems);
+        var todoEldiaBox = crearCheckBox(formulario);
+
+        formulario.getChildren().addAll(
+                new Label("Titulo: "), tituloField,
+                new Label("Descripcion:"),descripcionField,
+                new Label("Fecha: "), fechaField,
+                new Label("Todo el dia: ", todoEldiaBox),
+                horarioVbox,
+                new Label("Frecuencia: "),frecuenciaChoice);
+
+        List<Control> camposFormulario = List.of(tituloField, descripcionField,fechaField,
+                                                horaSpinner, minutosSpinner, todoEldiaBox,frecuenciaChoice,
+                                                intervaloSpinner,ocurrenciasSpinner, infinitasCheckBox);
+
+        var botones = crearBotonesVentanaTarea(ventana, tituloField,descripcionField,fechaField,horaSpinner,
+                minutosSpinner, todoEldiaBox,frecuenciaChoice,intervaloSpinner, ocurrenciasSpinner, infinitasCheckBox);
+
+        var contenido = new BorderPane();
+        contenido.setCenter(formulario);
+        contenido.setBottom(botones);
 
         return contenido;
     }
-    private void abrirVentanaEmergente2(){
+
+
+    /**
+     * Es llamada únicamente por la funcion 'contenidoBarraInferior'.
+     * Abre una ventana emergente que incluye el contenido indicado en el parametro
+     * */
+    private void abrirVentanaEmergente(String string){
         var ventana = new Stage();
 
-        var contenido = (VBox) contenidoTareaDeVentanaEmergente();
-        ventana.setTitle("Agregar Tarea");
+        BorderPane contenido;
+        if (string.equals("Tarea"))
+            contenido = contenidoVentanaTarea(ventana);
+        else
+            contenido = null;
+        ventana.setTitle("Agregar" + string);
 
-        var escena = new Scene(contenido,250,430);
+        var escena = new Scene(contenido,280,450);
         ventana.initModality(Modality.APPLICATION_MODAL);
         ventana.initOwner(ventanaPrincipal);
         ventana.setResizable(false);
         ventana.setScene(escena);
         ventana.showAndWait();
     }
+
     /**
      * Contiene un boton para agregar Tareas al Calendario y otro para agregar Eventos
      * */
@@ -513,16 +585,17 @@ public class App extends Application {
         var botonAgregarEvento = new Button("agregar Evento");
         var botonAgregarTarea = new Button("agregar Tarea");
         botonAgregarTarea.setOnAction(actionEvent -> {
-            abrirVentanaEmergente2();
-
-            System.out.println("Se agrego el evento");
+            abrirVentanaEmergente("Tarea");
         });
         botonAgregarEvento.setOnAction(actionEvent -> {
+            //abrirVentanaEmergente("Evento");
 
         });
+        var hbox = new HBox(1,botonAgregarTarea,botonAgregarEvento);
+        hbox.setAlignment(Pos.CENTER);
 
-        var barraInferior = new StackPane(botonAgregarEvento);
-        barraInferior.getChildren().add(botonAgregarTarea);
+        var barraInferior = new StackPane(hbox);
+
         return barraInferior;
     }
 
@@ -539,7 +612,7 @@ public class App extends Application {
         ventanaPrincipal = stage;
 
 
-        contenidoCentro = contenidoCentroSemana();
+        var contenidoCentro = contenidoCentroSemana();
         //contenidoCentro.setStyle("-fx-background-color: green;");//para probar. Despues lo saco
 
         var barraSuperior = contenidoBarraSuperior();
@@ -559,17 +632,17 @@ public class App extends Application {
         contenedor.setLeft(barraIzquierda);
         contenedor.setRight(barraDerecha);
 
-        /**
-         * COSAS QUE FALTAN:
-         * contenidoCentro Dia y ContenidoCentro Mes. (la barra inferior y superior van a ser las mismas)
-         * Al hacer  click en un evento mostrar la info
+        /*
+          COSAS QUE FALTAN:
+          contenidoCentro Dia y ContenidoCentro Mes. (la barra inferior y superior van a ser las mismas)
+          Al hacer  click en un evento mostrar la info
 
-         * Mejorar las proporciones, tamaños  (estetica)
+          Mejorar las proporciones, tamaños  (estetica)
 
-         * Usar los datos ingresados para crear un evento/tarea
+          Usar los datos ingresados para crear un evento/tarea
 
-         * que se vean los eventos y tareas en las fechas correspondientes ordenados por hora
-         *
+          que se vean los eventos y tareas en las fechas correspondientes ordenados por hora
+
          */
 
 
