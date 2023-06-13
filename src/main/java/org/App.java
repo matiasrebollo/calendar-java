@@ -304,6 +304,7 @@ public class App extends Application {
         choiceBox.getItems().addAll("Dia", "Semana", "Mes");
         choiceBox.setValue("Semana");//formato semana por defecto
 
+
         // Acciones a realizar cuando se modifica la opción seleccionada
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.intValue() == 0) {
