@@ -144,9 +144,7 @@ public class App extends Application {
 
         return formulario;
     }
-
-    private void informacionElemento(ElementoCalendario elemento){
-
+    private void informacionElemento(ElementoCalendario elemento) {
         var ventana = new Stage();
         ventana.setTitle("Informacion" + elemento.getTypename());
 
@@ -331,8 +329,6 @@ public class App extends Application {
                 columnaDia.getChildren().add(hBox);
             }
         }
-
-
     }
     /**
      *
