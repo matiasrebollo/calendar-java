@@ -30,6 +30,9 @@ public class Tarea extends ElementoCalendario{
         return this.completada;
     }
 
+    public boolean estaCompletada() {
+        return completada;
+    }
 
     @JsonCreator
     private Tarea(@JsonProperty("titulo") String titulo,

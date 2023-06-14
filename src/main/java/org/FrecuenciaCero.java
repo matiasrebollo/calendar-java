@@ -22,7 +22,10 @@ public class FrecuenciaCero extends Frecuencia {
         return fechaInicio.equals(fechaCualquiera) || fechaCualquiera.equals(fechaFin);
     }
 
-
+    @Override
+    protected String getTipoFrecuencia() {
+        return "Ninguna";
+    }
 
     @JsonCreator
     private FrecuenciaCero(@JsonProperty("fechaInicio") LocalDate fechaInicio,

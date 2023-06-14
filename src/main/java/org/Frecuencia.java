@@ -90,5 +90,8 @@ public abstract class Frecuencia implements Serializable {
      * y recibe una fecha que corresponde a un martes, devolverá true
      **/
     public abstract boolean fechaCorrespondeAFrecuencia(LocalDate fechaCualquiera);
+
+    protected abstract String getTipoFrecuencia();
+
 }
 

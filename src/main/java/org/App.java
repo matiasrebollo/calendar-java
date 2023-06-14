@@ -17,6 +17,7 @@ import javafx.util.Duration;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class App extends Application {
@@ -90,15 +91,99 @@ public class App extends Application {
         return cuantos;
     }
 
+    private VBox contenidoPrincipal(ElementoCalendario elemento){
+        var titulo = new VBox(new Label("Titulo:   "), new Label(elemento.getTitulo()));
+        var descripcion = new VBox(new Label("Descripcion:   "), new Label(elemento.getDescripcion()));
+        var fechaYHoraInicio = new VBox();
+        var fechaYHoraFin = new VBox();
+        var duracion = new VBox();
+        var completada = new VBox();
+        if (elemento.getTypename().equals("Evento")){
+            Evento evento = (Evento) elemento;
+            if (evento.esTodoElDia()){
+                fechaYHoraInicio.getChildren().addAll(new Label("Fecha inicio:   "),
+                        new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                fechaYHoraFin.getChildren().addAll(new Label("Fecha fin:   "),
+                        new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                duracion.getChildren().addAll(new Label("Duracion:"), new Label("Todo el día"));
+            } else {
+                fechaYHoraInicio.getChildren().addAll(new Label("Fecha y hora inicio:   "),
+                        new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
+                        new Label(evento.getHoraInicio().format(DateTimeFormatter.ofPattern("hh:mm"))));
+                fechaYHoraFin.getChildren().addAll(new Label("Fecha y hora fin:   "),
+                        new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
+                        new Label(evento.getHoraFin().format(DateTimeFormatter.ofPattern("hh:mm"))));
+            }
+        } else {
+            Tarea tarea = (Tarea) elemento;
+            if (tarea.esTodoElDia()){
+                fechaYHoraInicio.getChildren().addAll(new Label("Fecha inicio:   "),
+                        new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                duracion.getChildren().addAll(new Label("Duracion:"), new Label("Todo el día"));
+            } else {
+                fechaYHoraInicio.getChildren().addAll(new Label("Fecha y hora inicio:   "),
+                        new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
+                        new Label(tarea.getHoraInicio().format(DateTimeFormatter.ofPattern("hh:mm"))));
+            }
+            if (tarea.estaCompletada()){
+                completada.getChildren().addAll(new Label("Estado:"), new Label("Completada"));
+            } else {
+                completada.getChildren().addAll(new Label("Estado:"), new Label("Incompleta"));
+            }
+        }
+        var frecuencia = new HBox(new Label("Frecuencia:   "), new Label(elemento.getFrecuencia().getTipoFrecuencia()));
+        ArrayList<Alarma> alarmas = elemento.getAlarmas();
+        var enumeracion = new VBox();
+        for (int i = 0; i < elemento.cantidadAlarmas(); i++){
+            enumeracion.getChildren().add(new Label(alarmas.get(i).getFechaHoraAlarma().format(DateTimeFormatter.ofPattern("d/M/yyyy hh:mm"))));
+        }
+        var alarma = new HBox(new Label("Alarmas:   "), enumeracion);
+
+        VBox formulario = new VBox(20);
+        formulario.getChildren().addAll(titulo, descripcion, fechaYHoraInicio, fechaYHoraFin, duracion, completada, frecuencia, alarma);
+
+        return formulario;
+    }
+
+    private void informacionElemento(ElementoCalendario elemento){
+
+        var ventana = new Stage();
+        ventana.setTitle("Informacion" + elemento.getTypename());
+
+        VBox formulario = contenidoPrincipal(elemento);
+        var botonAlarma = new Button("Agregar alarma");
+        botonAlarma.setOnAction(e -> {
+            var ventanaAlarma = new Stage();
+            ventanaAlarma.setTitle("Agregar alarma");
+
+        });
+        var contenedorAlarma = new HBox(botonAlarma);
+        contenedorAlarma.setAlignment(Pos.CENTER);
+
+        var contenido = new BorderPane();
+        contenido.setCenter(formulario);
+        contenido.setBottom(contenedorAlarma);
+
+        var escena = new Scene(contenido,280,450);
+        ventana.initModality(Modality.APPLICATION_MODAL);
+        ventana.initOwner(ventanaPrincipal);
+        ventana.setResizable(false);
+        ventana.setScene(escena);
+        ventana.showAndWait();
+    }
+
     private void mostrarEventosEnLaInterfazMes(VBox casilla, int dia){
         LocalDateTime fechaHoraInicio = LocalDateTime.of(2023,6,12,14,30);
         LocalDateTime fechaHoraFin = LocalDateTime.of(2023,6,12,18,30);
+        LocalDate fechaInicio = LocalDate.of(2023,6,12);
+        var frecuencia = new FrecuenciaDiaria(fechaInicio, 2, 3);
         var evento1 = new Evento("Evento 1", "Este es el evento 1",
-                fechaHoraInicio,fechaHoraFin,false,null);
+                fechaHoraInicio,fechaHoraFin,false,frecuencia);
         var labelEvento = new Label(evento1.getTitulo());
 
         labelEvento.textAlignmentProperty().set(TextAlignment.LEFT);
         labelEvento.setOnMouseClicked(a -> {
+            informacionElemento(evento1);
             //mostrar todos los datos del evento
             //...
         });
@@ -240,6 +325,7 @@ public class App extends Application {
         labelEvento.setOnMouseClicked(a -> {
             //mostrar todos los datos del evento
             //...
+            abrirVentanaEmergente("mostrarInformacionEvento");
         });
 
         //si el evento ocurre este dia de la semana...
@@ -573,11 +659,13 @@ public class App extends Application {
         var ventana = new Stage();
 
         BorderPane contenido;
-        if (string.equals("Tarea"))
+        if (string.equals("Tarea")) {
             contenido = contenidoVentanaTarea(ventana);
-        else
+            ventana.setTitle("Agregar" + string);
+        } else {
             contenido = null;
-        ventana.setTitle("Agregar" + string);
+        }
+
 
         var escena = new Scene(contenido,280,450);
         ventana.initModality(Modality.APPLICATION_MODAL);

@@ -121,6 +121,15 @@ public class ElementoCalendario implements Serializable {
     public LocalTime getHoraInicio() {
         return horaInicio;
     }
+
+    public ArrayList<Alarma> getAlarmas() {
+        return alarmas;
+    }
+
+    public boolean esTodoElDia() {
+        return todoElDia;
+    }
+
     protected String getTypename(){
         return "";
     }

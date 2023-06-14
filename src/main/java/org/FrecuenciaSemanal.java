@@ -85,6 +85,10 @@ public class FrecuenciaSemanal extends Frecuencia{
         return false;
     }
 
+    @Override
+    protected String getTipoFrecuencia() {
+        return "Semanal";
+    }
 
     @JsonCreator
     private FrecuenciaSemanal(@JsonProperty("fechaInicio") LocalDate fechaInicio,

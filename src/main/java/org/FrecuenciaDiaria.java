@@ -47,6 +47,11 @@ public class FrecuenciaDiaria extends Frecuencia {
         return false;
     }
 
+    @Override
+    protected String getTipoFrecuencia() {
+        return "Diaria";
+    }
+
     @JsonCreator
     private FrecuenciaDiaria(@JsonProperty("fechaInicio") LocalDate fechaInicio,
                            @JsonProperty("intervalo")int intervalo,

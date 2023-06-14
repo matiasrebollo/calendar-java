@@ -55,6 +55,11 @@ public class FrecuenciaAnual extends Frecuencia {
         return false;
     }
 
+    @Override
+    protected String getTipoFrecuencia() {
+        return "Anual";
+    }
+
     @JsonCreator
     private FrecuenciaAnual(@JsonProperty("fechaInicio") LocalDate fechaInicio,
                             @JsonProperty("intervalo")int intervalo,
