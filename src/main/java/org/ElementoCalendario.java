@@ -30,7 +30,7 @@ public class ElementoCalendario implements Serializable {
         this.horaInicio = horaInicio;
         this.todoElDia = todoElDia;
         if (todoElDia) {
-            this.horaInicio = LocalTime.MAX;
+            this.horaInicio = LocalTime.MIN;
         }
     }
 

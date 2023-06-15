@@ -56,7 +56,7 @@ public class Calendario implements Serializable {
             tarea = new Tarea(titulo,descripcion, fecha, todoElDia, null,frecuencia);
         }
         else {
-            LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("kk:mm"));
+            LocalTime horaTime = LocalTime.parse(hora,DateTimeFormatter.ofPattern("k:m"));
             tarea = new Tarea(titulo,descripcion, fecha, todoElDia, horaTime,frecuencia);
         }
 
@@ -147,4 +147,29 @@ public class Calendario implements Serializable {
             }
         }
     }
+
+    /**
+     * Devuelve una lista con los eventos y tareas que ocurren en la fecha recibida
+     * */
+    public ArrayList<ElementoCalendario> obtenerElementosDeLaFecha(LocalDate fecha) {
+        ArrayList<ElementoCalendario> array = new ArrayList<>();
+        int tope = Math.max(eventos.size(),tareas.size());
+        for (int i = 0; i < tope; i++) {
+            if (i < eventos.size()) {
+                Evento evento = eventos.get(i);
+                if (evento.ocurreEnFecha(fecha) && !array.contains(evento))
+                    array.add(evento);
+            }
+            if (i < tareas.size()) {
+                Tarea tarea = tareas.get(i);
+                if (tarea.ocurreEnFecha(fecha) && !array.contains(tarea))
+                    array.add(tarea);
+            }
+        }
+        ordenarArrayPorHora(array);
+        return array;
+    }
+
+
+
 }

@@ -3,7 +3,6 @@ package org;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -29,6 +28,8 @@ public class App extends Application {
     private DateTimeFormatter formatter = FORMATTER_FECHA;
 
     private Calendario calendario;
+    private ArrayList<ElementoCalendario> eventosDelDia;
+
     private LocalDate fechaSeleccionada;
     private Label labelFecha = new Label();
 
@@ -74,26 +75,13 @@ public class App extends Application {
             }
         }
     }
+    private void mostrarNotificacion(Alarma alarma) {
 
-    /**
-     * Recibe un día de la semana y
-     * Devuelve la cantidad de días que pasaron desde el lunes
-     */
-    private int calcularDiasDesdeElLunes(DayOfWeek dia){
-        int cuantos = 0;
-        switch (dia) {
-            case TUESDAY -> cuantos = 1;
-            case WEDNESDAY -> cuantos = 2;
-            case THURSDAY -> cuantos = 3;
-            case FRIDAY -> cuantos = 4;
-            case SATURDAY -> cuantos = 5;
-            case SUNDAY -> cuantos = 6;
-        }
-        return cuantos;
     }
 
     private VBox contenidoPrincipal(ElementoCalendario elemento){
-        var titulo = new VBox(new Label("Titulo:   "), new Label(elemento.getTitulo()));
+        var titulo = new Label("Titulo:  " + elemento.getTitulo());
+        //var titulo = new VBox(new Label("Titulo:   "), new Label(elemento.getTitulo()));
         var descripcion = new VBox(new Label("Descripcion:   "), new Label(elemento.getDescripcion()));
         var fechaYHoraInicio = new VBox();
         var fechaYHoraFin = new VBox();
@@ -151,19 +139,19 @@ public class App extends Application {
         botonAlarma.setOnAction(e -> {
             var ventanaAlarma = new Stage();
             ventanaAlarma.setTitle("Agregar alarma");
+
             var intervaloCasilla = new Spinner<>(1,60,0);
             intervaloCasilla.setPrefWidth(70);
             var unidadCasilla = new ChoiceBox<>();
             unidadCasilla.getItems().addAll("minutos","horas", "dias", "semanas");
             unidadCasilla.setValue("minutos");
-            var alarmaCasilla = new HBox();
-            alarmaCasilla.getChildren().addAll(new Label("Agregar alarma"), intervaloCasilla, unidadCasilla, new Label("antes."));
+            var alarmaCasilla = new HBox(new Label("Agregar alarma"), intervaloCasilla, unidadCasilla, new Label("antes."));
             alarmaCasilla.setAlignment(Pos.CENTER);
             alarmaCasilla.setSpacing(5);
             var mensaje = new HBox(new Label("La alarma será una notificación por defecto."));
             mensaje.setAlignment(Pos.CENTER);
-            var contenidoAlarma = new VBox(alarmaCasilla, mensaje);
-            contenidoAlarma.setSpacing(10);
+            var contenidoAlarma = new VBox(10,alarmaCasilla, mensaje);
+            //contenidoAlarma.setSpacing(10);
             contenidoAlarma.setAlignment(Pos.CENTER);
             var botonAceptar = new Button("Aceptar");
             var contenedorAceptar = new HBox(botonAceptar);
@@ -201,12 +189,12 @@ public class App extends Application {
     }
 
     private void informacionElemento(ElementoCalendario elemento){
-
         var ventana = new Stage();
         ventana.setTitle("Informacion" + elemento.getTypename());
         VBox formulario = contenidoPrincipal(elemento);
         HBox contenedorAlarma = contenidoAlarma(elemento, ventana);
         contenedorAlarma.setAlignment(Pos.CENTER);
+
         var contenido = new BorderPane();
         contenido.setCenter(formulario);
         contenido.setBottom(contenedorAlarma);
@@ -268,6 +256,7 @@ public class App extends Application {
             if (!aux && auxiliares[0] < cantidadDiasMes){
                 mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
                         (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());//entero que representa el dia del año.
+                //mostrarEventosEnLaInterfaz(dia,fechaSeleccionada);
             }
             HBox.setHgrow(dia, Priority.ALWAYS);
             VBox.setVgrow(dia, Priority.ALWAYS);
@@ -311,6 +300,9 @@ public class App extends Application {
         return centroMes;
     }
 
+    /***
+     * Vuelve a cargar el contenido centro de la interfaz
+     */
     private void actualizarContenidoCentro() {
         switch (modalidad) {
             case DIA -> contenedor.setCenter(contenidoCentroDia());
@@ -343,58 +335,46 @@ public class App extends Application {
 
     //tengo que tener todos los eventos que ocurren en la semana actual
     /**
-     * Recibe una columna de uno de los dias de la semana, y
-     * agrega todos los eventos que ocurren en ese dia en la columna recibida
+     * Recibe un VBox y una fecha, y
+     * agrega todos los eventos y tareas que ocurren en ese dia al VBox recibid
      * */
-    private void mostrarEventosEnLaInterfazSemana(VBox columnaDia, LocalDate fecha){
-        //un evento de ejemplo:
-        LocalDateTime fechaHoraInicio = LocalDateTime.of(2023,6,12,14,30);
-        LocalDateTime fechaHoraFin = LocalDateTime.of(2023,6,12,18,30);
-        var evento1 = new Evento("Evento 1", "Este es el evento 1",
-                fechaHoraInicio,fechaHoraFin,true,null);
-        //una Tarea de ejemplo:
-        var tarea = new Tarea("tarea0", "xd", fechaHoraInicio.toLocalDate(),false,
-                LocalTime.of(19,40),null);
+    private void mostrarEventosEnLaInterfaz(VBox columnaDia, LocalDate fecha){
+        var elementosDelDia = calendario.obtenerElementosDeLaFecha(fecha);
+        for (ElementoCalendario elemento : elementosDelDia) {
+            var labelTitulo = new Label (elemento.getTitulo());
+            var hBoxTitulo = new HBox(labelTitulo);
+            hBoxTitulo.setAlignment(Pos.CENTER_LEFT);
+            Label labelHora;
 
-        ArrayList<ElementoCalendario> array= new ArrayList<>();
-        array.add(evento1); array.add(tarea);
-
-        for (ElementoCalendario elemento : array) {
-            var labelTitulo = new Label(elemento.getTitulo());
-            var labelHora = new HBox();
             if (elemento.getTypename().equals("Evento")){
                 Evento e = (Evento) elemento;
-                if (e.esTodoElDia()){
-                    labelHora.getChildren().add(new Label("Todo el dia: "));
-                } else {
-                    labelHora.getChildren().add(new Label(e.getHoraInicio().toString() + " : " + e.getHoraFin().toString()));
-                }
+                labelHora = new Label(e.getHoraInicio().toString() + " : " + e.getHoraFin().toString());
                 labelTitulo.setStyle("-fx-border-color: gray");
             }
             else {
                 Tarea t = (Tarea) elemento;
-                if (t.esTodoElDia()){
-                    labelHora.getChildren().add(new Label("Todo el dia: "));
-                } else {
-                    labelHora.getChildren().add(new Label(elemento.getHoraInicio().toString() + " "));
-                }
-                labelTitulo.setStyle("-fx-border-color: red");
+                var completadaCheck = new CheckBox();
+                completadaCheck.setSelected(t.estaCompletada());
+                completadaCheck.setOnAction(e->{
+                    t.marcarTareaCompletada();
+                });
+                hBoxTitulo.getChildren().add(completadaCheck);
+                labelHora = new Label(elemento.getHoraInicio().toString() + " ");
+                labelTitulo.setStyle("-fx-border-color: black");
             }
-
-            var hBox= new HBox(5, labelHora,labelTitulo);
+            if (elemento.esTodoElDia()) {
+                labelHora = new Label("Todo el dia");
+            }
+            var hBox= new HBox(5, labelHora,hBoxTitulo);
             hBox.setAlignment(Pos.CENTER_LEFT);
             if (modalidad == Modalidades.DIA){
                 hBox.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");
+            } else if (modalidad == Modalidades.MES) {
+                hBox.getChildren().remove(labelHora);
             }
-            labelTitulo.setOnMouseClicked(e-> {
-                informacionElemento(elemento);
-            });
-            if (elemento.ocurreEnFecha(fecha)) {
-                columnaDia.getChildren().add(hBox);
-            }
+            labelTitulo.setOnMouseClicked(e-> informacionElemento(elemento));
+            columnaDia.getChildren().add(hBox);
         }
-
-
     }
     /**
      *
@@ -425,7 +405,7 @@ public class App extends Application {
             col.getChildren().add(stackPane);
 
             col.setBorder(new Border(borde));
-            mostrarEventosEnLaInterfazSemana(col,fechaSeleccionada.plusDays(i));
+            mostrarEventosEnLaInterfaz(col,fechaSeleccionada.plusDays(i));
             HBox.setHgrow(col, Priority.ALWAYS);
 
             contenido.getChildren().add(col);
@@ -437,9 +417,8 @@ public class App extends Application {
      *
      * */
     private Node contenidoCentroDia(){
-        //ver si poner que dia es cada dia
         var columna = new VBox(7);
-        mostrarEventosEnLaInterfazSemana(columna, fechaSeleccionada);
+        mostrarEventosEnLaInterfaz(columna, fechaSeleccionada);
         HBox.setHgrow(columna, Priority.ALWAYS);
 
         return columna;
@@ -571,6 +550,7 @@ public class App extends Application {
         });
         return caja;
     }
+
     /***
      * crea una ChoiceBox con las opciones de frecuencia:
      * "Ninguna": quita los items de Frecuencia de la caja
@@ -650,16 +630,15 @@ public class App extends Application {
                 LocalDate fechaFin = fechaFinPicker.getValue();
                 if (fechaFin == null || fechaFin.isBefore(fecha))
                     return;// hubo un error
-
-                //this.calendario.crearEvento(titulo,descripcion,fecha.format(FORMATTER_FECHA),
-                //                          fechaFin.format(FORMATTER_FECHA),horaString,
-                //                        horaFinString,todoElDia,frecuencia);
-                System.out.println("Se creo el Evento");
+                Evento ev = calendario.crearEvento(titulo,descripcion,fecha,fechaFin,horaString,horaFinString,todoElDia,frecuencia);
+                if (ev!=null)
+                    System.out.println("Se creo el Evento");
             }
             else {
-                //this.calendario.crearTarea();
+                calendario.crearTarea(titulo,descripcion,fecha,todoElDia,horaString,frecuencia);
                 System.out.println("Se creó la tarea");
             }
+            actualizarContenidoCentro();
             ventana.close();
         });
         var botonCancelar = new Button("Cancelar");
@@ -671,7 +650,6 @@ public class App extends Application {
         botones.setAlignment(Pos.CENTER);
         return botones;
     }
-
 
 
     /***
@@ -780,9 +758,15 @@ public class App extends Application {
         fechaSeleccionada = fechaActual;
         ventanaPrincipal = stage;
 
+        this.calendario = new Calendario();
+        calendario.crearTarea("Tarea 0", "XD", fechaActual,false,"20:30",null);
+        calendario.crearEvento("Evento 1", "Este es el evento 1", fechaActual,fechaActual,"12:00","14:30",false,null);
+        var frec = new FrecuenciaDiaria(fechaActual,3,5);
+        calendario.crearEvento("Evento a", "Evento cada 3 dias", fechaActual,fechaActual,"0:0","0:0",true,frec);
+        this.eventosDelDia = calendario.obtenerElementosDeLaFecha(fechaSeleccionada);
+
 
         var contenidoCentro = contenidoCentroSemana();
-        //contenidoCentro.setStyle("-fx-background-color: green;");//para probar. Despues lo saco
 
         var barraSuperior = contenidoBarraSuperior();
         barraSuperior.setStyle("-fx-background-color: #34a9c9;");//para probar. Despues lo saco

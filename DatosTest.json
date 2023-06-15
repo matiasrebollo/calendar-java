@@ -22,7 +22,7 @@
     "descripcion" : "es la primer tarea",
     "fechaInicio" : [ 2023, 2, 2 ],
     "todoElDia" : true,
-    "horaInicio" : [ 23, 59, 59, 999999999 ],
+    "horaInicio" : [ 0, 0 ],
     "alarmas" : [ ],
     "completada" : false,
     "frecuencia" : {
