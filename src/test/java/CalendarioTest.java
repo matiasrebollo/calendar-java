@@ -278,7 +278,7 @@ public class CalendarioTest {
         Frecuencia f = new FrecuenciaDiaria(fechaHoraEvento.toLocalDate(),2,10);
         var evento = c.crearEvento("evento1", "", fechaInicio, fechaFin, "08:00", "10:30" , false, f);
         var tarea1 = c.crearTarea("org.Tarea 1", "es la primer tarea",fechaTarea,true, "", null);
-
+        evento.agregarAlarma(null,5, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);
         c.serializar(new ObjectMapper(), "DatosTest.json");
 
         assertTrue(Files.exists(Path.of("DatosTest.json")));//existe el archivo

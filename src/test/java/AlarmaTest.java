@@ -12,10 +12,11 @@ public class AlarmaTest {
     private Alarma crearAlarma() {
         // Crear una instancia de org.Alarma 5 minutos antes
         LocalDateTime fechaHoraEvento = LocalDateTime.of(2023, 4, 30, 12, 0); // Ejemplo de fecha y hora de evento
+        var evento = new Evento("titulo", "",fechaHoraEvento,fechaHoraEvento,true,null);
         int intervalo = 5; // Ejemplo de intervalo
         Alarma.UnidadesDeTiempo unidad = Alarma.UnidadesDeTiempo.MINUTOS; // Ejemplo de unidad de tiempo
         Alarma.EfectosAlarma efecto = Alarma.EfectosAlarma.NOTIFICACION; // Ejemplo de efecto de alarma
-        return new Alarma(fechaHoraEvento, intervalo, unidad, efecto);
+        return new Alarma(evento, intervalo, unidad, efecto);
     }
 
     @Test

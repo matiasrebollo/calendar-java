@@ -27,6 +27,7 @@ public class App extends Application {
     enum Modalidades {DIA, SEMANA, MES};
     private static final DateTimeFormatter FORMATTER_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter FORMATTER_HORA = DateTimeFormatter.ofPattern("HH:mm:ss");
+    private static final String NOMBRE_ARCHIVO = "datosCalendario.json";
 
     private Calendario calendario;
     private ArrayList<ElementoCalendario> eventosDelDia;
@@ -149,15 +150,15 @@ public class App extends Application {
                 case "semanas" -> unidad = Alarma.UnidadesDeTiempo.SEMANAS;
             }
             var a = elementoSeleccionado.agregarAlarma(null, intervalo, unidad, Alarma.EfectosAlarma.NOTIFICACION);
-            try {
-                calendario.serializar(new ObjectMapper(), "datosCalendario.json");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             ventana2.close();
             if (a.getFechaHoraAlarma().toLocalDate().equals(fechaActual))
                 alarmasDeHoy.add(a);
             System.out.println("Se agregó la alarma. hoy hay: " + alarmasDeHoy.size());
+            try {
+                calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
         return botonAceptar;
     }
@@ -195,7 +196,7 @@ public class App extends Application {
         botonAgregarAlarma.setOnAction(e->{
             var aux = ventana2;
             abrirVentanaEmergente(335, 100, contenidoAlarma(), "Agregar Alarma");
-            ventana2 = aux;
+            aux.close();
         });
         formulario.getChildren().add(botonAgregarAlarma);
 
@@ -203,12 +204,12 @@ public class App extends Application {
         botonEliminar.setStyle("-fx-background-color: #943333; -fx-text-fill: white");
         botonEliminar.setOnAction(e->{
             calendario.eliminarElemento(elemento);
+            ventana2.close();
             try {
-                calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+                calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            ventana2.close();
         });
         var hboxBotonEliminar = new HBox(botonEliminar);
         hboxBotonEliminar.setAlignment(Pos.CENTER);
@@ -615,7 +616,7 @@ public class App extends Application {
                     return;// hubo un error
                 Evento ev = calendario.crearEvento(titulo, descripcion, fecha, fechaFin, horaString, horaFinString, todoElDia, frecuencia);
                 try {
-                    calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+                    calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -625,7 +626,7 @@ public class App extends Application {
             else {
                 calendario.crearTarea(titulo,descripcion,fecha,todoElDia,horaString,frecuencia);
                 try {
-                    calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+                    calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -738,13 +739,9 @@ public class App extends Application {
 
     public void chequarAlarmas() {
         var hora = LocalTime.of(horaActual.getHour(), horaActual.getMinute());
-        System.out.println("Chequeo alarma");
         for (var a : alarmasDeHoy){
-            System.out.println("alarma: " + a.getFechaHoraAlarma().toLocalTime());
-            System.out.println("Hora:   " + hora);
             if (a.getFechaHoraAlarma().toLocalTime().equals(hora)){
                 Platform.runLater(()-> mostrarNotifificacion(a));
-                System.out.println("Suena");
             }
         }
     }
@@ -756,8 +753,6 @@ public class App extends Application {
         var contenido = new BorderPane();
         contenido.setCenter(vBox);
         abrirVentanaEmergente(200,50, contenido, "Notificacion");
-        System.out.println("suena la alarma");
-
     }
     public ArrayList<Alarma> obtenerAlarmasDeLaFecha(LocalDate fecha) {
         ArrayList<Alarma> array = new ArrayList<>();
@@ -783,16 +778,8 @@ public class App extends Application {
         fechaSeleccionada = fechaActual;
         ventanaPrincipal = stage;
 
-        calendario = Calendario.deserializar(new ObjectMapper(), "datosCalendario.json");
-        /* de ejemplo
-        this.calendario = new Calendario();
-        var t =calendario.crearTarea("Tarea 0", "XD", fechaActual,false,"13:20",null);
-        calendario.crearEvento("Evento 1", "Este es el evento 1", fechaActual,fechaActual,"12:00","14:30",false,null);
-        var frec = new FrecuenciaDiaria(fechaActual,3,5);
-        calendario.crearEvento("Evento a", "Evento cada 3 dias", fechaActual,fechaActual,"0:0","0:0",true,frec);
-        this.eventosDelDia = calendario.obtenerElementosDeLaFecha(fechaSeleccionada);
+        calendario = Calendario.deserializar(new ObjectMapper(),NOMBRE_ARCHIVO);
         alarmasDeHoy = obtenerAlarmasDeLaFecha(fechaActual);
-        var alarma = new Alarma(t,50, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);*/
 
         var contenidoCentro = contenidoCentroDia();
 
@@ -811,7 +798,6 @@ public class App extends Application {
         contenedor.setLeft(barraIzquierda);
         contenedor.setRight(barraDerecha);
 
-        chequarAlarmas();
         var sceneSemana = new Scene(contenedor, 800, 540);
         stage.setScene(sceneSemana);
         stage.show();
@@ -819,6 +805,6 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
-        System.out.println("XD");
+        System.out.println("fin");
     }
 }

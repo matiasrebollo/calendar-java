@@ -105,12 +105,14 @@ public class Alarma implements Serializable {
             @JsonProperty("fechaHoraAlarma") LocalDateTime fechaHoraAlarma,
             @JsonProperty("intervalo") int intervalo,
             @JsonProperty("unidad") UnidadesDeTiempo unidad,
-            @JsonProperty("efecto") EfectosAlarma efecto) {
+            @JsonProperty("efecto") EfectosAlarma efecto,
+            @JsonProperty("evento") ElementoCalendario evento){
         this.fechaHoraEvento = fechaHoraEvento;
         this.fechaHoraAlarma = fechaHoraAlarma;
         this.unidad = unidad;
         this.intervalo = intervalo;
         this.efecto = efecto;
+        this.evento = evento;
     }
 
 }
