@@ -1,5 +1,6 @@
 package org;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -16,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -83,7 +85,6 @@ public class App extends Application {
 
     private VBox contenidoPrincipal(ElementoCalendario elemento){
         var titulo = new Label("Titulo:  " + elemento.getTitulo());
-        //var titulo = new VBox(new Label("Titulo:   "), new Label(elemento.getTitulo()));
         var descripcion = new VBox(new Label("Descripcion:   "), new Label(elemento.getDescripcion()));
         var fechaYHoraInicio = new VBox();
         var fechaYHoraFin = new VBox();
@@ -148,6 +149,11 @@ public class App extends Application {
                 case "semanas" -> unidad = Alarma.UnidadesDeTiempo.SEMANAS;
             }
             var a = elementoSeleccionado.agregarAlarma(null, intervalo, unidad, Alarma.EfectosAlarma.NOTIFICACION);
+            try {
+                calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             ventana2.close();
             if (a.getFechaHoraAlarma().toLocalDate().equals(fechaActual))
                 alarmasDeHoy.add(a);
@@ -197,6 +203,11 @@ public class App extends Application {
         botonEliminar.setStyle("-fx-background-color: #943333; -fx-text-fill: white");
         botonEliminar.setOnAction(e->{
             calendario.eliminarElemento(elemento);
+            try {
+                calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             ventana2.close();
         });
         var hboxBotonEliminar = new HBox(botonEliminar);
@@ -206,31 +217,6 @@ public class App extends Application {
         contenido.setCenter(formulario);
         contenido.setBottom(hboxBotonEliminar);
         abrirVentanaEmergente(280,450, contenido, "Informacion "+ elemento.getTypename());
-    }
-
-    //si recibe la fecha va a ser igual a la funcion mostrarEventosEninterfaz. entonces se puede usar la otra
-    private void mostrarEventosEnLaInterfazMes(VBox casilla, int dia){
-        LocalDateTime fechaHoraInicio = LocalDateTime.of(2023,6,12,14,30);
-        LocalDateTime fechaHoraFin = LocalDateTime.of(2023,6,12,18,30);
-        LocalDate fechaInicio = LocalDate.of(2023,6,12);
-        var frecuencia = new FrecuenciaDiaria(fechaInicio, 2, 3);
-        var evento1 = new Evento("Evento 1", "Este es el evento 1",
-                fechaHoraInicio,fechaHoraFin,false,frecuencia);
-        var labelEvento = new Label(evento1.getTitulo());
-
-        labelEvento.textAlignmentProperty().set(TextAlignment.LEFT);
-        labelEvento.setOnMouseClicked(a -> {
-            mostrarInformacionElemento(evento1);
-        });
-        /*êstoy entre dos cosas al usar el array, llamar a obtenerlementosenunlapsodedias, mandando fechaseleccionada.primerdiadelmes, y
-        fechasleccionada.cantidaddiasmes, y despues iterar con la funcion de abajo.
-        o directamente mandarle a esa funcion el parametro dia, convertido a un LocalDate, y cantidad de dias 1. esto ahorraria iteraciones.
-         esto debido a como tengo implementado mi funcion de crear dias. Esta llama una vez por casilla de dia, entonces, no se si
-         iterar 30 veces por cada vez que llamo a esta funcion, quizas mejor mandar el dia en el que estoy parado, y obtener un arraylist
-         con los eventos y tareas de ese dia, e iterarlos.*/
-        if (evento1.getFechaInicio().getDayOfYear() == dia){
-            casilla.getChildren().add(labelEvento);
-        }
     }
 
     private void crearDias(int[] auxiliares, HBox fila, int posicionDiaUno, int cantidadDiasMes, BorderStroke borde){
@@ -256,9 +242,9 @@ public class App extends Application {
                 dia.setStyle("-fx-background-color: #484848;");
             }
             if (!aux && auxiliares[0] < cantidadDiasMes){
-                mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
-                        (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());//entero que representa el dia del año.
-                //mostrarEventosEnLaInterfaz(dia,fechaSeleccionada.plus(?));
+                //mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
+                    //    (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());//entero que representa el dia del año.
+                mostrarEventosEnLaInterfaz(dia, fechaSeleccionada.withDayOfMonth(auxiliares[0] - 1));
             }
             HBox.setHgrow(dia, Priority.ALWAYS);
             VBox.setVgrow(dia, Priority.ALWAYS);
@@ -627,12 +613,22 @@ public class App extends Application {
                 LocalDate fechaFin = fechaFinPicker.getValue();
                 if (fechaFin == null || fechaFin.isBefore(fecha))
                     return;// hubo un error
-                Evento ev = calendario.crearEvento(titulo,descripcion,fecha,fechaFin,horaString,horaFinString,todoElDia,frecuencia);
-                if (ev!=null)
+                Evento ev = calendario.crearEvento(titulo, descripcion, fecha, fechaFin, horaString, horaFinString, todoElDia, frecuencia);
+                try {
+                    calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if (ev != null)
                     System.out.println("Se creo el Evento");
             }
             else {
                 calendario.crearTarea(titulo,descripcion,fecha,todoElDia,horaString,frecuencia);
+                try {
+                    calendario.serializar(new ObjectMapper(), "datosCalendario.json");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 System.out.println("Se creó la tarea");
             }
             actualizarContenidoCentro();
@@ -787,8 +783,8 @@ public class App extends Application {
         fechaSeleccionada = fechaActual;
         ventanaPrincipal = stage;
 
-        //calendario = Calendario.deserializar();
-        // de ejemplo
+        calendario = Calendario.deserializar(new ObjectMapper(), "datosCalendario.json");
+        /* de ejemplo
         this.calendario = new Calendario();
         var t =calendario.crearTarea("Tarea 0", "XD", fechaActual,false,"13:20",null);
         calendario.crearEvento("Evento 1", "Este es el evento 1", fechaActual,fechaActual,"12:00","14:30",false,null);
@@ -796,7 +792,7 @@ public class App extends Application {
         calendario.crearEvento("Evento a", "Evento cada 3 dias", fechaActual,fechaActual,"0:0","0:0",true,frec);
         this.eventosDelDia = calendario.obtenerElementosDeLaFecha(fechaSeleccionada);
         alarmasDeHoy = obtenerAlarmasDeLaFecha(fechaActual);
-        var alarma = new Alarma(t,50, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);
+        var alarma = new Alarma(t,50, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);*/
 
         var contenidoCentro = contenidoCentroDia();
 
@@ -808,10 +804,6 @@ public class App extends Application {
 
         var barraInferior = contenidoBarraInferior();
 
-        var btn = new Button("a");
-        btn.setOnAction(e->{
-            mostrarNotifificacion(alarma);
-        });
         contenedor = new BorderPane();
         contenedor.setTop(barraSuperior);
         contenedor.setCenter(contenidoCentro);
