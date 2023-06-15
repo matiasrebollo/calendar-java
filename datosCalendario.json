@@ -23,6 +23,39 @@
       "fechaFin" : [ 2023, 6, 16 ],
       "fechaProxima" : [ 2023, 6, 16 ]
     }
+  }, {
+    "titulo" : "",
+    "descripcion" : "",
+    "fechaInicio" : [ 2023, 6, 15 ],
+    "todoElDia" : false,
+    "horaInicio" : [ 0, 0 ],
+    "alarmas" : [ ],
+    "fechaFin" : [ 2023, 6, 16 ],
+    "horaFin" : [ 0, 0 ],
+    "frecuencia" : {
+      "type" : "org.FrecuenciaDiaria",
+      "fechaInicio" : [ 2023, 6, 15 ],
+      "intervalo" : 3,
+      "ocurrencias" : 5,
+      "fechaFin" : [ 2023, 6, 27 ],
+      "fechaProxima" : [ 2023, 6, 15 ]
+    }
   } ],
-  "Tareas" : [ ]
+  "Tareas" : [ {
+    "titulo" : "tarea 1",
+    "descripcion" : "",
+    "fechaInicio" : [ 2023, 6, 15 ],
+    "todoElDia" : false,
+    "horaInicio" : [ 2, 0 ],
+    "alarmas" : [ ],
+    "completada" : false,
+    "frecuencia" : {
+      "type" : "org.FrecuenciaDiaria",
+      "fechaInicio" : [ 2023, 6, 15 ],
+      "intervalo" : 2,
+      "ocurrencias" : -1,
+      "fechaFin" : [ 999999999, 12, 31 ],
+      "fechaProxima" : [ 2023, 6, 15 ]
+    }
+  } ]
 }

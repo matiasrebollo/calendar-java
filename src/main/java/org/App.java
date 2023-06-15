@@ -84,7 +84,7 @@ public class App extends Application {
         }
     }
 
-    private VBox contenidoPrincipal(ElementoCalendario elemento){
+    private VBox contenidoInformacionElemento(ElementoCalendario elemento, LocalDate fecha){
         var titulo = new Label("Titulo:  " + elemento.getTitulo());
         var descripcion = new VBox(new Label("Descripcion:   "), new Label(elemento.getDescripcion()));
         var fechaYHoraInicio = new VBox();
@@ -95,28 +95,43 @@ public class App extends Application {
             Evento evento = (Evento) elemento;
             if (evento.esTodoElDia()){
                 fechaYHoraInicio.getChildren().addAll(new Label("Fecha inicio:   "),
-                        new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                        //new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                        new Label(evento.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA))
+                );
                 fechaYHoraFin.getChildren().addAll(new Label("Fecha fin:   "),
-                        new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                        new Label(evento.getFechaFinRepeticion(fecha).format(FORMATTER_FECHA))
+                        //new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy")))
+                );
                 duracion.getChildren().addAll(new Label("Duracion:"), new Label("Todo el día"));
             } else {
-                fechaYHoraInicio.getChildren().addAll(new Label("Fecha y hora inicio:   "),
-                        new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
-                        new Label(evento.getHoraInicio().toString()));
-                fechaYHoraFin.getChildren().addAll(new Label("Fecha y hora fin:   "),
-                        new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
+                fechaYHoraInicio.getChildren().addAll(
+                        new Label("Fecha y hora inicio:   "),
+                        new Label(evento.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA)),
+                        //new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
+                        new Label(evento.getHoraInicio().toString())
+                );
+                fechaYHoraFin.getChildren().addAll(
+                        new Label("Fecha y hora fin:   "),
+                        new Label(evento.getFechaFinRepeticion(fecha).format(FORMATTER_FECHA)),
+                        //new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
                         new Label(evento.getHoraFin().toString()));
             }
         } else {
             Tarea tarea = (Tarea) elemento;
             if (tarea.esTodoElDia()){
-                fechaYHoraInicio.getChildren().addAll(new Label("Fecha inicio:   "),
-                        new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                fechaYHoraInicio.getChildren().addAll(
+                        new Label("Fecha inicio:   "),
+                        //new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
+                        new Label(tarea.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA))
+                );
                 duracion.getChildren().addAll(new Label("Duracion:"), new Label("Todo el día"));
             } else {
-                fechaYHoraInicio.getChildren().addAll(new Label("Fecha y hora inicio:   "),
-                        new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
-                        new Label(tarea.getHoraInicio().toString()));
+                fechaYHoraInicio.getChildren().addAll(
+                        new Label("Fecha y hora inicio:   "),
+                        new Label(tarea.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA)),
+                        //new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
+                        new Label(tarea.getHoraInicio().toString())
+                );
             }
             if (tarea.estaCompletada()){
                 completada.getChildren().addAll(new Label("Estado:"), new Label("Completada"));
@@ -189,9 +204,9 @@ public class App extends Application {
         return contenido;
     }
 
-    private void mostrarInformacionElemento(ElementoCalendario elemento){
+    private void mostrarInformacionElemento(ElementoCalendario elemento, LocalDate fecha){
         elementoSeleccionado = elemento;
-        var formulario = contenidoPrincipal(elemento);
+        var formulario = contenidoInformacionElemento(elemento, fecha);
         var botonAgregarAlarma = new Button("Agregar alarma");
         botonAgregarAlarma.setOnAction(e->{
             var aux = ventana2;
@@ -358,7 +373,7 @@ public class App extends Application {
                 case DIA -> hBox.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");
                 case MES -> hBox.getChildren().remove(labelHora);
             }
-            labelTitulo.setOnMouseClicked(e-> mostrarInformacionElemento(elemento));
+            labelTitulo.setOnMouseClicked(e-> mostrarInformacionElemento(elemento, fecha));
             columnaDia.getChildren().add(hBox);
         }
     }

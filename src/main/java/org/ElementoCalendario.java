@@ -140,7 +140,9 @@ public class ElementoCalendario implements Serializable {
     public boolean ocurreEnFecha(LocalDate fechaCualquiera){
         return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
     }
-    public LocalDate getFechaRepeticion(LocalDate fecha) {
+    public LocalDate getFechaInicioRepeticion(LocalDate fecha) {
+        if (ocurreEnFecha(fecha))
+            return fecha;
         return fechaInicio;
     }
 

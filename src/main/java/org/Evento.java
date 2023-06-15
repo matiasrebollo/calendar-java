@@ -28,6 +28,11 @@ public class Evento extends ElementoCalendario{
     public LocalTime getHoraFin() {
         return horaFin;
     }
+    public LocalDate getFechaFinRepeticion(LocalDate fecha) {
+        if (ocurreEnFecha(fecha))
+            return fecha;
+        return fechaFin;
+    }
 
     public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
