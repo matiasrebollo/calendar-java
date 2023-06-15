@@ -17,6 +17,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +31,6 @@ public class App extends Application {
     private static final String NOMBRE_ARCHIVO = "datosCalendario.json";
 
     private Calendario calendario;
-    private ArrayList<ElementoCalendario> eventosDelDia;
     private ElementoCalendario elementoSeleccionado;
     private ArrayList<Alarma> alarmasDeHoy;
 
@@ -38,7 +38,6 @@ public class App extends Application {
     private LocalDate fechaActual;
     private LocalTime horaActual;
 
-    //de la vista
     private Modalidades modalidad = Modalidades.DIA;
     private DateTimeFormatter formatter = FORMATTER_FECHA;
     private Label labelFecha;
@@ -48,12 +47,12 @@ public class App extends Application {
 
 
     private void irAlLunes(){
-        while (!fechaSeleccionada.getDayOfWeek().equals(DayOfWeek.MONDAY)) {//para tener el lunes seleccionado y simplificar cosas
+        while (!fechaSeleccionada.getDayOfWeek().equals(DayOfWeek.MONDAY)) {
             fechaSeleccionada = fechaSeleccionada.minusDays(1);
         }
     }
     private void irAlPrimerDiaDelMes(){
-        while (fechaSeleccionada.getDayOfMonth() != 1) {//para tener el dia 1 del mes
+        while (fechaSeleccionada.getDayOfMonth() != 1) {
             fechaSeleccionada = fechaSeleccionada.minusDays(1);
         }
     }
@@ -84,6 +83,7 @@ public class App extends Application {
         }
     }
 
+
     private VBox contenidoInformacionElemento(ElementoCalendario elemento, LocalDate fecha){
         var titulo = new Label("Titulo:  " + elemento.getTitulo());
         var descripcion = new VBox(new Label("Descripcion:   "), new Label(elemento.getDescripcion()));
@@ -95,25 +95,21 @@ public class App extends Application {
             Evento evento = (Evento) elemento;
             if (evento.esTodoElDia()){
                 fechaYHoraInicio.getChildren().addAll(new Label("Fecha inicio:   "),
-                        //new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
                         new Label(evento.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA))
                 );
                 fechaYHoraFin.getChildren().addAll(new Label("Fecha fin:   "),
                         new Label(evento.getFechaFinRepeticion(fecha).format(FORMATTER_FECHA))
-                        //new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy")))
                 );
                 duracion.getChildren().addAll(new Label("Duracion:"), new Label("Todo el día"));
             } else {
                 fechaYHoraInicio.getChildren().addAll(
                         new Label("Fecha y hora inicio:   "),
                         new Label(evento.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA)),
-                        //new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
                         new Label(evento.getHoraInicio().toString())
                 );
                 fechaYHoraFin.getChildren().addAll(
                         new Label("Fecha y hora fin:   "),
                         new Label(evento.getFechaFinRepeticion(fecha).format(FORMATTER_FECHA)),
-                        //new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
                         new Label(evento.getHoraFin().toString()));
             }
         } else {
@@ -121,7 +117,6 @@ public class App extends Application {
             if (tarea.esTodoElDia()){
                 fechaYHoraInicio.getChildren().addAll(
                         new Label("Fecha inicio:   "),
-                        //new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))));
                         new Label(tarea.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA))
                 );
                 duracion.getChildren().addAll(new Label("Duracion:"), new Label("Todo el día"));
@@ -129,7 +124,6 @@ public class App extends Application {
                 fechaYHoraInicio.getChildren().addAll(
                         new Label("Fecha y hora inicio:   "),
                         new Label(tarea.getFechaInicioRepeticion(fecha).format(FORMATTER_FECHA)),
-                        //new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
                         new Label(tarea.getHoraInicio().toString())
                 );
             }
@@ -153,6 +147,9 @@ public class App extends Application {
         return formulario;
     }
 
+    /*
+    Crea una alarma con los datos seleccionados.
+     */
     private Button botonAceptarAlarma(Spinner intervaloSpinner, ChoiceBox unidades) {
         var botonAceptar = new Button("Aceptar");
         botonAceptar.setOnAction(actionEvent -> {
@@ -177,6 +174,9 @@ public class App extends Application {
         });
         return botonAceptar;
     }
+    /*
+    Muestra un cuadro para poder crear una alarma.
+     */
     private BorderPane contenidoAlarma() {
         var intervaloCasilla = new Spinner<>(1,60,0);
         intervaloCasilla.setPrefWidth(70);
@@ -204,6 +204,9 @@ public class App extends Application {
         return contenido;
     }
 
+    /*
+    Muestra la informacion del elemento recibido, permitiendo agregar una alarma o eliminar el elemento.
+     */
     private void mostrarInformacionElemento(ElementoCalendario elemento, LocalDate fecha){
         elementoSeleccionado = elemento;
         var formulario = contenidoInformacionElemento(elemento, fecha);
@@ -235,15 +238,18 @@ public class App extends Application {
         abrirVentanaEmergente(280,450, contenido, "Informacion "+ elemento.getTypename());
     }
 
+    /*
+    Crea el numero de cada dia del mes.
+     */
     private void crearDias(int[] auxiliares, HBox fila, int posicionDiaUno, int cantidadDiasMes, BorderStroke borde){
         int semana = 7;
         for (int i = 1; i <= semana; i++){
-            String numero; //auxiliares 0 es el numero que se printea en la casilla, auxiliares 1 es un auxiliar para printear 00 hasta que se llegue a la posicion del dia uno.
+            String numero;
             boolean aux = false;
             if (auxiliares[1] < posicionDiaUno || auxiliares[0] > cantidadDiasMes){
                 numero = "00";
                 auxiliares[1]++;
-                aux = true; // esta solo para que no rompa mostrareventosenlainteraz, es para saber si se entró a este if.
+                aux = true;
             } else {
                 numero = String.valueOf(auxiliares[0]);
                 if (numero.length() == 1){
@@ -258,8 +264,6 @@ public class App extends Application {
                 dia.setStyle("-fx-background-color: #484848;");
             }
             if (!aux && auxiliares[0] < cantidadDiasMes){
-                //mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
-                    //    (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());//entero que representa el dia del año.
                 mostrarEventosEnLaInterfaz(dia, fechaSeleccionada.withDayOfMonth(auxiliares[0] - 1));
             }
             HBox.setHgrow(dia, Priority.ALWAYS);
@@ -268,7 +272,7 @@ public class App extends Application {
         }
     }
 
-    //Contenido del centro
+
     private Node contenidoCentroMes() {
         BorderStroke borde = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT);
 
@@ -295,7 +299,7 @@ public class App extends Application {
             centroMes.getChildren().add(fila);
         }
 
-        if (auxiliares[0] <= diasMes){//si falta un fila, se agrega una mas...
+        if (auxiliares[0] <= diasMes){
             HBox fila6 = new HBox();
             crearDias(auxiliares, fila6, posicion, diasMes, borde);
             VBox.setVgrow(fila6, Priority.ALWAYS);
@@ -387,16 +391,16 @@ public class App extends Application {
         var contenido = new HBox();
         contenido.setAlignment(Pos.TOP_CENTER);
 
-        int j = 1;//numero de dia del mes siguiente
+        int j = 1;
         for (int i = 0; i < 7; i++) {
             var col = new VBox();
             var stackPane = new StackPane();
-            stackPane.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");//borde inferior
+            stackPane.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");
             var label = new Label();
             label.setTextAlignment(TextAlignment.CENTER);
-            String dia = nombreDiaDeLaSemana(i);//calcular dia
+            String dia = nombreDiaDeLaSemana(i);
 
-            if (n+i > fechaSeleccionada.lengthOfMonth()) {//si me paso del mes
+            if (n+i > fechaSeleccionada.lengthOfMonth()) {
                 label.setText(dia+j);
                 j++;
             }
@@ -423,7 +427,6 @@ public class App extends Application {
     }
 
 
-    //Barra superior...
 
     /**
      * Crea una caja de opciones (Dia, Semana, Mes),
@@ -432,9 +435,8 @@ public class App extends Application {
     private Node choiceBoxModalidad() {
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll("Dia", "Semana", "Mes");
-        choiceBox.setValue("Dia");//formato Dia por defecto
+        choiceBox.setValue("Dia");
 
-        // Acciones a realizar cuando se modifica la opción seleccionada
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.intValue() == 0) {
                 this.modalidad = Modalidades.DIA;
@@ -461,10 +463,10 @@ public class App extends Application {
      * */
     private Node labelFechaHoraActual() {
         var labelFechaHora = new Label(horaActual.format(FORMATTER_HORA) +"\n"+ fechaActual.format(FORMATTER_FECHA));
-        labelFechaHora.setTextAlignment(TextAlignment.CENTER);//para centrar el texto
-        labelFechaHora.setFont(Font.font(15));//para agrandar el tamaño de la fuente
+        labelFechaHora.setTextAlignment(TextAlignment.CENTER);
+        labelFechaHora.setFont(Font.font(15));
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {//realiza cada 1 segundo
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
             fechaActual = LocalDate.now();
             horaActual = LocalTime.now();
             labelFechaHora.setText(horaActual.format(FORMATTER_HORA) +"\n"+ fechaActual.format(FORMATTER_FECHA));
@@ -526,10 +528,6 @@ public class App extends Application {
     }
 
 
-    //____________________________________________________________________________________________________
-    //barra inferior...
-    //
-
     /***
      * Crea un VBox qu contendrá en cada fila los campos recibidos
      */
@@ -558,7 +556,7 @@ public class App extends Application {
      */
     private ChoiceBox choiceBoxDeFrecuencia(VBox contenedor, VBox frecuenciaItems){
         var choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Ninguna","Diaria");//lo que pide el enunciado
+        choiceBox.getItems().addAll("Ninguna","Diaria");
         choiceBox.setValue("Ninguna");
 
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -597,7 +595,7 @@ public class App extends Application {
      * */
     private HBox crearBotonesVentanaTarea(String elemento, List<Control> camposFormulario) {
         var botonAceptar = new Button("Aceptar");
-        botonAceptar.setOnAction(e -> {//leer los datos ingresados por el usuario
+        botonAceptar.setOnAction(e -> {
             var titulo = ((TextField) camposFormulario.get(0)).getText();
             var descripcion = ((TextArea) camposFormulario.get(1)).getText();
             var fechaPicker = (DatePicker) camposFormulario.get(2);
@@ -631,7 +629,7 @@ public class App extends Application {
 
                 LocalDate fechaFin = fechaFinPicker.getValue();
                 if (fechaFin == null || fechaFin.isBefore(fecha))
-                    return;// hubo un error
+                    return;
                 if (horaInicio.isAfter(horaFin) && fecha.equals(fechaFin))
                     return;
                 Evento ev = calendario.crearEvento(titulo, descripcion, fecha, fechaFin, horaString, horaFinString, todoElDia, frecuencia);
@@ -640,7 +638,6 @@ public class App extends Application {
             }
             else {
                 calendario.crearTarea(titulo,descripcion,fecha,todoElDia,horaString,frecuencia);
-
                 System.out.println("Se creó la tarea");
             }
             try {
@@ -667,9 +664,9 @@ public class App extends Application {
      * crear un Evento o Tarea.
      */
     private BorderPane contenidoVentanaEmergente(String string) {
-        VBox formulario = new VBox(5);//5px de espacio entre bloques
+        VBox formulario = new VBox(5);
         var tituloField = new TextField();
-        var descripcionField = new TextArea(); descripcionField.setPrefHeight(90);//ajusto el tamaño
+        var descripcionField = new TextArea(); descripcionField.setPrefHeight(90);
         var fechaField = new DatePicker(); fechaField.setEditable(false);
         var fechaVBox = new VBox(new Label("Fecha:"), fechaField);
         var horaSpinner = new Spinner<>(0,23, 0); horaSpinner.setPrefWidth(60);
@@ -681,7 +678,7 @@ public class App extends Application {
         var ocurrenciasSpinner = new Spinner<>(1,1000,0);
         var infinitasCheckBox = new CheckBox();
         var frecuenciaItems = itemsDeFrecuencia(intervaloSpinner,ocurrenciasSpinner,infinitasCheckBox);
-        //para los eventos
+
         var fechaFinField = new DatePicker(); fechaFinField.setEditable(false);
         var horaFinSpinner = new Spinner<>(0,23, 0); horaFinSpinner.setPrefWidth(60);
         var minFinSpinner = new Spinner<>(0,59,0); minFinSpinner.setPrefWidth(60);
@@ -794,16 +791,21 @@ public class App extends Application {
         fechaSeleccionada = fechaActual;
         ventanaPrincipal = stage;
 
-        calendario = Calendario.deserializar(new ObjectMapper(),NOMBRE_ARCHIVO);
+        File archivo = new File(NOMBRE_ARCHIVO);
+        if (archivo.exists()){
+            calendario = Calendario.deserializar(new ObjectMapper(),NOMBRE_ARCHIVO);
+        } else {
+            calendario = new Calendario();
+        }
         alarmasDeHoy = obtenerAlarmasDeLaFecha(fechaActual);
 
         var contenidoCentro = contenidoCentroDia();
 
         var barraSuperior = contenidoBarraSuperior();
-        barraSuperior.setStyle("-fx-background-color: #34a9c9;");//para probar. Despues lo saco
+        barraSuperior.setStyle("-fx-background-color: #34a9c9;");
 
-        var barraIzquierda = new StackPane(new Label("  "));//para agregar un espacio de margen
-        var barraDerecha = new StackPane(new Label("  "));//para agregar un espacio de margen
+        var barraIzquierda = new StackPane(new Label("  "));
+        var barraDerecha = new StackPane(new Label("  "));
 
         var barraInferior = contenidoBarraInferior();
 
@@ -821,6 +823,5 @@ public class App extends Application {
 
     public static void main(String[] args) {
         launch();
-        System.out.println("fin");
     }
 }
