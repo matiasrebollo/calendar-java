@@ -611,26 +611,27 @@ public class App extends Application {
                 }
             }
             if (elemento.equals("Evento")) {
+                var horaInicio = LocalTime.parse(horaString, DateTimeFormatter.ofPattern("k:m"));
+                var horaFin = LocalTime.parse(horaFinString, DateTimeFormatter.ofPattern("k:m"));
+
                 LocalDate fechaFin = fechaFinPicker.getValue();
                 if (fechaFin == null || fechaFin.isBefore(fecha))
                     return;// hubo un error
+                if (horaInicio.isAfter(horaFin) && fecha.equals(fechaFin))
+                    return;
                 Evento ev = calendario.crearEvento(titulo, descripcion, fecha, fechaFin, horaString, horaFinString, todoElDia, frecuencia);
-                try {
-                    calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
                 if (ev != null)
                     System.out.println("Se creo el Evento");
             }
             else {
                 calendario.crearTarea(titulo,descripcion,fecha,todoElDia,horaString,frecuencia);
-                try {
-                    calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+
                 System.out.println("Se creó la tarea");
+            }
+            try {
+                calendario.serializar(new ObjectMapper(), NOMBRE_ARCHIVO);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
             actualizarContenidoCentro();
             ventana2.close();
