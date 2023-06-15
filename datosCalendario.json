@@ -1,0 +1,28 @@
+{
+  "Eventos" : [ {
+    "titulo" : "",
+    "descripcion" : "",
+    "fechaInicio" : [ 2023, 6, 16 ],
+    "todoElDia" : false,
+    "horaInicio" : [ 3, 0 ],
+    "alarmas" : [ {
+      "fechaHoraEvento" : [ 2023, 6, 16, 3, 0 ],
+      "fechaHoraAlarma" : [ 2023, 6, 16, 2, 59 ],
+      "intervalo" : 1,
+      "unidad" : "MINUTOS",
+      "efecto" : "NOTIFICACION",
+      "tituloEvento" : ""
+    } ],
+    "fechaFin" : [ 2023, 6, 16 ],
+    "horaFin" : [ 3, 0 ],
+    "frecuencia" : {
+      "type" : "org.FrecuenciaCero",
+      "fechaInicio" : [ 2023, 6, 16 ],
+      "intervalo" : 1,
+      "ocurrencias" : -1,
+      "fechaFin" : [ 2023, 6, 16 ],
+      "fechaProxima" : [ 2023, 6, 16 ]
+    }
+  } ],
+  "Tareas" : [ ]
+}

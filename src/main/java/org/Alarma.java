@@ -18,18 +18,18 @@ public class Alarma implements Serializable {
     private int intervalo;
     private UnidadesDeTiempo unidad;
     private EfectosAlarma efecto;
-    private ElementoCalendario evento;
+    private String tituloEvento;
 
     //constructor que recibe una fecha y hora específica para la alarma
     public Alarma(ElementoCalendario evento, LocalDateTime fechaHoraAlarma, EfectosAlarma efecto) {
-        this.evento = evento;
+        this.tituloEvento = evento.getTitulo();
         this.fechaHoraEvento = LocalDateTime.of(evento.getFechaInicio(),evento.getHoraInicio());
         this.fechaHoraAlarma = fechaHoraAlarma;
         this.efecto = efecto;
     }
     //Constructor que recibe cuánto tiempo antes del evento sonará la alarma
     public Alarma(ElementoCalendario evento, int intervalo, UnidadesDeTiempo unidad, EfectosAlarma efecto) {
-        this.evento = evento;
+        this.tituloEvento = evento.getTitulo();
         this.fechaHoraEvento = LocalDateTime.of(evento.getFechaInicio(),evento.getHoraInicio());
         this.unidad = unidad;
         this.intervalo = intervalo;
@@ -95,8 +95,8 @@ public class Alarma implements Serializable {
         return unidad;
     }
 
-    public ElementoCalendario getEvento() {
-        return evento;
+    public String getTituloEvento() {
+        return tituloEvento;
     }
 
     @JsonCreator
@@ -106,13 +106,13 @@ public class Alarma implements Serializable {
             @JsonProperty("intervalo") int intervalo,
             @JsonProperty("unidad") UnidadesDeTiempo unidad,
             @JsonProperty("efecto") EfectosAlarma efecto,
-            @JsonProperty("evento") ElementoCalendario evento){
+            @JsonProperty("tituloEvento:") String tituloEvento){
         this.fechaHoraEvento = fechaHoraEvento;
         this.fechaHoraAlarma = fechaHoraAlarma;
         this.unidad = unidad;
         this.intervalo = intervalo;
         this.efecto = efecto;
-        this.evento = evento;
+        this.tituloEvento = tituloEvento;
     }
 
 }

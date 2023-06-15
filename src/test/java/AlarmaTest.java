@@ -12,7 +12,7 @@ public class AlarmaTest {
     private Alarma crearAlarma() {
         // Crear una instancia de org.Alarma 5 minutos antes
         LocalDateTime fechaHoraEvento = LocalDateTime.of(2023, 4, 30, 12, 0); // Ejemplo de fecha y hora de evento
-        var evento = new Evento("titulo", "",fechaHoraEvento,fechaHoraEvento,true,null);
+        var evento = new Evento("titulo", "",fechaHoraEvento,fechaHoraEvento,false,null);
         int intervalo = 5; // Ejemplo de intervalo
         Alarma.UnidadesDeTiempo unidad = Alarma.UnidadesDeTiempo.MINUTOS; // Ejemplo de unidad de tiempo
         Alarma.EfectosAlarma efecto = Alarma.EfectosAlarma.NOTIFICACION; // Ejemplo de efecto de alarma
@@ -37,7 +37,8 @@ public class AlarmaTest {
     @Test
     public void alarmaEnviaNotificacion() {
         LocalDateTime fechaHora = LocalDateTime.of(2023,1,1, 20, 0);
-        Alarma a = new Alarma(null,fechaHora, Alarma.EfectosAlarma.NOTIFICACION);
+        var evento = new Evento("","",fechaHora,fechaHora,false,null);
+        Alarma a = new Alarma(evento,fechaHora, Alarma.EfectosAlarma.NOTIFICACION);
 
         int devuelto = a.reproducirEfecto();
         assertEquals(0, devuelto);
@@ -45,7 +46,8 @@ public class AlarmaTest {
     @Test
     public void alarmaReproduceSonido() {
         LocalDateTime fechaHora = LocalDateTime.of(2023,1,1, 20, 0);
-        Alarma a = new Alarma(null,fechaHora, Alarma.EfectosAlarma.SONIDO);
+        var evento = new Evento("", "",fechaHora,fechaHora,false,null);
+        Alarma a = new Alarma(evento,fechaHora, Alarma.EfectosAlarma.SONIDO);
 
         int devuelto = a.reproducirEfecto();
         assertEquals(1, devuelto);
@@ -53,7 +55,8 @@ public class AlarmaTest {
     @Test
     public void alarmaEnviaEmail() {
         LocalDateTime fechaHora = LocalDateTime.of(2023,1,1, 20, 0);
-        Alarma a = new Alarma(null,fechaHora, Alarma.EfectosAlarma.EMAIL);
+        var evento = new Evento("", "",fechaHora,fechaHora,false,null);
+        Alarma a = new Alarma(evento,fechaHora, Alarma.EfectosAlarma.EMAIL);
 
         int devuelto = a.reproducirEfecto();
         assertEquals(2, devuelto);

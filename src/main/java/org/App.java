@@ -749,7 +749,7 @@ public class App extends Application {
 
     private void mostrarNotifificacion(Alarma alarma) {
         var label =new Label(" Faltan "+ alarma.getIntervalo() +" "+ alarma.getUnidad().toString());
-        var label2 = new Label(" para " + alarma.getEvento().getTitulo());
+        var label2 = new Label(" para " + alarma.getTituloEvento());
         var vBox = new VBox(label,label2);
         var contenido = new BorderPane();
         contenido.setCenter(vBox);
