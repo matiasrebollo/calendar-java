@@ -18,16 +18,19 @@ public class Alarma implements Serializable {
     private int intervalo;
     private UnidadesDeTiempo unidad;
     private EfectosAlarma efecto;
+    private ElementoCalendario evento;
 
     //constructor que recibe una fecha y hora específica para la alarma
-    public Alarma(LocalDateTime fechaHoraEvento, LocalDateTime fechaHoraAlarma, EfectosAlarma efecto) {
-        this.fechaHoraEvento = fechaHoraEvento;
+    public Alarma(ElementoCalendario evento, LocalDateTime fechaHoraAlarma, EfectosAlarma efecto) {
+        this.evento = evento;
+        this.fechaHoraEvento = LocalDateTime.of(evento.getFechaInicio(),evento.getHoraInicio());
         this.fechaHoraAlarma = fechaHoraAlarma;
         this.efecto = efecto;
     }
     //Constructor que recibe cuánto tiempo antes del evento sonará la alarma
-    public Alarma(LocalDateTime fechaHoraEvento, int intervalo, UnidadesDeTiempo unidad, EfectosAlarma efecto) {
-        this.fechaHoraEvento = fechaHoraEvento;
+    public Alarma(ElementoCalendario evento, int intervalo, UnidadesDeTiempo unidad, EfectosAlarma efecto) {
+        this.evento = evento;
+        this.fechaHoraEvento = LocalDateTime.of(evento.getFechaInicio(),evento.getHoraInicio());
         this.unidad = unidad;
         this.intervalo = intervalo;
         this.efecto = efecto;
@@ -85,8 +88,16 @@ public class Alarma implements Serializable {
     public EfectosAlarma getEfecto() {
         return efecto;
     }
+    public int getIntervalo() {
+        return intervalo;
+    }
+    public UnidadesDeTiempo getUnidad() {
+        return unidad;
+    }
 
-
+    public ElementoCalendario getEvento() {
+        return evento;
+    }
 
     @JsonCreator
     private Alarma(

@@ -41,6 +41,16 @@ public class Calendario implements Serializable {
             this.eventos.remove(evento);
         }
     }
+    public void eliminarElemento(ElementoCalendario elemento) {
+        if (elemento.getTypename().equals("Evento")) {
+            if (eventos.contains((Evento)elemento))
+                 this.eventos.remove(elemento);
+        }
+        else if (elemento.getTypename().equals("Tarea")) {
+            if (tareas.contains((Tarea) elemento))
+                this.tareas.remove(elemento);
+        }
+    }
 
     public boolean existeEvento(Evento evento){
         return this.eventos.contains(evento);
@@ -169,7 +179,4 @@ public class Calendario implements Serializable {
         ordenarArrayPorHora(array);
         return array;
     }
-
-
-
 }

@@ -3,6 +3,7 @@ package org;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -22,21 +23,25 @@ import java.util.List;
 
 public class App extends Application {
     enum Modalidades {DIA, SEMANA, MES};
-    private Modalidades modalidad = Modalidades.SEMANA;
     private static final DateTimeFormatter FORMATTER_FECHA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter FORMATTER_HORA = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private DateTimeFormatter formatter = FORMATTER_FECHA;
 
     private Calendario calendario;
     private ArrayList<ElementoCalendario> eventosDelDia;
+    private ElementoCalendario elementoSeleccionado;
+    private ArrayList<Alarma> alarmasDeHoy;
 
     private LocalDate fechaSeleccionada;
-    private Label labelFecha = new Label();
-
     private LocalDate fechaActual;
     private LocalTime horaActual;
 
+    //de la vista
+    private Modalidades modalidad = Modalidades.DIA;
+    private DateTimeFormatter formatter = FORMATTER_FECHA;
+    private Label labelFecha;
     private BorderPane contenedor;
+    private Stage ventanaPrincipal;
+    private Stage ventana2;
 
 
     private void irAlLunes(){
@@ -75,9 +80,6 @@ public class App extends Application {
             }
         }
     }
-    private void mostrarNotificacion(Alarma alarma) {
-
-    }
 
     private VBox contenidoPrincipal(ElementoCalendario elemento){
         var titulo = new Label("Titulo:  " + elemento.getTitulo());
@@ -98,10 +100,10 @@ public class App extends Application {
             } else {
                 fechaYHoraInicio.getChildren().addAll(new Label("Fecha y hora inicio:   "),
                         new Label(evento.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
-                        new Label(evento.getHoraInicio().format(DateTimeFormatter.ofPattern("hh:mm"))));
+                        new Label(evento.getHoraInicio().toString()));
                 fechaYHoraFin.getChildren().addAll(new Label("Fecha y hora fin:   "),
                         new Label(evento.getFechaFin().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
-                        new Label(evento.getHoraFin().format(DateTimeFormatter.ofPattern("hh:mm"))));
+                        new Label(evento.getHoraFin().toString()));
             }
         } else {
             Tarea tarea = (Tarea) elemento;
@@ -112,7 +114,7 @@ public class App extends Application {
             } else {
                 fechaYHoraInicio.getChildren().addAll(new Label("Fecha y hora inicio:   "),
                         new Label(tarea.getFechaInicio().format(DateTimeFormatter.ofPattern("d/M/yyyy"))),
-                        new Label(tarea.getHoraInicio().format(DateTimeFormatter.ofPattern("hh:mm"))));
+                        new Label(tarea.getHoraInicio().toString()));
             }
             if (tarea.estaCompletada()){
                 completada.getChildren().addAll(new Label("Estado:"), new Label("Completada"));
@@ -124,7 +126,7 @@ public class App extends Application {
         ArrayList<Alarma> alarmas = elemento.getAlarmas();
         var enumeracion = new VBox();
         for (int i = 0; i < elemento.cantidadAlarmas(); i++){
-            enumeracion.getChildren().add(new Label(alarmas.get(i).getFechaHoraAlarma().format(DateTimeFormatter.ofPattern("d/M/yyyy hh:mm"))));
+            enumeracion.getChildren().add(new Label(alarmas.get(i).getFechaHoraAlarma().format(DateTimeFormatter.ofPattern("d/M/yyyy kk:mm"))));
         }
         var alarma = new HBox(new Label("Alarmas:   "), enumeracion);
 
@@ -134,79 +136,79 @@ public class App extends Application {
         return formulario;
     }
 
-    private HBox contenidoAlarma(ElementoCalendario elemento, Stage ventana){
-        var botonAlarma = new Button("Agregar alarma");
-        botonAlarma.setOnAction(e -> {
-            var ventanaAlarma = new Stage();
-            ventanaAlarma.setTitle("Agregar alarma");
-
-            var intervaloCasilla = new Spinner<>(1,60,0);
-            intervaloCasilla.setPrefWidth(70);
-            var unidadCasilla = new ChoiceBox<>();
-            unidadCasilla.getItems().addAll("minutos","horas", "dias", "semanas");
-            unidadCasilla.setValue("minutos");
-            var alarmaCasilla = new HBox(new Label("Agregar alarma"), intervaloCasilla, unidadCasilla, new Label("antes."));
-            alarmaCasilla.setAlignment(Pos.CENTER);
-            alarmaCasilla.setSpacing(5);
-            var mensaje = new HBox(new Label("La alarma será una notificación por defecto."));
-            mensaje.setAlignment(Pos.CENTER);
-            var contenidoAlarma = new VBox(10,alarmaCasilla, mensaje);
-            //contenidoAlarma.setSpacing(10);
-            contenidoAlarma.setAlignment(Pos.CENTER);
-            var botonAceptar = new Button("Aceptar");
-            var contenedorAceptar = new HBox(botonAceptar);
-            contenedorAceptar.setAlignment(Pos.CENTER);
-            var contenido = new BorderPane();
-            contenido.setCenter(contenidoAlarma);
-            contenido.setBottom(contenedorAceptar);
-            botonAceptar.setOnAction(actionEvent -> {
-                int intervalo = (int) intervaloCasilla.getValue();
-                Alarma.UnidadesDeTiempo unidad;
-                if (unidadCasilla.getValue().toString().equals("minutos")){
-                    unidad = Alarma.UnidadesDeTiempo.MINUTOS;
-                } else if (unidadCasilla.getValue().toString().equals("horas")){
-                    unidad = Alarma.UnidadesDeTiempo.HORAS;
-                } else if (unidadCasilla.getValue().toString().equals("dias")){
-                    unidad = Alarma.UnidadesDeTiempo.DIAS;
-                } else {
-                    unidad = Alarma.UnidadesDeTiempo.SEMANAS;
-                }
-                elemento.agregarAlarma(null, intervalo, unidad, Alarma.EfectosAlarma.NOTIFICACION);
-                System.out.println("Se agregó la alarma.");
-                ventanaAlarma.close();
-                ventana.close();
-            });
-
-            var escena = new Scene(contenido, 335, 100);
-            ventanaAlarma.initModality(Modality.APPLICATION_MODAL);
-            ventanaAlarma.initOwner(ventanaPrincipal);
-            ventanaAlarma.setResizable(false);
-            ventanaAlarma.setScene(escena);
-            ventanaAlarma.showAndWait();
-
+    private Button botonAceptarAlarma(Spinner intervaloSpinner, ChoiceBox unidades) {
+        var botonAceptar = new Button("Aceptar");
+        botonAceptar.setOnAction(actionEvent -> {
+            int intervalo = (int) intervaloSpinner.getValue();
+            Alarma.UnidadesDeTiempo unidad = null;
+            switch (unidades.getValue().toString()){
+                case "minutos" -> unidad = Alarma.UnidadesDeTiempo.MINUTOS;
+                case "horas" -> unidad = Alarma.UnidadesDeTiempo.HORAS;
+                case "dias" -> unidad = Alarma.UnidadesDeTiempo.DIAS;
+                case "semanas" -> unidad = Alarma.UnidadesDeTiempo.SEMANAS;
+            }
+            var a = elementoSeleccionado.agregarAlarma(null, intervalo, unidad, Alarma.EfectosAlarma.NOTIFICACION);
+            ventana2.close();
+            if (a.getFechaHoraAlarma().toLocalDate().equals(fechaActual))
+                alarmasDeHoy.add(a);
+            System.out.println("Se agregó la alarma. hoy hay: " + alarmasDeHoy.size());
         });
-        return new HBox(botonAlarma);
+        return botonAceptar;
+    }
+    private BorderPane contenidoAlarma() {
+        var intervaloCasilla = new Spinner<>(1,60,0);
+        intervaloCasilla.setPrefWidth(70);
+
+        var unidadCasilla = new ChoiceBox<>();
+        unidadCasilla.getItems().addAll("minutos","horas", "dias", "semanas");
+        unidadCasilla.setValue("minutos");
+
+        var alarmaCasilla = new HBox(5,new Label("Agregar alarma"), intervaloCasilla, unidadCasilla, new Label("antes."));
+        alarmaCasilla.setAlignment(Pos.CENTER);
+
+        var mensaje = new HBox(new Label("La alarma será una notificación por defecto."));
+        mensaje.setAlignment(Pos.CENTER);
+
+        var contenidoAlarma = new VBox(10,alarmaCasilla, mensaje);
+        contenidoAlarma.setAlignment(Pos.CENTER);
+
+        var botonAceptar = botonAceptarAlarma(intervaloCasilla,unidadCasilla);
+        var contenedorAceptar = new HBox(botonAceptar);
+        contenedorAceptar.setAlignment(Pos.CENTER);
+        var contenido = new BorderPane();
+        contenido.setCenter(contenidoAlarma);
+        contenido.setBottom(contenedorAceptar);
+
+        return contenido;
     }
 
-    private void informacionElemento(ElementoCalendario elemento){
-        var ventana = new Stage();
-        ventana.setTitle("Informacion" + elemento.getTypename());
-        VBox formulario = contenidoPrincipal(elemento);
-        HBox contenedorAlarma = contenidoAlarma(elemento, ventana);
-        contenedorAlarma.setAlignment(Pos.CENTER);
+    private void mostrarInformacionElemento(ElementoCalendario elemento){
+        elementoSeleccionado = elemento;
+        var formulario = contenidoPrincipal(elemento);
+        var botonAgregarAlarma = new Button("Agregar alarma");
+        botonAgregarAlarma.setOnAction(e->{
+            var aux = ventana2;
+            abrirVentanaEmergente(335, 100, contenidoAlarma(), "Agregar Alarma");
+            ventana2 = aux;
+        });
+        formulario.getChildren().add(botonAgregarAlarma);
+
+        var botonEliminar = new Button("Eliminar " + elemento.getTypename());
+        botonEliminar.setStyle("-fx-background-color: #943333; -fx-text-fill: white");
+        botonEliminar.setOnAction(e->{
+            calendario.eliminarElemento(elemento);
+            ventana2.close();
+        });
+        var hboxBotonEliminar = new HBox(botonEliminar);
+        hboxBotonEliminar.setAlignment(Pos.CENTER);
 
         var contenido = new BorderPane();
         contenido.setCenter(formulario);
-        contenido.setBottom(contenedorAlarma);
-
-        var escena = new Scene(contenido,280,450);
-        ventana.initModality(Modality.APPLICATION_MODAL);
-        ventana.initOwner(ventanaPrincipal);
-        ventana.setResizable(false);
-        ventana.setScene(escena);
-        ventana.showAndWait();
+        contenido.setBottom(hboxBotonEliminar);
+        abrirVentanaEmergente(280,450, contenido, "Informacion "+ elemento.getTypename());
     }
 
+    //si recibe la fecha va a ser igual a la funcion mostrarEventosEninterfaz. entonces se puede usar la otra
     private void mostrarEventosEnLaInterfazMes(VBox casilla, int dia){
         LocalDateTime fechaHoraInicio = LocalDateTime.of(2023,6,12,14,30);
         LocalDateTime fechaHoraFin = LocalDateTime.of(2023,6,12,18,30);
@@ -218,7 +220,7 @@ public class App extends Application {
 
         labelEvento.textAlignmentProperty().set(TextAlignment.LEFT);
         labelEvento.setOnMouseClicked(a -> {
-            informacionElemento(evento1);
+            mostrarInformacionElemento(evento1);
         });
         /*êstoy entre dos cosas al usar el array, llamar a obtenerlementosenunlapsodedias, mandando fechaseleccionada.primerdiadelmes, y
         fechasleccionada.cantidaddiasmes, y despues iterar con la funcion de abajo.
@@ -251,12 +253,12 @@ public class App extends Application {
             dia.setAlignment(Pos.TOP_LEFT);
             dia.setBorder(new Border(borde));
             if (numero.equals("00")){
-                dia.setStyle("-fx-background-color: #c22d2d;");
+                dia.setStyle("-fx-background-color: #484848;");
             }
             if (!aux && auxiliares[0] < cantidadDiasMes){
                 mostrarEventosEnLaInterfazMes(dia, this.fechaSeleccionada.withMonth
                         (this.fechaSeleccionada.getMonth().getValue()).withDayOfMonth(auxiliares[0] - 1).getDayOfYear());//entero que representa el dia del año.
-                //mostrarEventosEnLaInterfaz(dia,fechaSeleccionada);
+                //mostrarEventosEnLaInterfaz(dia,fechaSeleccionada.plus(?));
             }
             HBox.setHgrow(dia, Priority.ALWAYS);
             VBox.setVgrow(dia, Priority.ALWAYS);
@@ -333,10 +335,10 @@ public class App extends Application {
         return "";
     }
 
-    //tengo que tener todos los eventos que ocurren en la semana actual
+
     /**
      * Recibe un VBox y una fecha, y
-     * agrega todos los eventos y tareas que ocurren en ese dia al VBox recibid
+     * agrega todos los eventos y tareas que ocurren en ese dia al VBox recibido
      * */
     private void mostrarEventosEnLaInterfaz(VBox columnaDia, LocalDate fecha){
         var elementosDelDia = calendario.obtenerElementosDeLaFecha(fecha);
@@ -344,20 +346,18 @@ public class App extends Application {
             var labelTitulo = new Label (elemento.getTitulo());
             var hBoxTitulo = new HBox(labelTitulo);
             hBoxTitulo.setAlignment(Pos.CENTER_LEFT);
-            Label labelHora;
 
+            Label labelHora = null;
             if (elemento.getTypename().equals("Evento")){
                 Evento e = (Evento) elemento;
                 labelHora = new Label(e.getHoraInicio().toString() + " : " + e.getHoraFin().toString());
                 labelTitulo.setStyle("-fx-border-color: gray");
             }
-            else {
+            else if (elemento.getTypename().equals("Tarea")){
                 Tarea t = (Tarea) elemento;
                 var completadaCheck = new CheckBox();
                 completadaCheck.setSelected(t.estaCompletada());
-                completadaCheck.setOnAction(e->{
-                    t.marcarTareaCompletada();
-                });
+                completadaCheck.setOnAction(e-> t.marcarTareaCompletada());
                 hBoxTitulo.getChildren().add(completadaCheck);
                 labelHora = new Label(elemento.getHoraInicio().toString() + " ");
                 labelTitulo.setStyle("-fx-border-color: black");
@@ -365,17 +365,17 @@ public class App extends Application {
             if (elemento.esTodoElDia()) {
                 labelHora = new Label("Todo el dia");
             }
-            var hBox= new HBox(5, labelHora,hBoxTitulo);
-            hBox.setAlignment(Pos.CENTER_LEFT);
-            if (modalidad == Modalidades.DIA){
-                hBox.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");
-            } else if (modalidad == Modalidades.MES) {
-                hBox.getChildren().remove(labelHora);
+            var hBox= new HBox(5, labelHora,hBoxTitulo); hBox.setAlignment(Pos.CENTER_LEFT);
+
+            switch (modalidad) {
+                case DIA -> hBox.setStyle("-fx-border-width: 0 0 2 0; -fx-border-color: black;");
+                case MES -> hBox.getChildren().remove(labelHora);
             }
-            labelTitulo.setOnMouseClicked(e-> informacionElemento(elemento));
+            labelTitulo.setOnMouseClicked(e-> mostrarInformacionElemento(elemento));
             columnaDia.getChildren().add(hBox);
         }
     }
+
     /**
      *
      */
@@ -413,17 +413,12 @@ public class App extends Application {
         return contenido;
     }
 
-    /**
-     *
-     * */
     private Node contenidoCentroDia(){
         var columna = new VBox(7);
         mostrarEventosEnLaInterfaz(columna, fechaSeleccionada);
         HBox.setHgrow(columna, Priority.ALWAYS);
-
         return columna;
     }
-
 
 
     //Barra superior...
@@ -435,7 +430,7 @@ public class App extends Application {
     private Node choiceBoxModalidad() {
         ChoiceBox<String> choiceBox = new ChoiceBox<>();
         choiceBox.getItems().addAll("Dia", "Semana", "Mes");
-        choiceBox.setValue("Semana");//formato semana por defecto
+        choiceBox.setValue("Dia");//formato Dia por defecto
 
         // Acciones a realizar cuando se modifica la opción seleccionada
         choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -471,6 +466,8 @@ public class App extends Application {
             fechaActual = LocalDate.now();
             horaActual = LocalTime.now();
             labelFechaHora.setText(horaActual.format(FORMATTER_HORA) +"\n"+ fechaActual.format(FORMATTER_FECHA));
+            if (horaActual.getSecond() == 0)
+                chequarAlarmas();
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -481,7 +478,8 @@ public class App extends Application {
     /**
      * Crea un VBox que contiene la fecha seleccionada y dos botones
      * con flechas para avanzar o retroceder esa fecha.
-     * Al pulsar alguno de los botones se actualiza el contenido centro
+     * Al pulsartimeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play(); alguno de los botones se actualiza el contenido centro
      */
     private Node bloqueSeleccionarFecha() {
         labelFecha = new Label(this.fechaSeleccionada.format(formatter));
@@ -524,7 +522,6 @@ public class App extends Application {
         HBox.setHgrow(espacioCentro,Priority.ALWAYS);
         return new HBox(espacioIzquierda, espacioCentro, espacioDerecha);
     }
-
 
 
     //____________________________________________________________________________________________________
@@ -596,7 +593,7 @@ public class App extends Application {
 
      * Devuelve un HBox con los dos botones.
      * */
-    private HBox crearBotonesVentanaTarea(Stage ventana, String elemento, List<Control> camposFormulario) {
+    private HBox crearBotonesVentanaTarea(String elemento, List<Control> camposFormulario) {
         var botonAceptar = new Button("Aceptar");
         botonAceptar.setOnAction(e -> {//leer los datos ingresados por el usuario
             var titulo = ((TextField) camposFormulario.get(0)).getText();
@@ -639,11 +636,11 @@ public class App extends Application {
                 System.out.println("Se creó la tarea");
             }
             actualizarContenidoCentro();
-            ventana.close();
+            ventana2.close();
         });
         var botonCancelar = new Button("Cancelar");
         botonCancelar.setOnAction(actionEvent -> {
-            ventana.close();
+            ventana2.close();
         });
 
         var botones = new HBox(5, botonAceptar, botonCancelar);
@@ -656,7 +653,7 @@ public class App extends Application {
      * Crea un formulario con todos los campos necesarios para
      * crear un Evento o Tarea.
      */
-    private BorderPane contenidoVentanaEmergente(Stage ventana, String string) {
+    private BorderPane contenidoVentanaEmergente(String string) {
         VBox formulario = new VBox(5);//5px de espacio entre bloques
         var tituloField = new TextField();
         var descripcionField = new TextArea(); descripcionField.setPrefHeight(90);//ajusto el tamaño
@@ -690,14 +687,15 @@ public class App extends Application {
                 fechaVBox,
                 new Label("Todo el dia: ", todoEldiaBox),
                 horarioVbox,
-                new Label("Frecuencia: "),frecuenciaChoice);
+                new Label("Frecuencia: "),frecuenciaChoice
+        );
 
         List<Control> camposFormulario = List.of(tituloField, descripcionField,fechaField,
                 horaSpinner, minSpinner, todoEldiaBox,frecuenciaChoice,
                 intervaloSpinner,ocurrenciasSpinner, infinitasCheckBox,
                 fechaFinField, horaFinSpinner, minFinSpinner);
 
-        var botones = crearBotonesVentanaTarea(ventana, string, camposFormulario);
+        var botones = crearBotonesVentanaTarea(string, camposFormulario);
 
 
         var contenido = new BorderPane();
@@ -708,22 +706,19 @@ public class App extends Application {
     }
 
 
-    /**
-     * Es llamada únicamente por la funcion 'contenidoBarraInferior'.
-     * Abre una ventana emergente que incluye el contenido indicado en el parametro
-     * */
-    private void abrirVentanaEmergente(String string){
-        var ventana = new Stage();
+    private void abrirVentanaEmergente(int ancho, int alto, Node contenido, String tituloVentana) {
+        ventana2 = new Stage();
+        ventana2.setTitle(tituloVentana);
 
-        BorderPane contenido = contenidoVentanaEmergente(ventana, string);
-        ventana.setTitle("Agregar" + string);
+        BorderPane contenido2 = (BorderPane) contenido;
 
-        var escena = new Scene(contenido,280,500);
-        ventana.initModality(Modality.APPLICATION_MODAL);
-        ventana.initOwner(ventanaPrincipal);
-        ventana.setResizable(false);
-        ventana.setScene(escena);
-        ventana.showAndWait();
+        var escena = new Scene(contenido2,ancho,alto);
+        ventana2.initModality(Modality.APPLICATION_MODAL);
+        ventana2.initOwner(ventanaPrincipal);
+        ventana2.setResizable(false);
+        ventana2.setScene(escena);
+        ventana2.showAndWait();
+        actualizarContenidoCentro();
     }
 
     /**
@@ -733,24 +728,58 @@ public class App extends Application {
         var botonAgregarEvento = new Button("agregar Evento");
         var botonAgregarTarea = new Button("agregar Tarea");
         botonAgregarTarea.setOnAction(actionEvent -> {
-            abrirVentanaEmergente("Tarea");
+            abrirVentanaEmergente(280,450,contenidoVentanaEmergente("Tarea"),"Agregar Tarea");
         });
         botonAgregarEvento.setOnAction(actionEvent -> {
-            abrirVentanaEmergente("Evento");
+            abrirVentanaEmergente(280, 500, contenidoVentanaEmergente("Evento"), "Agregar Evento");
         });
         var hbox = new HBox(1,botonAgregarTarea,botonAgregarEvento);
         hbox.setAlignment(Pos.CENTER);
 
-        var barraInferior = new StackPane(hbox);
-
-        return barraInferior;
+        return new StackPane(hbox);
     }
 
 
+    public void chequarAlarmas() {
+        var hora = LocalTime.of(horaActual.getHour(), horaActual.getMinute());
+        System.out.println("Chequeo alarma");
+        for (var a : alarmasDeHoy){
+            System.out.println("alarma: " + a.getFechaHoraAlarma().toLocalTime());
+            System.out.println("Hora:   " + hora);
+            if (a.getFechaHoraAlarma().toLocalTime().equals(hora)){
+                Platform.runLater(()-> mostrarNotifificacion(a));
+                System.out.println("Suena");
+            }
+        }
+    }
+
+    private void mostrarNotifificacion(Alarma alarma) {
+        var label =new Label(" Faltan "+ alarma.getIntervalo() +" "+ alarma.getUnidad().toString());
+        var label2 = new Label(" para " + alarma.getEvento().getTitulo());
+        var vBox = new VBox(label,label2);
+        var contenido = new BorderPane();
+        contenido.setCenter(vBox);
+        abrirVentanaEmergente(200,50, contenido, "Notificacion");
+        System.out.println("suena la alarma");
+
+    }
+    public ArrayList<Alarma> obtenerAlarmasDeLaFecha(LocalDate fecha) {
+        ArrayList<Alarma> array = new ArrayList<>();
+        var elementos = calendario.obtenerElementosDeLaFecha(fecha);
+        for(var e : elementos) {
+            if (e.getHoraInicio().isAfter(horaActual)) {
+                var alarmas = e.getAlarmas();
+                if(!alarmas.isEmpty()) {
+                    for (Alarma alarma : alarmas) {
+                        array.add(alarma);
+                    }
+                }
+            }
+        }
+        return array;
+    }
 
 
-
-    private Stage ventanaPrincipal;
     @Override
     public void start(Stage stage) throws Exception {
         fechaActual = LocalDate.now();
@@ -758,15 +787,18 @@ public class App extends Application {
         fechaSeleccionada = fechaActual;
         ventanaPrincipal = stage;
 
+        //calendario = Calendario.deserializar();
+        // de ejemplo
         this.calendario = new Calendario();
-        calendario.crearTarea("Tarea 0", "XD", fechaActual,false,"20:30",null);
+        var t =calendario.crearTarea("Tarea 0", "XD", fechaActual,false,"13:20",null);
         calendario.crearEvento("Evento 1", "Este es el evento 1", fechaActual,fechaActual,"12:00","14:30",false,null);
         var frec = new FrecuenciaDiaria(fechaActual,3,5);
         calendario.crearEvento("Evento a", "Evento cada 3 dias", fechaActual,fechaActual,"0:0","0:0",true,frec);
         this.eventosDelDia = calendario.obtenerElementosDeLaFecha(fechaSeleccionada);
+        alarmasDeHoy = obtenerAlarmasDeLaFecha(fechaActual);
+        var alarma = new Alarma(t,50, Alarma.UnidadesDeTiempo.MINUTOS, Alarma.EfectosAlarma.NOTIFICACION);
 
-
-        var contenidoCentro = contenidoCentroSemana();
+        var contenidoCentro = contenidoCentroDia();
 
         var barraSuperior = contenidoBarraSuperior();
         barraSuperior.setStyle("-fx-background-color: #34a9c9;");//para probar. Despues lo saco
@@ -776,8 +808,10 @@ public class App extends Application {
 
         var barraInferior = contenidoBarraInferior();
 
-
-
+        var btn = new Button("a");
+        btn.setOnAction(e->{
+            mostrarNotifificacion(alarma);
+        });
         contenedor = new BorderPane();
         contenedor.setTop(barraSuperior);
         contenedor.setCenter(contenidoCentro);
@@ -785,22 +819,14 @@ public class App extends Application {
         contenedor.setLeft(barraIzquierda);
         contenedor.setRight(barraDerecha);
 
-        /*
-          COSAS QUE FALTAN:
-          Al hacer click en un evento mostrar la info
-
-          Mejorar las proporciones, tamaños  (estetica)
-
-          Usar los datos ingresados para crear un evento/tarea
-
-          que se vean los eventos y tareas en las fechas correspondientes ordenados por hora
-
-         */
-
-
-
+        chequarAlarmas();
         var sceneSemana = new Scene(contenedor, 800, 540);
         stage.setScene(sceneSemana);
         stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch();
+        System.out.println("XD");
     }
 }

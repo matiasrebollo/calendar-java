@@ -75,16 +75,15 @@ public class ElementoCalendario implements Serializable {
     }
 
     /**
-     * Crea una org.Alarma con los datos recibidos.
+     * Crea una Alarma con los datos recibidos.
      * Devuelve la alarma creada o null en caso de error
      * */
     public Alarma agregarAlarma(LocalDateTime fechaHoraAlarma, int intervalo, Alarma.UnidadesDeTiempo unidad, Alarma.EfectosAlarma efecto){
-        LocalDateTime fechaHora = LocalDateTime.of(fechaInicio, horaInicio);
         Alarma alarma;
         if (fechaHoraAlarma == null){
-            alarma = new Alarma(fechaHora, intervalo, unidad, efecto);
+            alarma = new Alarma(this, intervalo, unidad, efecto);
         } else {
-            alarma = new Alarma(fechaHora, fechaHoraAlarma, efecto);
+            alarma = new Alarma(this, fechaHoraAlarma, efecto);
         }
         this.alarmas.add(alarma);
         return alarma;
@@ -140,6 +139,9 @@ public class ElementoCalendario implements Serializable {
      * */
     public boolean ocurreEnFecha(LocalDate fechaCualquiera){
         return frecuencia.fechaCorrespondeAFrecuencia(fechaCualquiera);
+    }
+    public LocalDate getFechaRepeticion(LocalDate fecha) {
+        return fechaInicio;
     }
 
 }
