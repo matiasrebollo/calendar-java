@@ -83,6 +83,73 @@ public class App extends Application {
         }
     }
 
+    /**
+     * Crea un nuevo Stage en la variable ventana2 con el titulo recibido,
+     * y una nueva Scene que tendrá el contenido y el tamaño recibidos
+     * Y luego muestra la ventana emergente en la interfaz
+     */
+    private void abrirVentanaEmergente(int ancho, int alto, Node contenido, String tituloVentana) {
+        ventana2 = new Stage();
+        ventana2.setTitle(tituloVentana);
+
+        BorderPane contenido2 = (BorderPane) contenido;
+
+        var escena = new Scene(contenido2,ancho,alto);
+        ventana2.initModality(Modality.APPLICATION_MODAL);
+        ventana2.initOwner(ventanaPrincipal);
+        ventana2.setResizable(false);
+        ventana2.setScene(escena);
+        ventana2.showAndWait();
+        actualizarContenidoCentro();
+    }
+
+    /**
+     * Revisa en el array de alarmasDeHoy el horario de cada una,
+     * y en caso de coincidir con la hora actual lanza la notificación
+     */
+    public void chequearAlarmas() {
+        var hora = LocalTime.of(horaActual.getHour(), horaActual.getMinute());
+        for (var a : alarmasDeHoy){
+            if (a.getFechaHoraAlarma().toLocalTime().equals(hora)){
+                Platform.runLater(()-> mostrarNotifificacion(a));
+            }
+        }
+    }
+
+    /***
+     * Lanza la notificacion de la alarma en la interfaz
+     */
+    private void mostrarNotifificacion(Alarma alarma) {
+        var label =new Label(" Faltan "+ alarma.getIntervalo() +" "+ alarma.getUnidad().toString());
+        var label2 = new Label(" para " + alarma.getTituloEvento());
+        var vBox = new VBox(label,label2);
+        var contenido = new BorderPane();
+        contenido.setCenter(vBox);
+        abrirVentanaEmergente(200,50, contenido, "Notificacion");
+    }
+
+    /**
+     * busca en los eventos y tareas que ocurren en la fecha recibida sus alarmas,
+     * y devuelve un array con las alarmas que aun no suenan
+     */
+    public ArrayList<Alarma> obtenerAlarmasDeLaFecha(LocalDate fecha) {
+        ArrayList<Alarma> array = new ArrayList<>();
+        var elementos = calendario.obtenerElementosDeLaFecha(fecha);
+        for(var e : elementos) {
+            if (e.getHoraInicio().isAfter(horaActual)) {
+                var alarmas = e.getAlarmas();
+                if(!alarmas.isEmpty()) {
+                    for (Alarma alarma : alarmas) {
+                        array.add(alarma);
+                    }
+                }
+            }
+        }
+        return array;
+    }
+
+
+    //Contenido centro...
 
     private VBox contenidoInformacionElemento(ElementoCalendario elemento, LocalDate fecha){
         var titulo = new Label("Titulo:  " + elemento.getTitulo());
@@ -147,8 +214,8 @@ public class App extends Application {
         return formulario;
     }
 
-    /*
-    Crea una alarma con los datos seleccionados.
+    /**
+     * Crea una alarma con los datos seleccionados.
      */
     private Button botonAceptarAlarma(Spinner intervaloSpinner, ChoiceBox unidades) {
         var botonAceptar = new Button("Aceptar");
@@ -174,8 +241,9 @@ public class App extends Application {
         });
         return botonAceptar;
     }
-    /*
-    Muestra un cuadro para poder crear una alarma.
+
+    /**
+     * Muestra un cuadro para poder crear una alarma.
      */
     private BorderPane contenidoAlarma() {
         var intervaloCasilla = new Spinner<>(1,60,0);
@@ -204,8 +272,9 @@ public class App extends Application {
         return contenido;
     }
 
-    /*
-    Muestra la informacion del elemento recibido, permitiendo agregar una alarma o eliminar el elemento.
+    /**
+     * Muestra la informacion del elemento recibido, permitiendo agregar una alarma o
+     * eliminar el elemento.
      */
     private void mostrarInformacionElemento(ElementoCalendario elemento, LocalDate fecha){
         elementoSeleccionado = elemento;
@@ -238,8 +307,8 @@ public class App extends Application {
         abrirVentanaEmergente(280,450, contenido, "Informacion "+ elemento.getTypename());
     }
 
-    /*
-    Crea el numero de cada dia del mes.
+    /**
+     * Crea la casilla de cada dia del mes.
      */
     private void crearDias(int[] auxiliares, HBox fila, int posicionDiaUno, int cantidadDiasMes, BorderStroke borde){
         int semana = 7;
@@ -382,9 +451,6 @@ public class App extends Application {
         }
     }
 
-    /**
-     *
-     */
     private Node contenidoCentroSemana() {
         int n = fechaSeleccionada.getDayOfMonth();
         BorderStroke borde = new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT);
@@ -427,6 +493,7 @@ public class App extends Application {
     }
 
 
+    //Barra superior
 
     /**
      * Crea una caja de opciones (Dia, Semana, Mes),
@@ -471,7 +538,7 @@ public class App extends Application {
             horaActual = LocalTime.now();
             labelFechaHora.setText(horaActual.format(FORMATTER_HORA) +"\n"+ fechaActual.format(FORMATTER_FECHA));
             if (horaActual.getSecond() == 0)
-                chequarAlarmas();
+                chequearAlarmas();
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -482,8 +549,7 @@ public class App extends Application {
     /**
      * Crea un VBox que contiene la fecha seleccionada y dos botones
      * con flechas para avanzar o retroceder esa fecha.
-     * Al pulsartimeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play(); alguno de los botones se actualiza el contenido centro
+     * Al pulsar alguno de los botones se actualiza el contenido centro
      */
     private Node bloqueSeleccionarFecha() {
         labelFecha = new Label(this.fechaSeleccionada.format(formatter));
@@ -528,8 +594,10 @@ public class App extends Application {
     }
 
 
+
+    //Barra inferior...
     /***
-     * Crea un VBox qu contendrá en cada fila los campos recibidos
+     * Crea un VBox que contendrá en cada fila los campos recibidos
      */
     private VBox itemsDeFrecuencia(Spinner intervalo, Spinner ocurrencias, CheckBox infinitas) {
         var caja = new VBox();
@@ -593,7 +661,7 @@ public class App extends Application {
 
      * Devuelve un HBox con los dos botones.
      * */
-    private HBox crearBotonesVentanaTarea(String elemento, List<Control> camposFormulario) {
+    private HBox crearBotonesVentanaElemento(String elemento, List<Control> camposFormulario) {
         var botonAceptar = new Button("Aceptar");
         botonAceptar.setOnAction(e -> {
             var titulo = ((TextField) camposFormulario.get(0)).getText();
@@ -705,7 +773,7 @@ public class App extends Application {
                 intervaloSpinner,ocurrenciasSpinner, infinitasCheckBox,
                 fechaFinField, horaFinSpinner, minFinSpinner);
 
-        var botones = crearBotonesVentanaTarea(string, camposFormulario);
+        var botones = crearBotonesVentanaElemento(string, camposFormulario);
 
 
         var contenido = new BorderPane();
@@ -713,22 +781,6 @@ public class App extends Application {
         contenido.setBottom(botones);
 
         return contenido;
-    }
-
-
-    private void abrirVentanaEmergente(int ancho, int alto, Node contenido, String tituloVentana) {
-        ventana2 = new Stage();
-        ventana2.setTitle(tituloVentana);
-
-        BorderPane contenido2 = (BorderPane) contenido;
-
-        var escena = new Scene(contenido2,ancho,alto);
-        ventana2.initModality(Modality.APPLICATION_MODAL);
-        ventana2.initOwner(ventanaPrincipal);
-        ventana2.setResizable(false);
-        ventana2.setScene(escena);
-        ventana2.showAndWait();
-        actualizarContenidoCentro();
     }
 
     /**
@@ -750,40 +802,6 @@ public class App extends Application {
     }
 
 
-    public void chequarAlarmas() {
-        var hora = LocalTime.of(horaActual.getHour(), horaActual.getMinute());
-        for (var a : alarmasDeHoy){
-            if (a.getFechaHoraAlarma().toLocalTime().equals(hora)){
-                Platform.runLater(()-> mostrarNotifificacion(a));
-            }
-        }
-    }
-
-    private void mostrarNotifificacion(Alarma alarma) {
-        var label =new Label(" Faltan "+ alarma.getIntervalo() +" "+ alarma.getUnidad().toString());
-        var label2 = new Label(" para " + alarma.getTituloEvento());
-        var vBox = new VBox(label,label2);
-        var contenido = new BorderPane();
-        contenido.setCenter(vBox);
-        abrirVentanaEmergente(200,50, contenido, "Notificacion");
-    }
-    public ArrayList<Alarma> obtenerAlarmasDeLaFecha(LocalDate fecha) {
-        ArrayList<Alarma> array = new ArrayList<>();
-        var elementos = calendario.obtenerElementosDeLaFecha(fecha);
-        for(var e : elementos) {
-            if (e.getHoraInicio().isAfter(horaActual)) {
-                var alarmas = e.getAlarmas();
-                if(!alarmas.isEmpty()) {
-                    for (Alarma alarma : alarmas) {
-                        array.add(alarma);
-                    }
-                }
-            }
-        }
-        return array;
-    }
-
-
     @Override
     public void start(Stage stage) throws Exception {
         fechaActual = LocalDate.now();
@@ -800,13 +818,10 @@ public class App extends Application {
         alarmasDeHoy = obtenerAlarmasDeLaFecha(fechaActual);
 
         var contenidoCentro = contenidoCentroDia();
-
         var barraSuperior = contenidoBarraSuperior();
         barraSuperior.setStyle("-fx-background-color: #34a9c9;");
-
         var barraIzquierda = new StackPane(new Label("  "));
         var barraDerecha = new StackPane(new Label("  "));
-
         var barraInferior = contenidoBarraInferior();
 
         contenedor = new BorderPane();
