@@ -1,6 +1,6 @@
 # Calendario en Java
 
-Aplicación de calendario estilo Google Calendar desarrollada en Java. Trabajo práctico grupal para la materia Algoritmos y Programación III de FIUBA, 1C2023.
+Aplicación de calendario estilo Google Calendar desarrollada en Java. Trabajo práctico grupal para la materia Algoritmos y Programación III de FIUBA.
 
 ## Descripción
 
